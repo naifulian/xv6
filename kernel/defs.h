@@ -102,6 +102,13 @@ int             either_copyout(int user_dst, uint64 dst, void *src, uint64 len);
 int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
 void            procdump(void);
 
+// sched/sched.c
+void            sched_init(void);
+struct proc*    sched_pick_next(void);
+void            sched_update_stats(void);
+int             sched_set_policy(int);
+const char*     sched_policy_name(int);
+
 // swtch.S
 void            swtch(struct context*, struct context*);
 

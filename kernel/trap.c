@@ -171,6 +171,9 @@ clockintr()
     release(&tickslock);
   }
 
+  // Update scheduler statistics for all processes
+  sched_update_stats();
+
   // ask for the next timer interrupt. this also clears
   // the interrupt request. 1000000 is about a tenth
   // of a second.

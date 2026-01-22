@@ -104,4 +104,15 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  // Scheduler-related fields (for new scheduling algorithms)
+  int priority;                // Process priority (1-20 for PRIORITY, 1-3 for SML)
+  int tickets;                 // Lottery tickets (default 1)
+  uint64 ctime;                // Process creation time (in ticks, for FCFS)
+  int rutime;                  // Running time (clock ticks)
+  int retime;                  // Ready/waiting time (clock ticks)
+  int stime;                   // Sleeping time (clock ticks)
+  int sched_class;             // SML queue class (1=high, 2=medium, 3=low)
 };
+
+extern struct proc proc[NPROC];
