@@ -131,3 +131,82 @@ sys_getscheduler(void)
 {
   return current_policy;
 }
+
+// mmap system call
+// Simplified version: supports MAP_ANONYMOUS | MAP_PRIVATE only
+// Parameters: addr (ignored), length, prot, flags, fd (ignored), offset (ignored)
+uint64
+sys_mmap(void)
+{
+  uint64 addr, length, prot, flags, fd, offset;
+  struct proc *p = myproc();
+
+  argaddr(0, &addr);
+  argaddr(1, &length);
+  argaddr(2, &prot);
+  argaddr(3, &flags);
+  argaddr(4, &fd);
+  argaddr(5, &offset);
+
+  // Only support MAP_ANONYMOUS | MAP_PRIVATE for now
+  if((flags & 0x02) == 0)  // MAP_PRIVATE = 0x02
+    return -1;
+  if((flags & 0x20) == 0)  // MAP_ANONYMOUS = 0x20
+    return -1;
+
+  // Check length
+  if(length == 0)
+    return 0;
+
+  // Align to page boundary
+  length = PGROUNDUP(length);
+
+  // Find a valid virtual address (after current sz)
+  uint64 new_addr = p->sz;
+
+  // Check for overflow
+  if(new_addr + length > MAXVA)
+    return -1;
+
+  // Allocate pages immediately (eager allocation)
+  // uvmalloc allocates from current p->sz to new_addr + length
+  if(uvmalloc(p->pagetable, p->sz, new_addr + length, (prot & 0x2) ? PTE_W : 0) == 0)
+    return -1;
+
+  // Update process size
+  p->sz += length;
+
+  return new_addr;
+}
+
+// munmap system call
+// Parameters: addr, length
+uint64
+sys_munmap(void)
+{
+  uint64 addr, length;
+  struct proc *p = myproc();
+
+  argaddr(0, &addr);
+  argaddr(1, &length);
+
+  if(length == 0)
+    return 0;
+
+  // Align to page boundary
+  addr = PGROUNDDOWN(addr);
+  length = PGROUNDUP(length);
+
+  // Check if address is valid
+  if(addr >= p->sz)
+    return -1;
+
+  // Check if it's at the end of address space
+  if(addr + length != p->sz)
+    return -1;  // Only support unmapping from the end
+
+  // Unmap and shrink
+  p->sz = addr;
+  uvmdealloc(p->pagetable, addr + length, addr);
+  return 0;
+}

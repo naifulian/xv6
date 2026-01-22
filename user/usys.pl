@@ -44,3 +44,5 @@ entry("pause");
 entry("uptime");
 entry("setscheduler");
 entry("getscheduler");
+entry("mmap");
+entry("munmap");

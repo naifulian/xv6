@@ -26,6 +26,8 @@ int pause(int);
 int uptime(void);
 int setscheduler(int);
 int getscheduler(void);
+void* mmap(void*, uint, uint, uint, uint, uint);
+int munmap(void*, uint);
 
 // ulib.c
 int stat(const char*, struct stat*);
