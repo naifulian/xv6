@@ -6,6 +6,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "vm.h"
+#include "sched/sched.h"
 
 uint64
 sys_exit(void)
@@ -106,4 +107,27 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+// Set the scheduling policy
+// Argument: policy number (0=DEFAULT, 1=FCFS, 2=PRIORITY, 3=SML, 4=LOTTERY)
+uint64
+sys_setscheduler(void)
+{
+  int policy;
+
+  argint(0, &policy);
+
+  if(sched_set_policy(policy) < 0)
+    return -1;
+
+  return 0;
+}
+
+// Get the current scheduling policy
+// Returns: policy number
+uint64
+sys_getscheduler(void)
+{
+  return current_policy;
 }
