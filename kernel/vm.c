@@ -189,6 +189,7 @@ uvmcreate()
 // Remove npages of mappings starting from va. va must be
 // page-aligned. It's OK if the mappings don't exist.
 // Optionally free the physical memory.
+// Handles COW reference counting.
 void
 uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
 {
@@ -200,12 +201,15 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
 
   for(a = va; a < va + npages*PGSIZE; a += PGSIZE){
     if((pte = walk(pagetable, a, 0)) == 0) // leaf page table entry allocated?
-      continue;   
+      continue;
     if((*pte & PTE_V) == 0)  // has physical page been allocated?
       continue;
     if(do_free){
       uint64 pa = PTE2PA(*pte);
-      kfree((void*)pa);
+      // For COW pages, use reference counting
+      if(ref_dec(pa)){
+        kfree((void*)pa);
+      }
     }
     *pte = 0;
   }
@@ -293,13 +297,13 @@ uvmfree(pagetable_t pagetable, uint64 sz)
 // physical memory.
 // returns 0 on success, -1 on failure.
 // frees any allocated pages on failure.
+// Implements Copy-on-Write (COW) optimization.
 int
 uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 {
   pte_t *pte;
   uint64 pa, i;
   uint flags;
-  char *mem;
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
@@ -308,19 +312,82 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
       continue;   // physical page hasn't been allocated
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto err;
-    memmove(mem, (char*)pa, PGSIZE);
-    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
-      kfree(mem);
+
+    // COW: instead of copying, map the same physical page
+    // and mark both parent and child PTEs as COW
+    if(flags & PTE_W){
+      // Page is writable, make it COW
+      flags &= ~PTE_W;        // Clear write bit
+      flags |= PTE_COW;       // Set COW bit
+      *pte = PA2PTE(pa) | flags | PTE_V;  // Update parent PTE
+    }
+
+    // Map child page to same physical page with COW flags
+    if(mappages(new, i, PGSIZE, pa, flags) != 0){
       goto err;
     }
+
+    // Increment reference count for shared page
+    ref_inc(pa);
   }
   return 0;
 
  err:
   uvmunmap(new, 0, i / PGSIZE, 1);
   return -1;
+}
+
+// Handle a write fault on a COW page.
+// Allocates a new physical page, copies the content,
+// and updates the PTE with write permissions.
+// Returns 0 on success, -1 on failure.
+int
+cow_alloc(pagetable_t pagetable, uint64 va)
+{
+  pte_t *pte;
+  uint64 pa, new_pa;
+  uint flags;
+  char *mem;
+
+  if(va >= MAXVA)
+    return -1;
+
+  va = PGROUNDDOWN(va);
+  pte = walk(pagetable, va, 0);
+
+  if(pte == 0 || (*pte & PTE_V) == 0 || (*pte & PTE_COW) == 0)
+    return -1;  // Not a valid COW page
+
+  pa = PTE2PA(*pte);
+  flags = PTE_FLAGS(*pte);
+
+  // Allocate new physical page
+  mem = kalloc();
+  if(mem == 0)
+    return -1;
+
+  // Copy content from old page
+  memmove(mem, (char*)pa, PGSIZE);
+
+  // Clear COW flag and set write flag
+  flags &= ~PTE_COW;
+  flags |= PTE_W;
+
+  // Get new physical address
+  new_pa = (uint64)mem;
+
+  // Update PTE to point to new page
+  *pte = PA2PTE(new_pa) | flags | PTE_V;
+
+  // Flush TLB for this specific page
+  sfence_vma_addr(va);
+
+  // Decrement reference count of old page
+  if(ref_dec(pa)){
+    kfree((void*)pa);
+  }
+
+  return 0;
 }
 
 // mark a PTE invalid for user access.
@@ -349,19 +416,31 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
     va0 = PGROUNDDOWN(dstva);
     if(va0 >= MAXVA)
       return -1;
-  
-    pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0) {
+
+    pte = walk(pagetable, va0, 0);
+    if(pte == 0 || (*pte & PTE_V) == 0) {
+      // Page not mapped, try lazy allocation
       if((pa0 = vmfault(pagetable, va0, 0)) == 0) {
+        return -1;
+      }
+    } else if((*pte & PTE_W) == 0 && (*pte & PTE_COW) != 0) {
+      // COW page: need to copy before writing
+      if(cow_alloc(pagetable, va0) < 0) {
         return -1;
       }
     }
 
-    pte = walk(pagetable, va0, 0);
-    // forbid copyout over read-only user text pages.
-    if((*pte & PTE_W) == 0)
+    // Get physical address after any COW allocation
+    pa0 = walkaddr(pagetable, va0);
+    if(pa0 == 0) {
       return -1;
-      
+    }
+
+    // Verify page is writable
+    pte = walk(pagetable, va0, 0);
+    if(pte == 0 || (*pte & PTE_W) == 0)
+      return -1;
+
     n = PGSIZE - (dstva - va0);
     if(n > len)
       n = len;

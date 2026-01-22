@@ -23,6 +23,66 @@ struct {
   struct run *freelist;
 } kmem;
 
+// Reference counting for COW pages
+// Each physical page has a reference count
+// Max 128MB physical memory / 4KB per page = 32768 pages
+#define MAX_PAGES 40000
+static int ref_count[MAX_PAGES];
+
+// Get page index from physical address
+// Physical addresses range from KERNBASE (0x80000000) to PHYSTOP (0x88000000)
+static int
+pa2index(uint64 pa)
+{
+  // Only track pages in the allocatable range
+  if (pa >= KERNBASE && pa < PHYSTOP)
+    return (pa - KERNBASE) / PGSIZE;
+  return -1;
+}
+
+// Increment reference count for a physical page
+void
+ref_inc(uint64 pa)
+{
+  int idx = pa2index(pa);
+  if (idx >= 0 && idx < MAX_PAGES) {
+    acquire(&kmem.lock);
+    ref_count[idx]++;
+    release(&kmem.lock);
+  }
+}
+
+// Decrement reference count for a physical page
+// Returns 1 if page should be freed (ref count reaches 0)
+int
+ref_dec(uint64 pa)
+{
+  int idx = pa2index(pa);
+  if (idx >= 0 && idx < MAX_PAGES) {
+    acquire(&kmem.lock);
+    if (ref_count[idx] > 0)
+      ref_count[idx]--;
+    int should_free = (ref_count[idx] == 0);
+    release(&kmem.lock);
+    return should_free;
+  }
+  return 1;  // Invalid address, treat as should free
+}
+
+// Get reference count for a physical page
+int
+ref_get(uint64 pa)
+{
+  int idx = pa2index(pa);
+  if (idx >= 0 && idx < MAX_PAGES) {
+    acquire(&kmem.lock);
+    int count = ref_count[idx];
+    release(&kmem.lock);
+    return count;
+  }
+  return 0;
+}
+
 void
 kinit()
 {
@@ -76,7 +136,14 @@ kalloc(void)
     kmem.freelist = r->next;
   release(&kmem.lock);
 
-  if(r)
+  if(r) {
     memset((char*)r, 5, PGSIZE); // fill with junk
+    // Initialize reference count to 1 for newly allocated page
+    // The page is not yet mapped, so no need to lock
+    int idx = pa2index((uint64)r);
+    if (idx >= 0 && idx < MAX_PAGES) {
+      ref_count[idx] = 1;
+    }
+  }
   return (void*)r;
 }
