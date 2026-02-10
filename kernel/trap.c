@@ -82,7 +82,7 @@ usertrap(void)
         printf("usertrap(): cow_alloc failed pid=%d va=0x%lx\n", p->pid, va);
         setkilled(p);
       }
-    } else if(vmfault(p->pagetable, va, (r_scause() == 13) ? 1 : 0) != 0) {
+    } else if(vmfault(p->pagetable, va, (r_scause() == 13) ? 1 : 0) == 0) {
       // Lazy allocation failed
       printf("usertrap(): vmfault failed pid=%d va=0x%lx\n", p->pid, va);
       setkilled(p);

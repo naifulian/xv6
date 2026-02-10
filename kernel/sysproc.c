@@ -168,12 +168,8 @@ sys_mmap(void)
   if(new_addr + length > MAXVA)
     return -1;
 
-  // Allocate pages immediately (eager allocation)
-  // uvmalloc allocates from current p->sz to new_addr + length
-  if(uvmalloc(p->pagetable, p->sz, new_addr + length, (prot & 0x2) ? PTE_W : 0) == 0)
-    return -1;
-
-  // Update process size
+  // Lazy allocation: just update process size, don't allocate physical pages yet
+  // Pages will be allocated on demand (page fault) via vmfault()
   p->sz += length;
 
   return new_addr;

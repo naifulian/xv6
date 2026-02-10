@@ -154,6 +154,7 @@ UPROGS=\
 	$U/_dorphan\
 	$U/_scheduler_test\
 	$U/_mmap_test\
+	$U/_mmap_lazy_test\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

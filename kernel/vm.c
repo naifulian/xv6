@@ -525,9 +525,9 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 }
 
 // allocate and map user memory if process is referencing a page
-// that was lazily allocated in sys_sbrk().
-// returns 0 if va is invalid or already mapped, or if
-// out of physical memory, and physical address if successful.
+// that was lazily allocated in sys_sbrk() or mmap.
+// returns 0 if va is invalid or out of physical memory,
+// and physical address if successful (page was already mapped or newly allocated).
 uint64
 vmfault(pagetable_t pagetable, uint64 va, int read)
 {
@@ -537,9 +537,15 @@ vmfault(pagetable_t pagetable, uint64 va, int read)
   if (va >= p->sz)
     return 0;
   va = PGROUNDDOWN(va);
-  if(ismapped(pagetable, va)) {
-    return 0;
+
+  // Check if page is already mapped
+  pte_t *pte = walk(pagetable, va, 0);
+  if(pte != 0 && (*pte & PTE_V) != 0) {
+    // Page is already mapped, return its physical address
+    return PTE2PA(*pte);
   }
+
+  // Allocate and map a new page
   mem = (uint64) kalloc();
   if(mem == 0)
     return 0;
