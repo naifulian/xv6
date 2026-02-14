@@ -106,6 +106,27 @@ tags: $(OBJS)
 
 ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o
 
+# Test files from tests/src directory
+TESTS_CFILES = \
+	tests/src/test_buddy.c \
+	tests/src/test_mmap.c \
+	tests/src/test_cow.c \
+	tests/src/test_lazy.c \
+	tests/src/test_integration.c \
+	tests/src/test_boundary.c
+
+TESTS_OBJS = \
+	tests/src/test_buddy.o \
+	tests/src/test_mmap.o \
+	tests/src/test_cow.o \
+	tests/src/test_lazy.o \
+	tests/src/test_integration.o \
+	tests/src/test_boundary.o
+
+# Compile test .c files to .o
+tests/src/%.o: tests/src/%.c tests/include/*.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 _%: %.o $(ULIB) $U/user.ld
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $< $(ULIB)
 	$(OBJDUMP) -S $@ > $*.asm
@@ -155,19 +176,28 @@ UPROGS=\
 	$U/_scheduler_test\
 	$U/_mmap_test\
 	$U/_mmap_lazy_test\
+	$U/_buddy_test\
+	$U/_test_runner\
+
+# Test runner depends on all test objects
+$U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld
+	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ tests/src/test_runner.o $(TESTS_OBJS) $(ULIB)
+	$(OBJDUMP) -S $U/_test_runner > $U/test_runner.asm
+	$(OBJDUMP) -t $U/_test_runner | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/test_runner.sym
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
 
 -include kernel/*.d user/*.d
 
-clean: 
+clean:
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*/*.o */*.d */*.asm */*.sym \
 	$K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
         $U/usys.S \
-	$(UPROGS)
+	$(UPROGS) \
+	tests/src/*.o tests/include/*.d
 
 # try to generate a unique GDB port
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)
