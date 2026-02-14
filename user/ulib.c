@@ -159,3 +159,9 @@ sbrklazy(int n) {
   return sys_sbrk(n, SBRK_LAZY);
 }
 
+
+// Sleep function - direct wrapper for pause system call
+int
+sleep(int ticks) {
+    return pause(ticks);
+}
