@@ -24,6 +24,7 @@ int getpid(void);
 char* sys_sbrk(int,int);
 int pause(int);
 int uptime(void);
+int sleep(int);
 int setscheduler(int);
 int getscheduler(void);
 void* mmap(void*, uint, uint, uint, uint, uint);
