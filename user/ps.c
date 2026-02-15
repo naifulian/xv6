@@ -14,29 +14,6 @@ static char *sched_names[] = {
   "DEFAULT", "FCFS", "PRIOR", "SML", "LOT"
 };
 
-void
-print_header(void)
-{
-  printf("PID   STATE    SCHED    PRI  TICK  SZ       RUNT  RETM  SLP  NAME\n");
-  printf("----  -------  -------  ---  ----  -------  ----  ----  ---  ----\n");
-}
-
-void
-print_process(struct pstat *p)
-{
-  printf("%-4d  %-7s  %-7s  %-3d  %-4d  %-7d  %-4d  %-4d  %-3d  %s\n",
-         p->pid,
-         state_names[p->state],
-         sched_names[p->sched_class],
-         p->priority,
-         p->tickets,
-         p->sz / 1024,
-         p->rutime,
-         p->retime,
-         p->stime,
-         p->name);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -50,7 +27,6 @@ main(int argc, char *argv[])
     } else if(strcmp(argv[i], "-h") == 0) {
       printf("Usage: ps [-s <scheduler>]\n");
       printf("  -s  Filter by scheduler (0-4)\n");
-      printf("Schedulers: 0=DEFAULT, 1=FCFS, 2=PRIORITY, 3=SML, 4=LOTTERY\n");
       exit(0);
     }
   }
@@ -62,13 +38,29 @@ main(int argc, char *argv[])
     exit(1);
   }
 
-  print_header();
+  printf("PID   STATE    SCHED    PRI  TICK  SZ    RUNT  RETM  SLP  NAME\n");
+  printf("----  -------  -------  ---  ----  -----  ----  ----  ---  ----\n");
 
   for(int i = 0; i < count; i++) {
-    if(show_sched >= 0 && ps[i].sched_class != show_sched) {
+    struct pstat *p = &ps[i];
+    
+    if(show_sched >= 0 && p->sched_class != show_sched) {
       continue;
     }
-    print_process(&ps[i]);
+    
+    char *st_name = "???";
+    if(p->state >= 0 && p->state <= 5) {
+      st_name = state_names[p->state];
+    }
+    
+    char *sch_name = "???";
+    if(p->sched_class >= 0 && p->sched_class <= 4) {
+      sch_name = sched_names[p->sched_class];
+    }
+    
+    printf("%-4d  %-7s  %-7s  %-3d  %-4d  %-5d  %-4d  %-4d  %-3d  %s\n",
+           p->pid, st_name, sch_name, p->priority, p->tickets,
+           p->sz / 1024, p->rutime, p->retime, p->stime, p->name);
   }
 
   printf("\nTotal: %d processes\n", count);

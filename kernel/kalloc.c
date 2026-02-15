@@ -305,7 +305,27 @@ lazy_alloc_inc(void)
 void
 fill_memstat(void *buf)
 {
+  struct memstats *ms = (struct memstats *)buf;
+  
   acquire(&kmem.lock);
-  *(struct memstats *)buf = memstats;
+  
+  // Calculate actual free pages from free lists
+  uint free_count = 0;
+  for(int order = 0; order < MAX_ORDER; order++) {
+    struct run *r = kmem.free_lists[order].head;
+    while(r) {
+      free_count += (1 << order);  // Each block has 2^order pages
+      r = r->next;
+    }
+  }
+  
+  ms->total_pages = (PHYSTOP - KERNBASE) / PGSIZE;
+  ms->free_pages = free_count;
+  ms->buddy_merges = memstats.buddy_merges;
+  ms->buddy_splits = memstats.buddy_splits;
+  ms->cow_faults = memstats.cow_faults;
+  ms->lazy_allocs = memstats.lazy_allocs;
+  ms->cow_copy_pages = memstats.cow_copy_pages;
+  
   release(&kmem.lock);
 }

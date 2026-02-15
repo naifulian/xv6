@@ -224,7 +224,7 @@ struct pstat {
   int priority;
   int tickets;
   int sched_class;
-  uint64 sz;
+  uint sz;
   int rutime;
   int retime;
   int stime;
