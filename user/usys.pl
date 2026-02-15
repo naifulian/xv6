@@ -46,3 +46,6 @@ entry("setscheduler");
 entry("getscheduler");
 entry("mmap");
 entry("munmap");
+entry("getptable");
+entry("getmemstat");
+entry("setpriority");

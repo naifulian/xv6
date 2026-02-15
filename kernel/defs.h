@@ -62,6 +62,9 @@ void            kinit(void);
 void            ref_inc(uint64);
 int             ref_dec(uint64);
 int             ref_get(uint64);
+void            cow_fault_inc(void);
+void            lazy_alloc_inc(void);
+void            fill_memstat(void*);
 
 // log.c
 void            initlog(int, struct superblock*);

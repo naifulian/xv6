@@ -8,6 +8,16 @@
 #include "vm.h"
 #include "sched/sched.h"
 
+struct memstat {
+  uint total_pages;
+  uint free_pages;
+  uint buddy_merges;
+  uint buddy_splits;
+  uint cow_faults;
+  uint lazy_allocs;
+  uint cow_copy_pages;
+};
+
 uint64
 sys_exit(void)
 {
@@ -205,4 +215,122 @@ sys_munmap(void)
   p->sz = addr;
   uvmdealloc(p->pagetable, addr + length, addr);
   return 0;
+}
+
+// Process info structure for user space
+struct pstat {
+  int pid;
+  int state;
+  int priority;
+  int tickets;
+  int sched_class;
+  uint64 sz;
+  int rutime;
+  int retime;
+  int stime;
+  char name[16];
+};
+
+// Get process table snapshot
+// Parameters: addr (buffer pointer), max_count (max entries)
+// Returns: number of processes copied
+uint64
+sys_getptable(void)
+{
+  uint64 addr;
+  int max_count;
+  struct pstat *buf;
+  struct proc *p;
+  int count = 0;
+
+  argaddr(0, &addr);
+  argint(1, &max_count);
+
+  if(addr == 0 || max_count <= 0)
+    return -1;
+
+  buf = (struct pstat *)kalloc();
+  if(buf == 0)
+    return -1;
+
+  memset(buf, 0, PGSIZE);
+
+  for(p = proc; p < &proc[NPROC] && count < max_count; p++) {
+    acquire(&p->lock);
+    if(p->state != UNUSED) {
+      buf[count].pid = p->pid;
+      buf[count].state = p->state;
+      buf[count].priority = p->priority;
+      buf[count].tickets = p->tickets;
+      buf[count].sched_class = p->sched_class;
+      buf[count].sz = p->sz;
+      buf[count].rutime = p->rutime;
+      buf[count].retime = p->retime;
+      buf[count].stime = p->stime;
+      safestrcpy(buf[count].name, p->name, sizeof(buf[count].name));
+      count++;
+    }
+    release(&p->lock);
+  }
+
+  // Copy to user space
+  struct proc *cur = myproc();
+  if(copyout(cur->pagetable, addr, (char *)buf, count * sizeof(struct pstat)) < 0) {
+    kfree((void *)buf);
+    return -1;
+  }
+
+  kfree((void *)buf);
+  return count;
+}
+
+// Get memory statistics
+// Parameters: addr (memstat structure pointer)
+// Returns: 0 on success, -1 on failure
+uint64
+sys_getmemstat(void)
+{
+  uint64 addr;
+  struct memstat buf;
+  struct proc *p = myproc();
+
+  argaddr(0, &addr);
+
+  if(addr == 0)
+    return -1;
+
+  fill_memstat(&buf);
+
+  if(copyout(p->pagetable, addr, (char*)&buf, sizeof(buf)) < 0)
+    return -1;
+
+  return 0;
+}
+
+// Set process priority
+// Parameters: pid, priority (1-20)
+// Returns: 0 on success, -1 on failure
+uint64
+sys_setpriority(void)
+{
+  int pid, priority;
+  struct proc *p;
+
+  argint(0, &pid);
+  argint(1, &priority);
+
+  if(priority < 1 || priority > 20)
+    return -1;
+
+  for(p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->pid == pid) {
+      p->priority = priority;
+      release(&p->lock);
+      return 0;
+    }
+    release(&p->lock);
+  }
+
+  return -1;
 }

@@ -105,6 +105,9 @@ extern uint64 sys_setscheduler(void);
 extern uint64 sys_getscheduler(void);
 extern uint64 sys_mmap(void);
 extern uint64 sys_munmap(void);
+extern uint64 sys_getptable(void);
+extern uint64 sys_getmemstat(void);
+extern uint64 sys_setpriority(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -134,6 +137,9 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getscheduler] sys_getscheduler,
 [SYS_mmap]    sys_mmap,
 [SYS_munmap]  sys_munmap,
+[SYS_getptable] sys_getptable,
+[SYS_getmemstat] sys_getmemstat,
+[SYS_setpriority] sys_setpriority,
 };
 
 void

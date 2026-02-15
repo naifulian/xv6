@@ -24,3 +24,6 @@
 #define SYS_getscheduler 23
 #define SYS_mmap   24
 #define SYS_munmap 25
+#define SYS_getptable 26
+#define SYS_getmemstat 27
+#define SYS_setpriority 28

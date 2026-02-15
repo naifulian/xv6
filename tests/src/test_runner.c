@@ -6,6 +6,7 @@
 #include "../include/test_lazy.h"
 #include "../include/test_integration.h"
 #include "../include/test_boundary.h"
+#include "../include/test_scheduler.h"
 
 // List of all tests
 struct test_case tests[] = {
@@ -70,9 +71,21 @@ struct test_case tests[] = {
     {"nproc_wait_refork", "NPROC wait refork", test_nproc_wait_refork},
     {"nproc_getpid", "NPROC getpid", test_nproc_getpid},
     {"nproc_orphaned", "NPROC orphaned", test_nproc_orphaned},
+
+    // Scheduler tests
+    {"sched_fcfs_order", "FCFS order", test_sched_fcfs_order},
+    {"sched_priority_order", "PRIORITY order", test_sched_priority_order},
+    {"sched_priority_fcfs", "PRIORITY FCFS tiebreak", test_sched_priority_fcfs},
+    {"sched_sml_queues", "SML queues", test_sched_sml_queues},
+    {"sched_lottery_basic", "LOTTERY basic", test_sched_lottery_basic},
+    {"sched_switch_preserves", "Scheduler switch preserves", test_sched_switch_preserves},
+    {"sched_default_rr", "DEFAULT RR", test_sched_default_rr},
+    {"sched_getscheduler", "getscheduler", test_sched_getscheduler},
+    {"sched_setpriority", "setpriority", test_sched_setpriority},
+    {"sched_stats_tracking", "Stats tracking", test_sched_stats_tracking},
 };
 
-#define NUM_TESTS 50  // Total number of tests (11+7+6+10+10+6)
+#define NUM_TESTS 60  // Total number of tests (11+7+6+10+10+6+10)
 int num_tests = NUM_TESTS;
 
 // Run a single test

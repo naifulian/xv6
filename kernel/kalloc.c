@@ -34,6 +34,19 @@ struct {
 #define MAX_PAGES 40000
 static int ref_count[MAX_PAGES];
 
+// Memory statistics counters
+struct memstats {
+  uint total_pages;
+  uint free_pages;
+  uint buddy_merges;
+  uint buddy_splits;
+  uint cow_faults;
+  uint lazy_allocs;
+  uint cow_copy_pages;
+};
+
+static struct memstats memstats;
+
 // Get page index from physical address
 static int
 pa2index(uint64 pa)
@@ -133,7 +146,9 @@ kinit()
   for (i = 0; i < MAX_ORDER; i++) {
     kmem.free_lists[i].head = 0;
   }
+  memset(&memstats, 0, sizeof(memstats));
   freerange(end, (void*)PHYSTOP);
+  memstats.total_pages = memstats.free_pages;
 }
 
 // Initialize memory range using buddy system
@@ -142,8 +157,10 @@ freerange(void *pa_start, void *pa_end)
 {
   char *p;
   p = (char*)PGROUNDUP((uint64)pa_start);
-  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE)
+  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE) {
     kfree(p);
+    memstats.free_pages++;
+  }
 }
 
 // Free memory block using buddy system
@@ -166,6 +183,7 @@ buddy_free(uint64 pa, int order)
         pa = buddy;
 
       order++;
+      memstats.buddy_merges++;
     } else {
       break;
     }
@@ -175,6 +193,7 @@ buddy_free(uint64 pa, int order)
   struct run *r = (struct run*)pa;
   r->next = kmem.free_lists[order].head;
   kmem.free_lists[order].head = r;
+  memstats.free_pages++;
 }
 
 // Free the page of physical memory pointed at by pa
@@ -220,6 +239,7 @@ buddy_alloc(int order)
     if (r) {
       // Remove from free list
       kmem.free_lists[current_order].head = r->next;
+      memstats.free_pages--;
 
       // Split the block until we reach the desired order
       while (current_order > order) {
@@ -230,9 +250,9 @@ buddy_alloc(int order)
         // Add the higher half to free list
         buddy_run->next = kmem.free_lists[current_order].head;
         kmem.free_lists[current_order].head = buddy_run;
+        memstats.buddy_splits++;
+        memstats.free_pages++;
       }
-
-      release(&kmem.lock);
 
       // Initialize reference count
       int idx = pa2index((uint64)r);
@@ -240,6 +260,7 @@ buddy_alloc(int order)
         ref_count[idx] = 1;
       }
 
+      release(&kmem.lock);
       return (void*)r;
     }
   }
@@ -259,4 +280,32 @@ kalloc(void)
   }
 
   return pa;
+}
+
+// Increment COW fault counter
+void
+cow_fault_inc(void)
+{
+  acquire(&kmem.lock);
+  memstats.cow_faults++;
+  memstats.cow_copy_pages++;
+  release(&kmem.lock);
+}
+
+// Increment lazy allocation counter
+void
+lazy_alloc_inc(void)
+{
+  acquire(&kmem.lock);
+  memstats.lazy_allocs++;
+  release(&kmem.lock);
+}
+
+// Fill memory statistics structure
+void
+fill_memstat(void *buf)
+{
+  acquire(&kmem.lock);
+  *(struct memstats *)buf = memstats;
+  release(&kmem.lock);
 }

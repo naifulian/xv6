@@ -387,6 +387,9 @@ cow_alloc(pagetable_t pagetable, uint64 va)
     kfree((void*)pa);
   }
 
+  // Increment COW fault counter
+  cow_fault_inc();
+
   return 0;
 }
 
@@ -554,6 +557,10 @@ vmfault(pagetable_t pagetable, uint64 va, int read)
     kfree((void *)mem);
     return 0;
   }
+
+  // Increment lazy allocation counter
+  lazy_alloc_inc();
+
   return mem;
 }
 

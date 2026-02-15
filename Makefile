@@ -113,7 +113,8 @@ TESTS_CFILES = \
 	tests/src/test_cow.c \
 	tests/src/test_lazy.c \
 	tests/src/test_integration.c \
-	tests/src/test_boundary.c
+	tests/src/test_boundary.c \
+	tests/src/test_scheduler.c
 
 TESTS_OBJS = \
 	tests/src/test_buddy.o \
@@ -121,7 +122,8 @@ TESTS_OBJS = \
 	tests/src/test_cow.o \
 	tests/src/test_lazy.o \
 	tests/src/test_integration.o \
-	tests/src/test_boundary.o
+	tests/src/test_boundary.o \
+	tests/src/test_scheduler.o
 
 # Compile test .c files to .o
 tests/src/%.o: tests/src/%.c tests/include/*.h
@@ -176,8 +178,10 @@ UPROGS=\
 	$U/_scheduler_test\
 	$U/_mmap_test\
 	$U/_mmap_lazy_test\
-	$U/_buddy_test\
 	$U/_test_runner\
+	$U/_perf_test\
+	$U/_ps\
+	$U/_memstat\
 
 # Test runner depends on all test objects
 $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld

@@ -2,6 +2,31 @@
 
 struct stat;
 
+// Process info structure for user space
+struct pstat {
+  int pid;
+  int state;
+  int priority;
+  int tickets;
+  int sched_class;
+  uint sz;
+  int rutime;
+  int retime;
+  int stime;
+  char name[16];
+};
+
+// Memory statistics structure for user space
+struct memstat {
+  uint total_pages;
+  uint free_pages;
+  uint buddy_merges;
+  uint buddy_splits;
+  uint cow_faults;
+  uint lazy_allocs;
+  uint cow_copy_pages;
+};
+
 // system calls
 int fork(void);
 int exit(int) __attribute__((noreturn));
@@ -29,6 +54,9 @@ int setscheduler(int);
 int getscheduler(void);
 void* mmap(void*, uint, uint, uint, uint, uint);
 int munmap(void*, uint);
+int getptable(struct pstat*, int);
+int getmemstat(struct memstat*);
+int setpriority(int, int);
 
 // ulib.c
 int stat(const char*, struct stat*);
