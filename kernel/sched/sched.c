@@ -11,6 +11,9 @@
 #include "kernel/sched/sched.h"
 #include "kernel/defs.h"
 
+// Lock for scheduler policy switching
+static struct spinlock sched_lock;
+
 // Current active scheduling policy
 enum sched_policy current_policy = SCHED_DEFAULT;
 struct sched_ops *current_ops = 0;  // Will be set in sched_init()
@@ -36,6 +39,9 @@ static struct sched_ops* sched_ops_table[SCHED_LOTTERY + 1] = {
 void
 sched_init(void)
 {
+  // Initialize the scheduler lock
+  initlock(&sched_lock, "sched");
+
   // Set initial policy to DEFAULT (Round-Robin)
   current_policy = SCHED_DEFAULT;
   current_ops = &default_ops;
@@ -74,9 +80,11 @@ sched_set_policy(int policy)
     return -1;  // Policy not yet implemented
   }
 
-  // Switch to new policy
+  // Switch to new policy with lock protection
+  acquire(&sched_lock);
   current_policy = policy;
   current_ops = sched_ops_table[policy];
+  release(&sched_lock);
 
   return 0;
 }

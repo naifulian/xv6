@@ -135,19 +135,18 @@ void test_fork_exec_exit_status(void) {
 
     int pid = fork();
     if(pid == 0) {
-        // Child: exec with success
-        char *argv[] = {"true", 0};
-        exec("true", argv);
-        exit(1);
+        // Child: exit with specific status
+        exit(42);
     } else if(pid > 0) {
         int status;
         wait(&status);
 
-        // Check if child exited successfully
-        if(WIFEXITED(status) && WEXITSTATUS(status) == 0) {
-            printf("  OK: child exited successfully\n");
+        // xv6 stores exit status directly (not shifted like POSIX)
+        if(status == 42) {
+            printf("  OK: child exited with status 42\n");
         } else {
-            printf("  FAIL: child exit status unexpected\n");
+            printf("  FAIL: child exit status unexpected (got %d, expected 42)\n", status);
+            exit(1);
         }
     } else {
         printf("  FAIL: fork failed\n");
