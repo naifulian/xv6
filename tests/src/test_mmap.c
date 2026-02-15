@@ -139,7 +139,7 @@ void test_mmap_invalid(void) {
     }
 }
 
-// Test case: munmap NULL pointer
+// Test case: munmap with invalid address
 void test_mmap_munmap_null(void) {
     printf("[TEST] mmap_munmap_null\n");
 
@@ -150,9 +150,15 @@ void test_mmap_munmap_null(void) {
         exit(1);
     }
 
-    // Try to munmap NULL (behavior depends on implementation)
-    int ret = munmap(0, 4096);
-    printf("  OK: munmapari(NULL) returned %d (behavior)\n", ret);
-
+    // Unmap the valid address first
     munmap(addr, 4096);
+
+    // Try to munmap invalid address (should fail or be ignored)
+    int ret = munmap(0, 4096);
+    if(ret == 0) {
+        printf("  INFO: munmap(0) returned 0 (accepted)\n");
+    } else {
+        printf("  INFO: munmap(0) returned -1 (rejected)\n");
+    }
+    printf("  OK: test completed\n");
 }

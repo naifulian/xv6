@@ -29,6 +29,7 @@ struct test_case tests[] = {
     {"mmap_large", "mmap large (anonymous)", test_mmap_large},
     {"mmap_offset", "mmap offset (anonymous)", test_mmap_offset},
     {"mmap_multiple", "mmap multiple (anonymous)", test_mmap_multiple},
+    {"mmap_invalid", "mmap invalid params", test_mmap_invalid},
     {"mmap_munmap_null", "mmap munmap NULL", test_mmap_munmap_null},
 
     // COW tests
@@ -85,7 +86,7 @@ struct test_case tests[] = {
     {"sched_stats_tracking", "Stats tracking", test_sched_stats_tracking},
 };
 
-#define NUM_TESTS 60  // Total: 11+6+6+10+10+6+10 = 60 (buddy+mmap+cow+lazy+integ+bound+sched)
+#define NUM_TESTS 60  // Total: 11+7+6+10+10+6+10 = 60 (buddy+mmap+cow+lazy+integ+bound+sched)
 int num_tests = NUM_TESTS;
 
 // Run a single test

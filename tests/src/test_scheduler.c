@@ -86,7 +86,7 @@ void test_sched_priority_order(void) {
         int status;
         wait(&status);
         if(i == 0) {
-            first_exit = status >> 8;
+            first_exit = status;  // xv6 stores exit status directly
             printf("  INFO: first process to exit had status %d\n", first_exit);
             // Process 1 (priority 1, high) should exit first
             if(first_exit == 201) {
@@ -133,7 +133,7 @@ void test_sched_priority_fcfs(void) {
     for(int i = 0; i < 3; i++) {
         int status;
         int pid = wait(&status);
-        printf("  INFO: process pid=%d exited with status %d\n", pid, status >> 8);
+        printf("  INFO: process pid=%d exited with status %d\n", pid, status);  // xv6 stores exit status directly
     }
 
     printf("  OK: PRIORITY-FCFS test completed\n");
@@ -173,7 +173,7 @@ void test_sched_sml_queues(void) {
     for(int i = 0; i < 3; i++) {
         int status;
         int pid = wait(&status);
-        printf("  INFO: process pid=%d exited with status %d\n", pid, status >> 8);
+        printf("  INFO: process pid=%d exited with status %d\n", pid, status);  // xv6 stores exit status directly
     }
 
     printf("  OK: SML test completed\n");

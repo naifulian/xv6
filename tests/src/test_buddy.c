@@ -203,9 +203,10 @@ void test_buddy_large_allocation(void) {
 // Test case: Free NULL (should be safe)
 void test_buddy_free_null(void) {
     printf("[TEST] buddy_free_null\n");
-    // Skip calling free(NULL) as umalloc doesn't handle it
-    // This would panic the kernel
-    printf("  INFO: free(NULL) test skipped (umalloc doesn't handle NULL)\n");
+    
+    // Test that free(NULL) is safe (should not crash)
+    free(0);
+    printf("  OK: free(NULL) did not crash\n");
 }
 
 // Test case: Double free detection (implementation dependent)
