@@ -91,3 +91,15 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_memtotal(void)
+{
+  return kmem_total_pages();
+}
+
+uint64
+sys_memfree(void)
+{
+  return kmem_free_pages();
+}
