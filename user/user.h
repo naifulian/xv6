@@ -73,6 +73,10 @@ void *memcpy(void *, const void *, uint);
 char* sbrk(int);
 char* sbrklazy(int);
 
+// Memory info helpers (compatible with baseline)
+uint memtotal(void);
+uint memfree(void);
+
 // printf.c
 void fprintf(int, const char*, ...) __attribute__ ((format (printf, 2, 3)));
 void printf(const char*, ...) __attribute__ ((format (printf, 1, 2)));

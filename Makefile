@@ -179,7 +179,7 @@ UPROGS=\
 	$U/_mmap_test\
 	$U/_mmap_lazy_test\
 	$U/_test_runner\
-	$U/_perf_test\
+	$U/_perftest\
 	$U/_ps\
 	$U/_memstat\
 

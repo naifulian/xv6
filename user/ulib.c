@@ -165,3 +165,20 @@ int
 sleep(int ticks) {
     return pause(ticks);
 }
+
+// Memory info helpers (compatible with baseline)
+uint
+memtotal(void) {
+    struct memstat ms;
+    if(getmemstat(&ms) < 0)
+        return 0;
+    return ms.total_pages;
+}
+
+uint
+memfree(void) {
+    struct memstat ms;
+    if(getmemstat(&ms) < 0)
+        return 0;
+    return ms.free_pages;
+}
