@@ -86,7 +86,7 @@ struct test_case tests[] = {
     {"sched_stats_tracking", "Stats tracking", test_sched_stats_tracking},
 };
 
-#define NUM_TESTS 60  // Total: 11+7+6+10+10+6+10 = 60 (buddy+mmap+cow+lazy+integ+bound+sched)
+#define NUM_TESTS (sizeof(tests) / sizeof(tests[0]))
 int num_tests = NUM_TESTS;
 
 // Run a single test
