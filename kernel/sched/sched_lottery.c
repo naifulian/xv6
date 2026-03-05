@@ -44,9 +44,14 @@ lottery_pick_next(void)
   struct proc *p;
   struct cpu *c = mycpu();
   int total_tickets = 0;
-  static uint64 seed = 12345;  // Seed for random number generation
+  static uint64 seed = 0;
+  static int initialized = 0;
 
-  // First pass: count total tickets among all runnable processes
+  if(!initialized) {
+    seed = ticks * 0x9e3779b97f4a7c15ULL;
+    initialized = 1;
+  }
+
   for(p = proc; p < &proc[NPROC]; p++) {
     acquire(&p->lock);
     if(p->state == RUNNABLE) {
@@ -55,28 +60,22 @@ lottery_pick_next(void)
     release(&p->lock);
   }
 
-  // If no runnable process or no tickets, return 0
   if(total_tickets <= 0) {
     return 0;
   }
 
-  // Draw a winning ticket
   int winning_ticket = (int)(lottery_random(&seed) % total_tickets);
   int current_ticket = 0;
 
-  // Second pass: find the process that holds the winning ticket
   for(p = proc; p < &proc[NPROC]; p++) {
     acquire(&p->lock);
     if(p->state == RUNNABLE) {
       int tickets = p->tickets;
       if(current_ticket + tickets > winning_ticket) {
-        // This process holds the winning ticket
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
         c->proc = 0;
         release(&p->lock);
         return p;
@@ -86,7 +85,6 @@ lottery_pick_next(void)
     release(&p->lock);
   }
 
-  // Should never reach here if there are runnable processes
   return 0;
 }
 

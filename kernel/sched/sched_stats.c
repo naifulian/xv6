@@ -16,20 +16,26 @@ sched_update_stats(void)
 {
   struct proc *p;
 
+  struct proc *current = myproc();
+  if(current) {
+    acquire(&current->lock);
+    if(current->state == RUNNING)
+      current->rutime++;
+    release(&current->lock);
+  }
+
   for(p = proc; p < &proc[NPROC]; p++) {
-    acquire(&p->lock);  // RISC-V uses per-process locks
+    if(p == current)
+      continue;
+    acquire(&p->lock);
     switch(p->state) {
     case SLEEPING:
-      p->stime++;  // Increment sleeping time
+      p->stime++;
       break;
     case RUNNABLE:
-      p->retime++;  // Increment ready/waiting time
-      break;
-    case RUNNING:
-      p->rutime++;  // Increment running time
+      p->retime++;
       break;
     default:
-      // UNUSED, USED, ZOMBIE - no stats update
       break;
     }
     release(&p->lock);

@@ -199,21 +199,17 @@ sys_munmap(void)
   if(length == 0)
     return 0;
 
-  // Align to page boundary
   addr = PGROUNDDOWN(addr);
   length = PGROUNDUP(length);
 
-  // Check if address is valid
-  if(addr >= p->sz)
+  if(addr >= p->sz || addr + length > p->sz)
     return -1;
 
-  // Check if it's at the end of address space
-  if(addr + length != p->sz)
-    return -1;  // Only support unmapping from the end
+  uvmunmap(p->pagetable, addr, length / PGSIZE, 1);
 
-  // Unmap and shrink
-  p->sz = addr;
-  uvmdealloc(p->pagetable, addr + length, addr);
+  if(addr + length == p->sz)
+    p->sz = addr;
+
   return 0;
 }
 
