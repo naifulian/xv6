@@ -1,0 +1,97 @@
+# 测试配置
+tests:
+  - id: COW_1_no_access
+    name: "COW: No Access"
+    category: COW
+    description: "fork后子进程立即退出（零复制）"
+  
+  - id: COW_2_readonly
+    name: "COW: Read Only"
+    category: COW
+    description: "fork后子进程只读访问"
+  
+  - id: COW_3_partial
+    name: "COW: Write 30%"
+    category: COW
+    description: "fork后子进程写入30%页面"
+  
+  - id: COW_4_fullwrite
+    name: "COW: Write 100%"
+    category: COW
+    description: "fork后子进程写入全部页面（最差情况）"
+  
+  - id: LAZY_1_sparse
+    name: "Lazy: Sparse Access"
+    category: LAZY
+    description: "sbrk(1MB)后访问1%"
+  
+  - id: LAZY_2_half
+    name: "Lazy: Half Access"
+    category: LAZY
+    description: "sbrk(1MB)后访问50%"
+  
+  - id: LAZY_3_full
+    name: "Lazy: Full Access"
+    category: LAZY
+    description: "sbrk(1MB)后访问100%（最差情况）"
+  
+  - id: BUDDY_1_max_alloc
+    name: "Buddy: Max Allocation"
+    category: BUDDY
+    description: "碎片化后最大连续分配"
+
+# 图表配置
+figures:
+  - id: fig1
+    type: line
+    title: "Copy-on-Write Performance Comparison"
+    data:
+      - COW_1_no_access
+      - COW_2_readonly
+      - COW_3_partial
+      - COW_4_fullwrite
+    x_label: "Scenario"
+    y_label: "Time (ticks)"
+    legend:
+      - "Baseline (Eager Copy)"
+      - "Testing (COW)"
+  
+  - id: fig2
+    type: line
+    title: "Lazy Allocation Performance Comparison"
+    data:
+      - LAZY_1_sparse
+      - LAZY_2_half
+      - LAZY_3_full
+    x_label: "Access Pattern"
+    y_label: "Time (ticks)"
+    legend:
+      - "Baseline (Eager Alloc)"
+      - "Testing (Lazy Alloc)"
+  
+  - id: fig3
+    type: bar
+    title: "Buddy System Memory Fragmentation"
+    data:
+      - BUDDY_1_max_alloc
+    x_label: "Allocator"
+    y_label: "Max Contiguous (KB)"
+    legend:
+      - "Baseline (Linked List)"
+      - "Testing (Buddy System)"
+
+# 图表质量
+quality:
+  dpi: 300
+  format:
+    - png
+    - pdf
+  style: "seaborn-v0_8-darkgrid"
+  font_size: 12
+  figure_size: [10, 6]
+
+# QEMU配置
+qemu:
+  memory: "128M"
+  cpus: 1
+  timeout: 300

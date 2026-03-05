@@ -237,3 +237,37 @@ check-qemu-version:
 		echo "ERROR: Need qemu version >= $(MIN_QEMU_VERSION)"; \
 		exit 1; \
 	fi
+
+# ========================================
+# 数据分析目标
+# ========================================
+
+.PHONY: analyze collect parse plot report clean-analysis
+
+analyze: collect parse plot report
+	@echo ""
+	@echo "========================================="
+	@echo "Analysis complete!"
+	@echo "  - Data: data/"
+	@echo "  - Figures: figures/"
+	@echo "  - Report: reports/experiment_report.md"
+	@echo "========================================="
+
+collect:
+	@echo "Collecting data from baseline and testing branches..."
+	@./tools/collect_data.sh all
+
+parse:
+	@echo "Parsing results..."
+	@python3 tools/parse_results.py
+
+plot:
+	@echo "Generating figures..."
+	@python3 tools/plot_figures.py
+
+report:
+	@echo "Generating report..."
+	@python3 tools/generate_report.py
+
+clean-analysis:
+	rm -rf data/ figures/ reports/
