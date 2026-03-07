@@ -16,7 +16,8 @@ enum sched_policy {
     SCHED_FCFS,       // First-Come-First-Served
     SCHED_PRIORITY,   // Priority Scheduling
     SCHED_SML,        // Static Multilevel Queue
-    SCHED_LOTTERY     // Lottery Scheduling
+    SCHED_LOTTERY,    // Lottery Scheduling
+    SCHED_SJF,        // Shortest Job First (新增)
 };
 
 // Scheduler operations interface (Strategy Pattern)
