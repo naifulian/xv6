@@ -26,9 +26,10 @@ extern struct sched_ops sml_ops;       // sched_sml.c
 extern struct sched_ops lottery_ops;   // sched_lottery.c
 extern struct sched_ops sjf_ops;       // sched_sjf.c
 extern struct sched_ops srtf_ops;      // sched_srtf.c
+extern struct sched_ops mlfq_ops;      // sched_mlfq.c
 
 // Scheduler operations table (maps policy to implementation)
-static struct sched_ops* sched_ops_table[SCHED_SRTF + 1] = {
+static struct sched_ops* sched_ops_table[SCHED_MLFQ + 1] = {
     [SCHED_DEFAULT]  = &default_ops,
     [SCHED_FCFS]     = &fcfs_ops,
     [SCHED_PRIORITY] = &priority_ops,
@@ -36,6 +37,7 @@ static struct sched_ops* sched_ops_table[SCHED_SRTF + 1] = {
     [SCHED_LOTTERY]  = &lottery_ops,
     [SCHED_SJF]      = &sjf_ops,
     [SCHED_SRTF]     = &srtf_ops,
+    [SCHED_MLFQ]     = &mlfq_ops,
 };
 
 // Initialize the scheduler subsystem
@@ -75,7 +77,7 @@ int
 sched_set_policy(int policy)
 {
   // Validate policy number
-  if(policy < 0 || policy > SCHED_SRTF) {
+  if(policy < 0 || policy > SCHED_MLFQ) {
     return -1;
   }
 
@@ -112,6 +114,8 @@ sched_policy_name(int policy)
       return "SJF";
     case SCHED_SRTF:
       return "SRTF";
+    case SCHED_MLFQ:
+      return "MLFQ";
     default:
       return "UNKNOWN";
   }

@@ -37,6 +37,7 @@ OBJS = \
   $K/sched/sched_lottery.o \
   $K/sched/sched_sjf.o \
   $K/sched/sched_srtf.o \
+  $K/sched/sched_mlfq.o \
   $K/sched/sched_stats.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -186,6 +187,7 @@ UPROGS=\
 	$U/_memstat\
 	$U/_test_sjf\
 	$U/_test_srtf\
+	$U/_test_mlfq\
 
 # Test runner depends on all test objects
 $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld

@@ -19,6 +19,7 @@ enum sched_policy {
     SCHED_LOTTERY,    // Lottery Scheduling
     SCHED_SJF,        // Shortest Job First (新增)
     SCHED_SRTF,       // Shortest Remaining Time First (新增)
+    SCHED_MLFQ,       // Multi-Level Feedback Queue (新增)
 };
 
 // Scheduler operations interface (Strategy Pattern)
