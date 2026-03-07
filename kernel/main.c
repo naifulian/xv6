@@ -21,6 +21,7 @@ main()
     kvminithart();   // turn on paging
     procinit();      // process table
     sched_init();    // scheduler initialization
+    sched_stats_init(); // CPU statistics initialization
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
     plicinit();      // set up interrupt controller

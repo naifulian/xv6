@@ -330,3 +330,12 @@ sys_setpriority(void)
 
   return -1;
 }
+
+// Get CPU statistics
+// Returns: 0 on success
+uint64
+sys_getstats(void)
+{
+  extern int sys_getstats_kernel(void);
+  return sys_getstats_kernel();
+}

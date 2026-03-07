@@ -155,6 +155,8 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
+  
+  sched_proc_created();
 
   return p;
 }
@@ -367,6 +369,8 @@ kexit(int status)
 
   p->xstate = status;
   p->state = ZOMBIE;
+  
+  sched_proc_exited();
 
   release(&wait_lock);
 
@@ -481,6 +485,7 @@ sched(void)
 
   intena = mycpu()->intena;
   swtch(&p->context, &mycpu()->context);
+  sched_context_switch();
   mycpu()->intena = intena;
 }
 

@@ -45,6 +45,17 @@ void sched_update_stats(void);
 int sched_set_policy(int policy);
 const char* sched_policy_name(int policy);
 
+// CPU statistics functions
+void sched_stats_init(void);
+void sched_tick(void);
+void sched_idle_tick(void);
+void sched_context_switch(void);
+void sched_interrupt(void);
+void sched_proc_created(void);
+void sched_proc_exited(void);
+void sched_syscall(void);
+int sys_getstats_kernel(void);
+
 // Default values for scheduler fields
 #define DEFAULT_PRIORITY    10    // Default priority for PRIORITY scheduler
 #define DEFAULT_SML_CLASS    2    // Default class for SML scheduler (medium)

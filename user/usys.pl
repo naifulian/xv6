@@ -49,3 +49,4 @@ entry("munmap");
 entry("getptable");
 entry("getmemstat");
 entry("setpriority");
+entry("getstats");

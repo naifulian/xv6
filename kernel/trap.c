@@ -180,6 +180,8 @@ kerneltrap()
 void
 clockintr()
 {
+  sched_interrupt();
+  
   if(cpuid() == 0){
     acquire(&tickslock);
     ticks++;

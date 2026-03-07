@@ -115,6 +115,17 @@ void            sched_update_stats(void);
 int             sched_set_policy(int);
 const char*     sched_policy_name(int);
 
+// sched/sched_stats.c
+void            sched_stats_init(void);
+void            sched_tick(void);
+void            sched_idle_tick(void);
+void            sched_context_switch(void);
+void            sched_interrupt(void);
+void            sched_proc_created(void);
+void            sched_proc_exited(void);
+void            sched_syscall(void);
+int             sys_getstats_kernel(void);
+
 // swtch.S
 void            swtch(struct context*, struct context*);
 
