@@ -38,6 +38,7 @@ OBJS = \
   $K/sched/sched_sjf.o \
   $K/sched/sched_srtf.o \
   $K/sched/sched_mlfq.o \
+  $K/sched/sched_cfs.o \
   $K/sched/sched_stats.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -188,6 +189,7 @@ UPROGS=\
 	$U/_test_sjf\
 	$U/_test_srtf\
 	$U/_test_mlfq\
+	$U/_test_cfs\
 
 # Test runner depends on all test objects
 $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld
@@ -195,8 +197,8 @@ $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld
 	$(OBJDUMP) -S $U/_test_runner > $U/test_runner.asm
 	$(OBJDUMP) -t $U/_test_runner | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/test_runner.sym
 
-fs.img: mkfs/mkfs README $(UPROGS)
-	mkfs/mkfs fs.img README $(UPROGS)
+fs.img: mkfs/mkfs  $(UPROGS)
+	mkfs/mkfs fs.img  $(UPROGS)
 
 -include kernel/*.d user/*.d
 
