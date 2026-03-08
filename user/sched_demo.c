@@ -24,7 +24,7 @@ run_cpu_bound_workload(int processes)
         
         if(pid == 0) {
             volatile int sum = 0;
-            for(int j = 0; j < 500000; j++) {
+            for(int j = 0; j < 2000000; j++) {
                 sum += j;
             }
             exit(0);
@@ -59,13 +59,13 @@ run_mixed_workload(int processes)
         if(pid == 0) {
             if(i % 2 == 0) {
                 volatile int sum = 0;
-                for(int j = 0; j < 300000; j++) {
+                for(int j = 0; j < 1000000; j++) {
                     sum += j;
                 }
             } else {
-                for(int k = 0; k < 3; k++) {
+                for(int k = 0; k < 5; k++) {
                     volatile int sum = 0;
-                    for(int j = 0; j < 100000; j++) {
+                    for(int j = 0; j < 200000; j++) {
                         sum += j;
                     }
                     sleep(1);
@@ -101,9 +101,9 @@ run_io_bound_workload(int processes)
         }
         
         if(pid == 0) {
-            for(int k = 0; k < 5; k++) {
+            for(int k = 0; k < 8; k++) {
                 volatile int sum = 0;
-                for(int j = 0; j < 50000; j++) {
+                for(int j = 0; j < 100000; j++) {
                     sum += j;
                 }
                 sleep(1);
