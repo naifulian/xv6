@@ -24,6 +24,22 @@ static struct cpu_stats cpu_stats;
 static struct spinlock stats_lock;
 
 void
+get_cpu_stats(struct cpu_stats *buf)
+{
+  if(buf == 0) return;
+  
+  acquire(&stats_lock);
+  buf->total_ticks = cpu_stats.total_ticks;
+  buf->idle_ticks = cpu_stats.idle_ticks;
+  buf->context_switches = cpu_stats.context_switches;
+  buf->interrupts = cpu_stats.interrupts;
+  buf->proc_created = cpu_stats.proc_created;
+  buf->proc_exited = cpu_stats.proc_exited;
+  buf->syscalls = cpu_stats.syscalls;
+  release(&stats_lock);
+}
+
+void
 sched_stats_init(void)
 {
   initlock(&stats_lock, "stats");

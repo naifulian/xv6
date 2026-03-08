@@ -109,6 +109,7 @@ extern uint64 sys_getptable(void);
 extern uint64 sys_getmemstat(void);
 extern uint64 sys_setpriority(void);
 extern uint64 sys_getstats(void);
+extern uint64 sys_getsnapshot(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -142,6 +143,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getmemstat] sys_getmemstat,
 [SYS_setpriority] sys_setpriority,
 [SYS_getstats] sys_getstats,
+[SYS_getsnapshot] sys_getsnapshot,
 };
 
 void

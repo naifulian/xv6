@@ -28,3 +28,4 @@
 #define SYS_getmemstat 27
 #define SYS_setpriority 28
 #define SYS_getstats 29
+#define SYS_getsnapshot 30

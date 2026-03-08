@@ -22,6 +22,7 @@ main()
     procinit();      // process table
     sched_init();    // scheduler initialization
     sched_stats_init(); // CPU statistics initialization
+    sys_snapshot_init(); // System snapshot initialization
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
     plicinit();      // set up interrupt controller

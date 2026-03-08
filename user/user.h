@@ -58,6 +58,7 @@ int getptable(struct pstat*, int);
 int getmemstat(struct memstat*);
 int setpriority(int, int);
 int getstats(void);
+int getsnapshot(void*);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -50,3 +50,4 @@ entry("getptable");
 entry("getmemstat");
 entry("setpriority");
 entry("getstats");
+entry("getsnapshot");

@@ -126,6 +126,10 @@ void            sched_proc_exited(void);
 void            sched_syscall(void);
 int             sys_getstats_kernel(void);
 
+// sysinfo.c
+void            sys_snapshot_init(void);
+uint64          sys_getsnapshot(void);
+
 // swtch.S
 void            swtch(struct context*, struct context*);
 
