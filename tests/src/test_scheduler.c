@@ -8,7 +8,7 @@
 #define MAX_PSTAT 64
 
 static char *sched_names[] = {
-  "DEFAULT", "FCFS", "PRIORITY", "SML", "LOTTERY"
+  "DEFAULT", "FCFS", "PRIORITY", "SML", "LOTTERY", "SJF", "SRTF", "MLFQ", "CFS"
 };
 
 // Test case: FCFS - First Come First Served
@@ -232,8 +232,8 @@ void test_sched_switch_preserves(void) {
     } else if(pid > 0) {
         printf("  OK: created long-running process (pid=%d)\n", pid);
 
-        // Switch schedulers multiple times
-        for(int s = 0; s <= 4; s++) {
+        // Switch schedulers multiple times (all 9 schedulers)
+        for(int s = 0; s <= 8; s++) {
             setscheduler(s);
             printf("  OK: switched to %s\n", sched_names[s]);
         }
@@ -290,7 +290,7 @@ void test_sched_default_rr(void) {
 void test_sched_getscheduler(void) {
     printf("[TEST] sched_getscheduler\n");
 
-    for(int s = 0; s <= 4; s++) {
+    for(int s = 0; s <= 8; s++) {
         setscheduler(s);
         int current = getscheduler();
         if(current == s) {
