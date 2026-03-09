@@ -1,0 +1,1098 @@
+{
+  "parse_time": "2026-03-09T20:33:12.148927",
+  "test_summary": {
+    "total": 68,
+    "passed": 68,
+    "failed": 0,
+    "pass_rate": 100.0
+  },
+  "test_results": [
+    {
+      "name": "buddy_alloc_single",
+      "description": "Buddy alloc single page",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "malloc(4096) = 0x000000000001B000",
+          "free succeeded"
+        ]
+      }
+    },
+    {
+      "name": "buddy_alloc_multiple",
+      "description": "Buddy alloc multiple same",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "allocated 10 pages",
+          "freed all 10 pages"
+        ]
+      }
+    },
+    {
+      "name": "buddy_alloc_sizes",
+      "description": "Buddy alloc different sizes",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "malloc(4096) = 0x000000000001B000",
+          "malloc(8192) = 0x0000000000018FF0",
+          "malloc(16384) = 0x0000000000014FE0",
+          "malloc(32768) = 0x000000000000CFD0",
+          "malloc(65536) = 0x000000000001C010",
+          "freed all allocations"
+        ]
+      }
+    },
+    {
+      "name": "buddy_data_integrity",
+      "description": "Buddy data integrity",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "wrote 1024 integers",
+          "data integrity verified (no errors)"
+        ]
+      }
+    },
+    {
+      "name": "buddy_merge",
+      "description": "Buddy merge pattern",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "allocated 4 pages",
+          "freed all 4 pages (buddy should merge)",
+          "large alloc succeeded (merge likely worked)"
+        ]
+      }
+    },
+    {
+      "name": "buddy_fragmentation",
+      "description": "Buddy fragmentation",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "allocated 20 blocks with varying sizes",
+          "freed 10 blocks (creating fragmented space)",
+          "cleaned up remaining blocks"
+        ]
+      }
+    },
+    {
+      "name": "buddy_stress",
+      "description": "Buddy stress small",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "allocated 100 pages",
+          "freed 100 pages"
+        ]
+      }
+    },
+    {
+      "name": "buddy_zero_size",
+      "description": "Buddy zero size",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "malloc(0) returned 0x000000000001C000 (implementation defined)"
+        ]
+      }
+    },
+    {
+      "name": "buddy_large",
+      "description": "Buddy large allocation",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "malloc(1MB) = 0x000000000000C010",
+          "freed large allocation"
+        ]
+      }
+    },
+    {
+      "name": "buddy_free_null",
+      "description": "Buddy free NULL",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "free(NULL) did not crash"
+        ]
+      }
+    },
+    {
+      "name": "buddy_double_free",
+      "description": "Buddy double free",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "double free handled (may or may not detect)"
+        ]
+      }
+    },
+    {
+      "name": "mmap_basic",
+      "description": "mmap basic (anonymous)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap returned 0x000000000000C000",
+          "wrote to mapped memory",
+          "mmap content verified",
+          "munmap succeeded"
+        ]
+      }
+    },
+    {
+      "name": "mmap_readonly",
+      "description": "mmap read-only (anonymous)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap PROT_READ succeeded",
+          "read from PROT_READ mapping worked (c=0)"
+        ]
+      }
+    },
+    {
+      "name": "mmap_large",
+      "description": "mmap large (anonymous)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap 1MB succeeded",
+          "verified both ends of mapping"
+        ]
+      }
+    },
+    {
+      "name": "mmap_offset",
+      "description": "mmap offset (anonymous)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap succeeded",
+          "wrote at offset 100",
+          "unmapped"
+        ]
+      }
+    },
+    {
+      "name": "mmap_multiple",
+      "description": "mmap multiple (anonymous)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mapped 5 times",
+          "unmapped all 5 times"
+        ]
+      }
+    },
+    {
+      "name": "mmap_invalid",
+      "description": "mmap invalid params",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap with zero size returned NULL"
+        ]
+      }
+    },
+    {
+      "name": "mmap_munmap_null",
+      "description": "mmap munmap NULL",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap succeeded at 0x000000000000C000",
+          "munmap succeeded",
+          "edge case test completed"
+        ],
+        "info_messages": [
+          "double munmap returned -1 (implementation defined)",
+          "munmap(addr, 0) returned 0 (implementation defined)"
+        ]
+      }
+    },
+    {
+      "name": "cow_fork_exec",
+      "description": "COW fork+exec",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 1MB data (256 pages)",
+          "forked child 0 (pid=23)",
+          "forked CchOiWC telsOt",
+          "CforOkeW dte chstild",
+          "forked child C3 (pid=26)",
+          "forked chilCdO 4 (pidW =27)",
+          "all children exited"
+        ],
+        "info_messages": [
+          "allocated 256 physical pages for 256 virtual pages",
+          "10 pages were copied (some exec overhead)"
+        ]
+      }
+    },
+    {
+      "name": "cow_partial_write",
+      "description": "COW partial write",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 1MB data (256 pages)",
+          "all children exited",
+          "parent data unchanged (COW works)"
+        ],
+        "info_messages": [
+          "allocated 256 physical pages"
+        ]
+      }
+    },
+    {
+      "name": "cow_full_write",
+      "description": "COW full write",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 256KB data (64 pages)",
+          "all children exited",
+          "parent data unchanged (COW works)"
+        ],
+        "info_messages": [
+          "COW worst case - copied 192 pages (expected ~192)"
+        ]
+      }
+    },
+    {
+      "name": "cow_multiple",
+      "description": "COW multiple forks",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 512KB data (128 pages)",
+          "all 10 children exited",
+          "parent data unchanged (COW works)"
+        ],
+        "info_messages": [
+          "allocated 128 physical pages"
+        ]
+      }
+    },
+    {
+      "name": "cow_fork_exec_chain",
+      "description": "COW fork+exec chain",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forhked acihn",
+          "child 0 completed",
+          "fchorked cain",
+          "child 1 completed",
+          "cforked chilhadi 2 (pid=50)",
+          "child 2 completed",
+          "c hfaorkein",
+          "child 3 completed",
+          "forked chicld 4 h(apid=52in)",
+          "child 4 completed",
+          "fork+exec chain test completed"
+        ]
+      }
+    },
+    {
+      "name": "cow_memory_sharing",
+      "description": "COW memory sharing",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 100 pages",
+          "all 100 pages unchanged (COW works)"
+        ],
+        "info_messages": [
+          "allocated 100 physical pages",
+          "free pages: 32377 -> 32377"
+        ]
+      }
+    },
+    {
+      "name": "lazy_large_small",
+      "description": "Lazy large alloc small access",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 1MB = 0x000000000000C000",
+          "accessed 10 KB",
+          "data verified"
+        ],
+        "info_messages": [
+          "After sbrk - lazy_allocs=0, pages_used=256",
+          "Allocated 0 pages (expected ~2)",
+          "Memory saved: 100% (256 of 256 pages not allocated)"
+        ]
+      }
+    },
+    {
+      "name": "lazy_full_access",
+      "description": "Lazy large full access",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 1MB = 0x000000000000C000",
+          "accessed all 256 pages",
+          "data verified"
+        ],
+        "info_messages": [
+          "After sbrk - pages_used=256"
+        ]
+      }
+    },
+    {
+      "name": "lazy_sequential",
+      "description": "Lazy sequential access",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 2MB = 0x000000000000C000",
+          "accessed 512 pages sequentially",
+          "pattern verified (no errors)"
+        ],
+        "info_messages": [
+          "After sbrk - pages_used=513"
+        ]
+      }
+    },
+    {
+      "name": "lazy_random",
+      "description": "Lazy random access",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 1MB = 0x000000000000C000",
+          "accessed 10 random pages",
+          "random access verified (no errors)"
+        ],
+        "info_messages": [
+          "Allocated 0 pages for 10 random accesses",
+          "Memory saved: 100%"
+        ]
+      }
+    },
+    {
+      "name": "lazy_multiple",
+      "description": "Lazy multiple allocs",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "allocated 3 blocks of 256KB",
+          "wrote to block 0",
+          "wrote to block 1",
+          "wrote to block 2",
+          "all blocks verified",
+          "freed all blocks"
+        ],
+        "info_messages": [
+          "After allocations - pages_used=192"
+        ]
+      }
+    },
+    {
+      "name": "lazy_zero",
+      "description": "Lazy zero alloc",
+      "result": "PASSED",
+      "details": {
+        "info_messages": [
+          "sbrk(0) returned 0x000000000000C000"
+        ]
+      }
+    },
+    {
+      "name": "lazy_negative",
+      "description": "Lazy negative alloc",
+      "result": "PASSED",
+      "details": {
+        "info_messages": [
+          "sbrk(-100) succeeded (freed memory?)",
+          "returned 0x000000000000C000"
+        ]
+      }
+    },
+    {
+      "name": "lazy_very_large",
+      "description": "Lazy very large alloc",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 2MB = 0x000000000000C000",
+          "accessed first and last byte"
+        ],
+        "info_messages": [
+          "After sbrk - pages_used=513"
+        ]
+      }
+    },
+    {
+      "name": "lazy_grow_sh_shrink",
+      "description": "Lazy grow and shrink",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 512KB = 0x000000000000C000",
+          "sbrk another 512KB = 0x000000000008C000",
+          "shrunk back to 512KB"
+        ],
+        "info_messages": [
+          "After first grow - pages_used=128",
+          "After second grow - pages_used=128",
+          "data verification skipped (xv6 sbrk shrink loses data)"
+        ]
+      }
+    },
+    {
+      "name": "lazy_sparse",
+      "description": "Lazy sparse array",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "sbrk 1MB = 0x000000000000C000",
+          "accessed 26 pages (sparse pattern)",
+          "sparse pattern verified (no errors)"
+        ],
+        "info_messages": [
+          "After sbrk - pages_used=256",
+          "Allocated 0 pages for 26 sparse accesses",
+          "Memory saved: 100% (256 of 256 pages not allocated)"
+        ]
+      }
+    },
+    {
+      "name": "fork_exec_single",
+      "description": "fork+exec single",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forked child f(opidrk=68+)",
+          "child exited with status 0"
+        ]
+      }
+    },
+    {
+      "name": "fork_exec_multiple",
+      "description": "fork+exec multiple",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "fotrekestd",
+          "forkedtest",
+          "eforked chilst",
+          "forkedte stc",
+          "all 5 children exited"
+        ]
+      }
+    },
+    {
+      "name": "fork_exec_data",
+      "description": "fork+exec with data",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared 4KB data",
+          "forked chilCOWd  (ptid=76)",
+          "child exited with status 0",
+          "parent data unchanged (COW works)"
+        ]
+      }
+    },
+    {
+      "name": "fork_exec_chain",
+      "description": "fork+exec chain",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forkchaed cihin ltd 0est",
+          "forked cchhiaild 1 (pid=79)",
+          "forkecdh aicnhild  2 (pid=8t0)",
+          "chain of 3 execs completed"
+        ]
+      }
+    },
+    {
+      "name": "fork_exec_exit",
+      "description": "fork+exec with exit",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "child exited with status 42"
+        ]
+      }
+    },
+    {
+      "name": "mmap_fork_private",
+      "description": "fork with data (simple)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "prepared data",
+          "child read parent data",
+          "child wrote data",
+          "parent data unchanged after child write (COW)"
+        ]
+      }
+    },
+    {
+      "name": "mmap_fork_shared",
+      "description": "multiple forks (no exec)",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forked child 0",
+          "forked child 1",
+          "forked child 2",
+          "all 3 children exited"
+        ]
+      }
+    },
+    {
+      "name": "mmap_fork_multiple",
+      "description": "fork then exec",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forkiemdmed, icahiteld  exshould exec iec",
+          "child exited"
+        ]
+      }
+    },
+    {
+      "name": "mmap_fork_exec",
+      "description": "nested fork+exec",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "n forked first chiled",
+          "nested fork+exec completed"
+        ]
+      }
+    },
+    {
+      "name": "mmap_fork_anonymous",
+      "description": "mmap+fork anonymous",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "mmap returned 0x000000000000C000",
+          "wrote to mapped memory",
+          "child can read mapped memory",
+          "child wrote to mapped memory",
+          "parent mapped memory unchanged (COW worked)",
+          "unmapped"
+        ]
+      }
+    },
+    {
+      "name": "nproc_limit",
+      "description": "NPROC limit",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "Created 60 processes (NPROC=64, 4 reserved for system)"
+        ]
+      }
+    },
+    {
+      "name": "nproc_exact",
+      "description": "NPROC exact",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forked child 0 (pid=158)",
+          "forked child 1 (pid=159)",
+          "forked child 2 (pid=160)",
+          "forked child 3 (pid=161)",
+          "forked child 4 (pid=162)",
+          "forked child 5 (pid=163)",
+          "forked child 6 (pid=164)",
+          "forked child 7 (pid=165)",
+          "forked child 8 (pid=166)",
+          "forked child 9 (pid=167)",
+          "forked child 10 (pid=168)",
+          "forked child 11 (pid=169)",
+          "forked child 12 (pid=170)",
+          "forked child 13 (pid=171)",
+          "forked child 14 (pid=172)",
+          "forked child 15 (pid=173)",
+          "forked child 16 (pid=174)",
+          "forked child 17 (pid=175)",
+          "forked child 18 (pid=176)",
+          "forked child 19 (pid=177)",
+          "forked child 20 (pid=178)",
+          "forked child 21 (pid=179)",
+          "forked child 22 (pid=180)",
+          "forked child 23 (pid=181)",
+          "forked child 24 (pid=182)",
+          "forked child 25 (pid=183)",
+          "forked child 26 (pid=184)",
+          "forked child 27 (pid=185)",
+          "forked child 28 (pid=186)",
+          "forked child 29 (pid=187)",
+          "forked 30 children",
+          "30 children exited",
+          "all 30 children accounted for"
+        ]
+      }
+    },
+    {
+      "name": "nproc_fork_bomb",
+      "description": "NPROC fork bomb",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "cleaned up 50 processes"
+        ]
+      }
+    },
+    {
+      "name": "nproc_wait_refork",
+      "description": "NPROC wait refork",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "forked child 0",
+          "forked child 1",
+          "forked child 2",
+          "forked child 3",
+          "forked child 4",
+          "forked child 5",
+          "forked child 6",
+          "forked child 7",
+          "forked child 8",
+          "forked child 9",
+          "forked child 10",
+          "forked child 11",
+          "forked child 12",
+          "forked child 13",
+          "forked child 14",
+          "forked child 15",
+          "forked child 16",
+          "forked child 17",
+          "forked child 18",
+          "forked child 19",
+          "forked 20 children",
+          "20 children exited",
+          "new fork succeeded (resources freed)",
+          "waited for new fork"
+        ]
+      }
+    },
+    {
+      "name": "nproc_getpid",
+      "description": "NPROC getpid",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "child PID differs from parent",
+          "forked child with pid 262"
+        ]
+      }
+    },
+    {
+      "name": "nproc_orphaned",
+      "description": "NPROC orphaned",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "orphan process test completed"
+        ]
+      }
+    },
+    {
+      "name": "sched_fcfs_order",
+      "description": "FCFS order",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to FCFS scheduler",
+          "created process 0 (pid=267)",
+          "created process 1 (pid=268)",
+          "created process 2 (pid=269)",
+          "FCFS test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited",
+          "process exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_priority_order",
+      "description": "PRIORITY order",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to PRIORITY scheduler",
+          "created process 0 (pid=271, priority=20)",
+          "created process 1 (pid=272, priority=1)",
+          "created process 2 (pid=273, priority=10)",
+          "PRIORITY test completed"
+        ],
+        "info_messages": [
+          "first process to exit had status 200",
+          "Process with status 200 completed first"
+        ]
+      }
+    },
+    {
+      "name": "sched_priority_fcfs",
+      "description": "PRIORITY FCFS tiebreak",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to PRIORITY scheduler",
+          "created process 0 (pid=275, priority=10)",
+          "created process 1 (pid=276, priority=10)",
+          "created process 2 (pid=277, priority=10)",
+          "PRIORITY-FCFS test completed"
+        ],
+        "info_messages": [
+          "process pid=275 exited with status 300",
+          "process pid=276 exited with status 301",
+          "process pid=277 exited with status 302"
+        ]
+      }
+    },
+    {
+      "name": "sched_sml_queues",
+      "description": "SML queues",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to SML scheduler",
+          "created process 0 (pid=279)",
+          "created process 1 (pid=280)",
+          "created process 2 (pid=281)",
+          "SML test completed"
+        ],
+        "info_messages": [
+          "process pid=279 exited with status 400",
+          "process pid=280 exited with status 401",
+          "process pid=281 exited with status 402"
+        ]
+      }
+    },
+    {
+      "name": "sched_lottery_basic",
+      "description": "LOTTERY basic",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to LOTTERY scheduler",
+          "created process 0 (pid=283, tickets=1)",
+          "created process 1 (pid=284, tickets=10)",
+          "created process 2 (pid=285, tickets=100)",
+          "LOTTERY test completed"
+        ]
+      }
+    },
+    {
+      "name": "sched_switch_preserves",
+      "description": "Scheduler switch preserves",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "created long-running process (pid=287)",
+          "switched to DEFAULT",
+          "switched to FCFS",
+          "switched to PRIORITY",
+          "switched to SML",
+          "switched to LOTTERY",
+          "child process completed"
+        ]
+      }
+    },
+    {
+      "name": "sched_default_rr",
+      "description": "DEFAULT RR",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to DEFAULT (RR) scheduler",
+          "created process 0 (pid=289)",
+          "created process 1 (pid=290)",
+          "created process 2 (pid=291)",
+          "created process 3 (pid=292)",
+          "DEFAULT (RR) test completed"
+        ],
+        "info_messages": [
+          "process pid=289 exited",
+          "process pid=290 exited",
+          "process pid=291 exited",
+          "process pid=292 exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_getscheduler",
+      "description": "getscheduler",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "getscheduler() returned 0 (DEFAULT)",
+          "getscheduler() returned 1 (FCFS)",
+          "getscheduler() returned 2 (PRIORITY)",
+          "getscheduler() returned 3 (SML)",
+          "getscheduler() returned 4 (LOTTERY)"
+        ]
+      }
+    },
+    {
+      "name": "sched_setpriority",
+      "description": "setpriority",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "setpriority(294, 1) succeeded",
+          "setpriority(294, 6) succeeded",
+          "setpriority(294, 11) succeeded",
+          "setpriority(294, 16) succeeded",
+          "setpriority(294, 0) rejected (expected)",
+          "setpriority(294, 21) rejected (expected)"
+        ],
+        "info_messages": [
+          "current pid=294"
+        ]
+      }
+    },
+    {
+      "name": "sched_stats_tracking",
+      "description": "Stats tracking",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "getptable returned 4 processes",
+          "stats tracking test completed"
+        ]
+      }
+    },
+    {
+      "name": "sched_sjf_order",
+      "description": "SJF order",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to SJF scheduler",
+          "created process 0 (pid=297, workload=100000)",
+          "created process 1 (pid=298, workload=10000)",
+          "created process 2 (pid=299, workload=50000)",
+          "SJF test completed"
+        ],
+        "info_messages": [
+          "process exited with status 700",
+          "process exited with status 701",
+          "process exited with status 702"
+        ]
+      }
+    },
+    {
+      "name": "sched_sjf_estimate",
+      "description": "SJF estimate",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to SJF scheduler",
+          "round 0 completed",
+          "round 1 completed",
+          "round 2 completed",
+          "SJF estimate test completed"
+        ]
+      }
+    },
+    {
+      "name": "sched_srtf_preempt",
+      "description": "SRTF preempt",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to SRTF scheduler",
+          "created long process (pid=305)",
+          "created short process (pid=306)",
+          "SRTF preempt test completed"
+        ],
+        "info_messages": [
+          "process exited with status 900",
+          "process exited with status 901"
+        ]
+      }
+    },
+    {
+      "name": "sched_srtf_remaining",
+      "description": "SRTF remaining",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to SRTF scheduler",
+          "created process 0 (pid=308)",
+          "created process 1 (pid=309)",
+          "created process 2 (pid=310)",
+          "SRTF remaining test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited",
+          "process exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_mlfq_queues",
+      "description": "MLFQ queues",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to MLFQ scheduler",
+          "created process 0 (pid=312)",
+          "created process 1 (pid=313)",
+          "created process 2 (pid=314)",
+          "MLFQ queues test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited",
+          "process exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_mlfq_boost",
+      "description": "MLFQ priority boost",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to MLFQ scheduler",
+          "created I/O-bound process (pid=316)",
+          "created CPU-bound process (pid=317)",
+          "MLFQ priority boost test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_cfs_fairness",
+      "description": "CFS fairness",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to CFS scheduler",
+          "created process 0 (pid=319)",
+          "created process 1 (pid=320)",
+          "created process 2 (pid=321)",
+          "created process 3 (pid=322)",
+          "CFS fairness test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited",
+          "process exited",
+          "process exited"
+        ]
+      }
+    },
+    {
+      "name": "sched_cfs_vruntime",
+      "description": "CFS vruntime",
+      "result": "PASSED",
+      "details": {
+        "ok_messages": [
+          "switched to CFS scheduler",
+          "created process 0 (pid=324, workload=100000)",
+          "created process 1 (pid=325, workload=30000)",
+          "created process 2 (pid=326, workload=50000)",
+          "CFS vruntime test completed"
+        ],
+        "info_messages": [
+          "process exited",
+          "process exited",
+          "process exited"
+        ]
+      }
+    }
+  ],
+  "scheduler_tests": {
+    "fcfs": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "priority": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "sml": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "lottery": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "sjf": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "srtf": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 0
+    },
+    "mlfq": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 3
+    },
+    "cfs": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 4
+    },
+    "default": {
+      "tested": true,
+      "passed": true,
+      "switch_ok": true,
+      "processes_created": 4
+    }
+  },
+  "memory_tests": {
+    "buddy_tests": {
+      "total": 11,
+      "passed": 11
+    },
+    "cow_tests": {
+      "total": 6,
+      "passed": 6
+    },
+    "lazy_tests": {
+      "total": 10,
+      "passed": 10
+    },
+    "mmap_tests": {
+      "total": 7,
+      "passed": 7
+    }
+  },
+  "system_info": {}
+}

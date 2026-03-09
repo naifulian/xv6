@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-03-09T20:33:31.892545",
+  "categories": {
+    "buddy": {
+      "name": "Buddy System",
+      "description": "伙伴系统内存分配",
+      "total": 11,
+      "passed": 11,
+      "pass_rate": 100.0,
+      "status": "pass"
+    },
+    "cow": {
+      "name": "Copy-on-Write",
+      "description": "写时复制优化",
+      "total": 6,
+      "passed": 6,
+      "pass_rate": 100.0,
+      "status": "pass"
+    },
+    "lazy": {
+      "name": "Lazy Allocation",
+      "description": "懒分配优化",
+      "total": 10,
+      "passed": 10,
+      "pass_rate": 100.0,
+      "status": "pass"
+    },
+    "mmap": {
+      "name": "Memory Mapping",
+      "description": "内存映射系统调用",
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 100.0,
+      "status": "pass"
+    }
+  },
+  "summary": {
+    "total": 34,
+    "passed": 34,
+    "pass_rate": 100.0
+  }
+}
