@@ -2,10 +2,41 @@
 
 本项目是对 MIT xv6-riscv 操作系统的深度扩展，实现了多种高级操作系统特性，包括多调度算法、伙伴系统内存分配、Copy-on-Write、懒分配和 mmap 系统调用。
 
-## 功能特性
+## 项目架构
 
-### 调度器模块
-实现了 9 种进程调度算法，支持运行时动态切换：
+本项目分为四个主要模块：
+
+### 模块一：调度算法优化 + 内存管理优化
+
+#### 调度算法架构
+
+**设计理念：**
+- 模块化设计：每个调度器独立实现，易于扩展
+- 运行时切换：支持动态切换调度算法
+- 避免修改核心数据结构：使用独立数组存储调度器数据
+
+**架构设计：**
+
+```
+kernel/sched/
+├── sched.c              # 调度器核心框架
+│   ├── sched_init()     # 初始化调度器
+│   ├── sched_pick_next() # 选择下一个进程
+│   ├── sched_set_policy() # 切换调度算法
+│   └── sched_policy_name() # 获取调度器名称
+├── sched_default.c      # Round-Robin 调度器
+├── sched_fcfs.c         # FCFS 调度器
+├── sched_priority.c     # 优先级调度器
+├── sched_sml.c          # 静态多级队列调度器
+├── sched_lottery.c      # 彩票调度器
+├── sched_sjf.c          # SJF 调度器（EWMA 预估）
+├── sched_srtf.c         # SRTF 调度器（抢占式）
+├── sched_mlfq.c         # MLFQ 调度器（动态优先级）
+├── sched_cfs.c          # CFS 调度器（vruntime）
+└── sched_stats.c        # CPU 统计模块
+```
+
+**调度器特性：**
 
 | 调度器 | 算法 | 特点 | 适用场景 |
 |--------|------|------|---------|
@@ -19,54 +50,175 @@
 | **MLFQ** | 多级反馈队列 | 3级队列，动态优先级调整 | 通用场景 |
 | **CFS** | 完全公平调度器 | vruntime 公平调度，类 Linux | 通用场景 |
 
-### 内存管理模块
+**技术亮点：**
+- EWMA（指数加权移动平均）时间预估机制
+- 动态优先级调整算法
+- vruntime 公平调度实现
+- 模块化设计，易于扩展
 
-| 特性 | 描述 |
-|------|------|
-| **伙伴系统** | 多级空闲链表，自动合并碎片，最大支持 4MB 块 |
-| **Copy-on-Write** | fork 时共享页面，写入时复制，节省内存 |
-| **懒分配** | 按需分配物理页面，延迟内存分配 |
-| **mmap** | 匿名私有内存映射支持 |
+#### 内存管理架构
 
-### 系统监控模块
+**设计理念：**
+- 伙伴系统：多级空闲链表，自动合并碎片
+- COW：写时复制，节省内存
+- 懒分配：按需分配，延迟内存分配
+- mmap：匿名私有内存映射
 
-| 工具 | 功能 |
-|------|------|
-| **CPU 统计** | CPU 使用率、上下文切换、中断统计、进程创建/退出统计 |
-| **系统快照** | 收集系统状态、内存统计、进程统计、调度器信息 |
-| **sysmon** | 实时系统监控工具，类似 Linux top 命令 |
-| **sched_demo** | 调度器性能演示程序 |
+**架构设计：**
 
-### 系统调用扩展
+```
+kernel/
+├── kalloc.c             # 伙伴系统内存分配器
+│   ├── kalloc()         # 分配页面
+│   ├── kfree()          # 释放页面
+│   └── buddy system     # 伙伴系统实现
+├── vm.c                 # 虚拟内存管理
+│   ├── uvmcopy()        # COW 实现
+│   ├── uvmunmap()       # 解除映射
+│   ├── mmap()           # mmap 系统调用
+│   └── lazy allocation  # 懒分配实现
+└── trap.c               # 中断/异常处理
+    └── page fault handler # 页错误处理（懒分配、COW）
+```
 
-| 系统调用 | 功能 |
-|---------|------|
-| `setscheduler(int)` | 切换调度算法 |
-| `getscheduler()` | 获取当前调度算法 |
-| `mmap(...)` | 内存映射 |
-| `munmap(...)` | 解除映射 |
-| `setpriority(int, int)` | 设置进程优先级 |
-| `getstats()` | 获取 CPU 统计信息 |
-| `getsnapshot(void*)` | 获取系统快照 |
+**性能提升：**
+- COW fork 不访问：↑94%
+- COW fork 只读：↑94%
+- 懒分配访问 1%：↑100%
 
-## 性能测试结果
+### 模块二：软件工程测试框架
 
-### COW 测试对比
+#### 测试框架架构
 
-| 测试 | Baseline (Eager) | Testing (COW) | 提升 |
-|------|------------------|---------------|------|
-| fork 不访问 | 18 ticks | 1 tick | ↑94% |
-| fork 只读 | 18 ticks | 1 tick | ↑94% |
-| fork 写 30% | 18 ticks | 15 ticks | ↑17% |
-| fork 全写 | 19 ticks | 42 ticks | ↓121% |
+**设计理念：**
+- TDD（测试驱动开发）：Red → Green → Refactor
+- 模块化测试：每个功能独立测试
+- 自动化测试：一键运行所有测试
 
-### 懒分配测试对比
+**架构设计：**
 
-| 测试 | Baseline (Eager) | Testing (Lazy) | 提升 |
-|------|------------------|----------------|------|
-| 访问 1% | 10 ticks | 0 tick | ↑100% |
-| 访问 50% | 8 ticks | 9 ticks | ↓13% |
-| 访问 100% | 9 ticks | 16 ticks | ↓78% |
+```
+tests/
+├── include/              # 测试头文件
+│   ├── test_common.h     # 通用测试框架
+│   ├── test_scheduler.h  # 调度器测试
+│   ├── test_buddy.h      # 伙伴系统测试
+│   ├── test_cow.h        # COW 测试
+│   ├── test_lazy.h       # 懒分配测试
+│   └── test_mmap.h       # mmap 测试
+└── src/                  # 测试实现
+    ├── test_runner.c     # 测试运行器
+    ├── test_scheduler.c  # 调度器测试实现
+    ├── test_buddy.c      # 伙伴系统测试实现
+    └── ...
+```
+
+**测试覆盖：**
+
+| 测试类别 | 用例数 | 通过率 | 状态 |
+|----------|--------|--------|------|
+| Buddy System | 11 | 100% | ✅ |
+| mmap | 6 | 100% | ✅ |
+| COW | 6 | 100% | ✅ |
+| Lazy Allocation | 10 | 100% | ✅ |
+| Integration | 10 | 100% | ✅ |
+| Boundary | 6 | 100% | ✅ |
+| Scheduler (旧) | 10 | 100% | ✅ |
+| **Scheduler (新)** | 待添加 | - | 🚧 |
+
+### 模块三：实验数据收集与分析
+
+#### 数据收集架构
+
+**设计理念：**
+- 内核态数据收集：通过系统调用获取系统状态
+- 用户态数据导出：将数据保存到文件
+- Python 数据分析：解析数据，生成图表
+
+**架构设计：**
+
+```
+数据流程：
+xv6 测试程序 → 系统调用 → 日志文件 → Python 解析 → JSON 数据
+
+系统调用：
+├── getstats()           # CPU 统计信息
+├── getsnapshot()        # 系统快照
+├── getptable()          # 进程表
+└── getmemstat()         # 内存统计
+
+数据处理：
+scripts/
+├── collect_data.py      # 收集数据
+├── parse_log.py         # 解析日志
+├── generate_json.py     # 生成 JSON
+└── analyze_data.py      # 数据分析
+```
+
+**数据格式：**
+
+```json
+{
+  "timestamp": "2024-01-01 12:00:00",
+  "schedulers": {
+    "DEFAULT": {"cpu_usage": 15, "context_switches": 253},
+    "SJF": {...}
+  },
+  "memory": {"total_pages": 32768, "free_pages": 32491}
+}
+```
+
+### 模块四：Web 展示界面
+
+#### Web 界面架构
+
+**设计理念：**
+- 纯前端实现：HTML + CSS + JavaScript
+- ECharts 图表：数据可视化
+- Python HTTP 服务器：简单部署
+
+**架构设计：**
+
+```
+webui/
+├── index.html           # 主页面
+├── css/
+│   └── style.css       # 样式
+├── js/
+│   ├── app.js          # 主逻辑
+│   ├── charts.js       # 图表配置
+│   └── data.js         # 数据加载
+├── data/
+│   ├── scheduler.json  # 调度器数据
+│   ├── memory.json     # 内存数据
+│   └── performance.json # 性能对比数据
+└── assets/
+    └── echarts.min.js  # ECharts 本地化（可选）
+```
+
+**技术栈：**
+- 前端：HTML5 + CSS3 + 原生 JavaScript
+- 图表：ECharts 5.x（CDN 或本地化）
+- 服务器：`python -m http.server`
+
+**页面功能：**
+1. 调度器对比页面：9种调度器性能对比
+2. 内存管理页面：内存使用统计
+3. 性能分析页面：性能对比图表
+
+## 系统调用扩展
+
+| 系统调用号 | 系统调用 | 功能 |
+|-----------|---------|------|
+| 22 | `setscheduler` | 切换调度算法 |
+| 23 | `getscheduler` | 获取当前调度算法 |
+| 24 | `mmap` | 内存映射 |
+| 25 | `munmap` | 解除映射 |
+| 26 | `getptable` | 获取进程表快照 |
+| 27 | `getmemstat` | 获取内存统计 |
+| 28 | `setpriority` | 设置进程优先级 |
+| 29 | `getstats` | 获取 CPU 统计信息 |
+| 30 | `getsnapshot` | 获取系统快照 |
 
 ## 快速开始
 
@@ -85,18 +237,14 @@ make qemu
 ### 测试
 
 ```bash
-$ test_runner          # 运行所有 60 个测试
-$ perftest              # 运行性能测试
+$ test_runner          # 运行所有测试
+$ perftest              # 性能测试
 $ ps                   # 进程状态
 $ memstat              # 内存统计
-$ sysmon               # 实时系统监控
-$ sched_demo           # 调度器演示
-$ test_sjf             # SJF 调度器测试
-$ test_srtf            # SRTF 调度器测试
-$ test_mlfq            # MLFQ 调度器测试
-$ test_cfs             # CFS 调度器测试
-$ test_stats           # CPU 统计测试
-$ test_snapshot        # 系统快照测试
+$ test_sjf             # SJF 测试
+$ test_srtf            # SRTF 测试
+$ test_mlfq            # MLFQ 测试
+$ test_cfs             # CFS 测试
 ```
 
 ## 项目结构
@@ -111,65 +259,66 @@ xv6/
 │   │   ├── sched_priority.c  # 优先级调度
 │   │   ├── sched_sml.c       # 静态多级队列
 │   │   ├── sched_lottery.c   # 彩票调度
-│   │   ├── sched_sjf.c       # SJF (新增)
-│   │   ├── sched_srtf.c      # SRTF (新增)
-│   │   ├── sched_mlfq.c      # MLFQ (新增)
-│   │   ├── sched_cfs.c       # CFS (新增)
-│   │   └── sched_stats.c     # CPU 统计 (新增)
-│   ├── sysinfo.c             # 系统快照 (新增)
+│   │   ├── sched_sjf.c       # SJF
+│   │   ├── sched_srtf.c      # SRTF
+│   │   ├── sched_mlfq.c      # MLFQ
+│   │   ├── sched_cfs.c       # CFS
+│   │   └── sched_stats.c     # CPU 统计
+│   ├── sysinfo.c             # 系统快照
 │   ├── kalloc.c              # 伙伴系统分配器
 │   ├── vm.c                  # 虚拟内存 (COW, mmap, 懒分配)
 │   └── trap.c                # 中断/异常处理
 ├── user/                     # 用户态程序
-│   ├── perftest.c             # 性能测试程序
-│   ├── scheduler_test.c      # 调度器测试
-│   ├── sysmon.c              # 系统监控工具 (新增)
-│   ├── sched_demo.c          # 调度器演示 (新增)
-│   ├── test_sjf.c            # SJF 测试 (新增)
-│   ├── test_srtf.c           # SRTF 测试 (新增)
-│   ├── test_mlfq.c           # MLFQ 测试 (新增)
-│   ├── test_cfs.c            # CFS 测试 (新增)
-│   ├── test_stats.c          # CPU 统计测试 (新增)
-│   └── test_snapshot.c       # 系统快照测试 (新增)
-├── tests/                     # TDD 测试框架 (60 个测试用例)
+│   ├── test_runner.c         # 测试运行器
+│   ├── perftest.c            # 性能测试
+│   └── ...                   # 其他测试程序
+├── tests/                    # 测试框架
+│   ├── include/              # 测试头文件
+│   └── src/                  # 测试实现
 ├── docs/                     # 文档目录
-│   └── log/                  # 开发日志和 BUG 记录
+│   └── log/                  # Bug 修复日志
 └── Makefile                  # 构建系统
 ```
 
 ## 开发进度
 
-### Phase 1: 新型调度器实现 ✅
+### ✅ 模块一：调度算法优化 + 内存管理优化
 
-- [x] Phase 1.1: SJF 调度器（含 EWMA 预估机制）
-- [x] Phase 1.2: SRTF 调度器（抢占式 SJF）
-- [x] Phase 1.3: MLFQ 调度器（含 I/O 判断）
-- [x] Phase 2: CFS 调度器（类 Linux 实现）
+- [x] 9种调度器实现
+- [x] 内存管理优化
+- [x] 所有功能测试通过
 
-### Phase 3: 监控与统计 ✅
+### ✅ 模块二：软件工程测试框架
 
-- [x] Phase 3.1: CPU 统计功能
-- [x] Phase 3.2: 系统快照数据结构
-- [x] Phase 3.3: sysmon 监控工具
-- [x] Phase 3.4: sched_demo 演示程序
+- [x] 测试框架设计
+- [x] 60+ 测试用例
+- [x] 100% 测试通过率
 
-### Phase 4: 测试与优化 ✅
+### 🚧 模块三：实验数据收集与分析
 
-- [x] 完善对比实验和测试
-- [x] 所有测试通过
+- [x] 数据收集机制
+- [ ] Python 分析脚本
+- [ ] 图表生成
+
+### 🚧 模块四：Web 展示界面
+
+- [x] 设计方案
+- [ ] Web 界面实现
+- [ ] 数据可视化
 
 ## 技术亮点
 
 1. **模块化设计**：每个调度器独立实现，易于扩展和维护
-2. **避免修改核心数据结构**：使用独立数组存储调度器数据，避免修改 `struct proc`
-3. **完整的监控体系**：从统计收集到可视化展示，形成完整监控链
-4. **丰富的测试**：每个功能都有专门的测试程序，确保质量
-5. **类 Linux 实现**：CFS 调度器参考 Linux 实现，具有实际应用价值
+2. **避免修改核心数据结构**：使用独立数组存储调度器数据
+3. **完整的测试框架**：60+ 测试用例，确保实现正确性
+4. **类 Linux 实现**：CFS 调度器参考真实系统
+5. **性能优化**：COW 和懒分配显著提升性能
 
 ## 环境要求
 
 - QEMU >= 7.2
 - RISC-V 工具链 (riscv64-unknown-elf-gcc)
+- Python >= 3.8（数据分析和可视化）
 
 ## 许可证
 

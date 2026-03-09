@@ -193,8 +193,6 @@ UPROGS=\
 	$U/_test_cfs\
 	$U/_test_stats\
 	$U/_test_snapshot\
-	$U/_sysmon\
-	$U/_sched_demo\
 
 # Test runner depends on all test objects
 $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld
