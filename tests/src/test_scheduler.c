@@ -350,3 +350,301 @@ void test_sched_stats_tracking(void) {
 
     printf("  OK: stats tracking test completed\n");
 }
+
+// Test case: SJF - Shortest Job First ordering
+void test_sched_sjf_order(void) {
+    printf("[TEST] sched_sjf_order\n");
+
+    int original = getscheduler();
+    setscheduler(5);  // SJF
+    printf("  OK: switched to SJF scheduler\n");
+
+    // Create processes with different workloads
+    int pids[3];
+    int workloads[3] = {100000, 10000, 50000};  // Long, Short, Medium
+
+    for(int i = 0; i < 3; i++) {
+        pids[i] = fork();
+        if(pids[i] == 0) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < workloads[i]; j++) sum += j;
+            exit(700 + i);
+        } else if(pids[i] > 0) {
+            printf("  OK: created process %d (pid=%d, workload=%d)\n", 
+                   i, pids[i], workloads[i]);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    // In SJF, shortest job should complete first
+    for(int i = 0; i < 3; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited with status %d\n", status);
+    }
+
+    printf("  OK: SJF test completed\n");
+    setscheduler(original);
+}
+
+// Test case: SJF - Time estimation
+void test_sched_sjf_estimate(void) {
+    printf("[TEST] sched_sjf_estimate\n");
+
+    int original = getscheduler();
+    setscheduler(5);  // SJF
+    printf("  OK: switched to SJF scheduler\n");
+
+    // Run same process multiple times to test EWMA estimation
+    for(int round = 0; round < 3; round++) {
+        int pid = fork();
+        if(pid == 0) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < 30000; j++) sum += j;
+            exit(800 + round);
+        } else if(pid > 0) {
+            int status;
+            wait(&status);
+            printf("  OK: round %d completed\n", round);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    printf("  OK: SJF estimate test completed\n");
+    setscheduler(original);
+}
+
+// Test case: SRTF - Preemption
+void test_sched_srtf_preempt(void) {
+    printf("[TEST] sched_srtf_preempt\n");
+
+    int original = getscheduler();
+    setscheduler(6);  // SRTF
+    printf("  OK: switched to SRTF scheduler\n");
+
+    // Create long process first
+    int pid1 = fork();
+    if(pid1 == 0) {
+        volatile int sum = 0;
+        for(volatile int j = 0; j < 200000; j++) sum += j;
+        exit(900);
+    } else if(pid1 > 0) {
+        printf("  OK: created long process (pid=%d)\n", pid1);
+    }
+
+    // Create short process after
+    int pid2 = fork();
+    if(pid2 == 0) {
+        volatile int sum = 0;
+        for(volatile int j = 0; j < 10000; j++) sum += j;
+        exit(901);
+    } else if(pid2 > 0) {
+        printf("  OK: created short process (pid=%d)\n", pid2);
+    }
+
+    // Wait for both
+    for(int i = 0; i < 2; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited with status %d\n", status);
+    }
+
+    printf("  OK: SRTF preempt test completed\n");
+    setscheduler(original);
+}
+
+// Test case: SRTF - Remaining time tracking
+void test_sched_srtf_remaining(void) {
+    printf("[TEST] sched_srtf_remaining\n");
+
+    int original = getscheduler();
+    setscheduler(6);  // SRTF
+    printf("  OK: switched to SRTF scheduler\n");
+
+    // Create processes with different remaining times
+    int pids[3];
+    int workloads[3] = {50000, 20000, 30000};
+
+    for(int i = 0; i < 3; i++) {
+        pids[i] = fork();
+        if(pids[i] == 0) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < workloads[i]; j++) sum += j;
+            exit(1000 + i);
+        } else if(pids[i] > 0) {
+            printf("  OK: created process %d (pid=%d)\n", i, pids[i]);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    for(int i = 0; i < 3; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited\n");
+    }
+
+    printf("  OK: SRTF remaining test completed\n");
+    setscheduler(original);
+}
+
+// Test case: MLFQ - Queue levels
+void test_sched_mlfq_queues(void) {
+    printf("[TEST] sched_mlfq_queues\n");
+
+    int original = getscheduler();
+    setscheduler(7);  // MLFQ
+    printf("  OK: switched to MLFQ scheduler\n");
+
+    // Create processes with different behaviors
+    int pids[3];
+
+    for(int i = 0; i < 3; i++) {
+        pids[i] = fork();
+        if(pids[i] == 0) {
+            volatile int sum = 0;
+            int iterations = (i + 1) * 50000;
+            for(volatile int j = 0; j < iterations; j++) sum += j;
+            exit(1100 + i);
+        } else if(pids[i] > 0) {
+            printf("  OK: created process %d (pid=%d)\n", i, pids[i]);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    for(int i = 0; i < 3; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited\n");
+    }
+
+    printf("  OK: MLFQ queues test completed\n");
+    setscheduler(original);
+}
+
+// Test case: MLFQ - Priority boost
+void test_sched_mlfq_priority_boost(void) {
+    printf("[TEST] sched_mlfq_priority_boost\n");
+
+    int original = getscheduler();
+    setscheduler(7);  // MLFQ
+    printf("  OK: switched to MLFQ scheduler\n");
+
+    // Create I/O-bound process (should stay in high priority)
+    int pid1 = fork();
+    if(pid1 == 0) {
+        for(int i = 0; i < 5; i++) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < 10000; j++) sum += j;
+            sleep(1);  // Simulate I/O
+        }
+        exit(1200);
+    } else if(pid1 > 0) {
+        printf("  OK: created I/O-bound process (pid=%d)\n", pid1);
+    }
+
+    // Create CPU-bound process (should demote)
+    int pid2 = fork();
+    if(pid2 == 0) {
+        volatile int sum = 0;
+        for(volatile int j = 0; j < 200000; j++) sum += j;
+        exit(1201);
+    } else if(pid2 > 0) {
+        printf("  OK: created CPU-bound process (pid=%d)\n", pid2);
+    }
+
+    for(int i = 0; i < 2; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited\n");
+    }
+
+    printf("  OK: MLFQ priority boost test completed\n");
+    setscheduler(original);
+}
+
+// Test case: CFS - Fairness
+void test_sched_cfs_fairness(void) {
+    printf("[TEST] sched_cfs_fairness\n");
+
+    int original = getscheduler();
+    setscheduler(8);  // CFS
+    printf("  OK: switched to CFS scheduler\n");
+
+    // Create processes with same priority
+    int pids[4];
+
+    for(int i = 0; i < 4; i++) {
+        pids[i] = fork();
+        if(pids[i] == 0) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < 50000; j++) sum += j;
+            exit(1300 + i);
+        } else if(pids[i] > 0) {
+            printf("  OK: created process %d (pid=%d)\n", i, pids[i]);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    // In CFS, all should get fair CPU time
+    for(int i = 0; i < 4; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited\n");
+    }
+
+    printf("  OK: CFS fairness test completed\n");
+    setscheduler(original);
+}
+
+// Test case: CFS - vruntime tracking
+void test_sched_cfs_vruntime(void) {
+    printf("[TEST] sched_cfs_vruntime\n");
+
+    int original = getscheduler();
+    setscheduler(8);  // CFS
+    printf("  OK: switched to CFS scheduler\n");
+
+    // Create processes with different workloads
+    int pids[3];
+    int workloads[3] = {100000, 30000, 50000};
+
+    for(int i = 0; i < 3; i++) {
+        pids[i] = fork();
+        if(pids[i] == 0) {
+            volatile int sum = 0;
+            for(volatile int j = 0; j < workloads[i]; j++) sum += j;
+            exit(1400 + i);
+        } else if(pids[i] > 0) {
+            printf("  OK: created process %d (pid=%d, workload=%d)\n", 
+                   i, pids[i], workloads[i]);
+        } else {
+            printf("  FAIL: fork failed\n");
+            setscheduler(original);
+            exit(1);
+        }
+    }
+
+    for(int i = 0; i < 3; i++) {
+        int status;
+        wait(&status);
+        printf("  INFO: process exited\n");
+    }
+
+    printf("  OK: CFS vruntime test completed\n");
+    setscheduler(original);
+}

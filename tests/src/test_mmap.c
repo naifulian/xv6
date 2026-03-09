@@ -139,7 +139,7 @@ void test_mmap_invalid(void) {
     }
 }
 
-// Test case: munmap with invalid address
+// Test case: munmap edge cases
 void test_mmap_munmap_null(void) {
     printf("[TEST] mmap_munmap_null\n");
 
@@ -149,16 +149,24 @@ void test_mmap_munmap_null(void) {
         printf("  FAIL: mmap failed\n");
         exit(1);
     }
+    printf("  OK: mmap succeeded at %p\n", addr);
 
-    // Unmap the valid address first
-    munmap(addr, 4096);
-
-    // Try to munmap invalid address (should fail or be ignored)
-    int ret = munmap(0, 4096);
+    // Unmap the valid address
+    int ret = munmap(addr, 4096);
     if(ret == 0) {
-        printf("  INFO: munmap(0) returned 0 (accepted)\n");
+        printf("  OK: munmap succeeded\n");
     } else {
-        printf("  INFO: munmap(0) returned -1 (rejected)\n");
+        printf("  FAIL: munmap failed\n");
+        exit(1);
     }
-    printf("  OK: test completed\n");
+
+    // Double unmap - should handle gracefully (may return error or succeed)
+    ret = munmap(addr, 4096);
+    printf("  INFO: double munmap returned %d (implementation defined)\n", ret);
+
+    // munmap with size 0 - should handle gracefully
+    ret = munmap(addr, 0);
+    printf("  INFO: munmap(addr, 0) returned %d (implementation defined)\n", ret);
+
+    printf("  OK: edge case test completed\n");
 }

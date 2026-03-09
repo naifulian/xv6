@@ -84,6 +84,22 @@ struct test_case tests[] = {
     {"sched_getscheduler", "getscheduler", test_sched_getscheduler},
     {"sched_setpriority", "setpriority", test_sched_setpriority},
     {"sched_stats_tracking", "Stats tracking", test_sched_stats_tracking},
+
+    // SJF tests
+    {"sched_sjf_order", "SJF order", test_sched_sjf_order},
+    {"sched_sjf_estimate", "SJF estimate", test_sched_sjf_estimate},
+
+    // SRTF tests
+    {"sched_srtf_preempt", "SRTF preempt", test_sched_srtf_preempt},
+    {"sched_srtf_remaining", "SRTF remaining", test_sched_srtf_remaining},
+
+    // MLFQ tests
+    {"sched_mlfq_queues", "MLFQ queues", test_sched_mlfq_queues},
+    {"sched_mlfq_boost", "MLFQ priority boost", test_sched_mlfq_priority_boost},
+
+    // CFS tests
+    {"sched_cfs_fairness", "CFS fairness", test_sched_cfs_fairness},
+    {"sched_cfs_vruntime", "CFS vruntime", test_sched_cfs_vruntime},
 };
 
 #define NUM_TESTS (sizeof(tests) / sizeof(tests[0]))
