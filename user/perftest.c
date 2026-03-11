@@ -382,11 +382,11 @@ run_cow_tests(void)
     
     printf("\n# M1: fork, child exits immediately (no memory access)\n");
     printf("#   testing: copies nothing (best case)\n");
-    run_cow_test("M1", test_cow_1_no_access, 20);
+    run_cow_test("M1", test_cow_1_no_access, 100);
     
     printf("\n# M2: fork, child reads all pages (readonly)\n");
     printf("#   testing: copies nothing, just reads\n");
-    run_cow_test("M2", test_cow_2_readonly, 20);
+    run_cow_test("M2", test_cow_2_readonly, 100);
     
     printf("\n# M3: fork, child writes 30%% of pages\n");
     printf("#   testing: copies 30%% on write (COW fault)\n");
