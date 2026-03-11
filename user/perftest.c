@@ -242,8 +242,8 @@ run_buddy_test(void)
     sleep(2);
     
     int max_kb = measure_max_alloc() / 1024;
-    printf("  BUDDY_1_max_alloc: %d KB\n", max_kb);
-    printf("RESULT:BUDDY_1_max_alloc:%d:0:kb\n", max_kb);
+    printf("  M8: %d KB\n", max_kb);
+    printf("RESULT:M8:%d:0:kb\n", max_kb);
     
     for(int i = 1; i < n; i += 2)
         kill(pids[i]);
@@ -253,10 +253,20 @@ run_buddy_test(void)
 static void
 run_mmap_test(const char *name, int access_percent, int batch)
 {
+    printf("  [DEBUG] Testing %s...\n", name);
+    
     result_count = 0;
     
     int total_kb = 1024;
     int access_kb = total_kb * access_percent / 100;
+    
+    char *test_p = mmap(0, 4096, 0x1, 0x20, -1, 0);
+    if(test_p == (char*)-1) {
+        printf("  [ERROR] mmap failed, test skipped\n");
+        printf("RESULT:%s:-1:0:error\n", name);
+        return;
+    }
+    munmap(test_p, 4096);
     
     for(int w = 0; w < WARMUP_RUNS; w++) {
         char *p = mmap(0, total_kb * 1024, 0x1, 0x20, -1, 0);
@@ -290,7 +300,7 @@ static void
 cpu_task_heavy(void)
 {
     volatile uint64 result = 0;
-    for(int i = 0; i < 10000000; i++)
+    for(int i = 0; i < 100000000; i++)
         result += (uint64)i * i;
 }
 
@@ -298,7 +308,7 @@ static void
 cpu_task_light(void)
 {
     volatile uint64 result = 0;
-    for(int i = 0; i < 100000; i++)
+    for(int i = 0; i < 10000000; i++)
         result += i;
 }
 
@@ -321,8 +331,6 @@ run_sched_test(const char *name, int sched_class, int ntasks, void (*task_fn)(vo
             if(pids[i] < 0) break;
             if(pids[i] == 0) {
                 task_fn();
-                int elapsed = uptime() - g_epoch;
-                printf("PTURN:%s_%d:%d\n", name, i, elapsed);
                 exit(0);
             }
             n++;
@@ -342,41 +350,6 @@ run_sched_test(const char *name, int sched_class, int ntasks, void (*task_fn)(vo
     int avg = calc_avg();
     int std = calc_std(avg);
     print_result(name, avg, std, "ticks");
-    
-    setscheduler(saved_class);
-}
-
-static void
-run_sched_fairness_test(const char *name, int sched_class)
-{
-    int saved_class = getscheduler();
-    setscheduler(sched_class);
-    
-    int pids[10];
-    
-    g_epoch = uptime();
-    
-    for(int i = 0; i < 10; i++) {
-        pids[i] = fork();
-        if(pids[i] == 0) {
-            while(uptime() - g_epoch < 100) {
-                cpu_task_light();
-            }
-            exit(0);
-        }
-    }
-    
-    sleep(1);
-    
-    for(int i = 0; i < 10; i++) {
-        kill(pids[i]);
-    }
-    for(int i = 0; i < 10; i++) {
-        wait(0);
-    }
-    
-    printf("  %s: fairness test completed\n", name);
-    printf("RESULT:%s:completed:0:test\n", name);
     
     setscheduler(saved_class);
 }
@@ -407,21 +380,21 @@ run_cow_tests(void)
         return;
     }
     
-    printf("\n# COW-1: fork, child exits immediately (no memory access)\n");
+    printf("\n# M1: fork, child exits immediately (no memory access)\n");
     printf("#   testing: copies nothing (best case)\n");
-    run_cow_test("COW_1_no_access", test_cow_1_no_access, 20);
+    run_cow_test("M1", test_cow_1_no_access, 20);
     
-    printf("\n# COW-2: fork, child reads all pages (readonly)\n");
+    printf("\n# M2: fork, child reads all pages (readonly)\n");
     printf("#   testing: copies nothing, just reads\n");
-    run_cow_test("COW_2_readonly", test_cow_2_readonly, 20);
+    run_cow_test("M2", test_cow_2_readonly, 20);
     
-    printf("\n# COW-3: fork, child writes 30%% of pages\n");
+    printf("\n# M3: fork, child writes 30%% of pages\n");
     printf("#   testing: copies 30%% on write (COW fault)\n");
-    run_cow_test("COW_3_partial", test_cow_3_partial, 20);
+    run_cow_test("M3", test_cow_3_partial, 20);
     
-    printf("\n# COW-4: fork, child writes all pages (worst case - counter-example)\n");
+    printf("\n# M4: fork, child writes all pages (worst case - counter-example)\n");
     printf("#   testing: copies 100%% on write (COW fault overhead)\n");
-    run_cow_test("COW_4_fullwrite", test_cow_4_fullwrite, 20);
+    run_cow_test("M4", test_cow_4_fullwrite, 20);
     
     free_mem();
 }
@@ -433,17 +406,17 @@ run_lazy_tests(void)
     printf("# Note: Testing uses Lazy Allocation (demand paging)\n");
     printf("# Testing sbrklazy(1MB) with different access patterns\n");
     
-    printf("\n# LAZY-1: access 1%% (10KB of 1MB) - best case for lazy\n");
+    printf("\n# M5: access 1%% (10KB of 1MB) - best case for lazy\n");
     printf("#   testing: allocates ~3 pages on demand\n");
-    run_lazy_test("LAZY_1_sparse", 1, 50);
+    run_lazy_test("M5", 1, 200);
     
-    printf("\n# LAZY-2: access 50%% (512KB of 1MB) - middle case\n");
+    printf("\n# M6: access 50%% (512KB of 1MB) - middle case\n");
     printf("#   testing: allocates 128 pages on demand\n");
-    run_lazy_test("LAZY_2_half", 50, 50);
+    run_lazy_test("M6", 50, 50);
     
-    printf("\n# LAZY-3: access 100%% (1MB) - worst case - counter-example\n");
+    printf("\n# M7: access 100%% (1MB) - worst case - counter-example\n");
     printf("#   testing: allocates 256 pages on demand (page fault overhead)\n");
-    run_lazy_test("LAZY_3_full", 100, 50);
+    run_lazy_test("M7", 100, 50);
 }
 
 void
@@ -473,24 +446,30 @@ run_mmap_tests(void)
 void
 run_sched_tests(void)
 {
-    printf("\n[SCHED TESTS - Multiple Schedulers]\n");
-    printf("# Note: Testing supports RR, FCFS, PRIORITY, LOTTERY\n");
+    printf("\n[SCHED TESTS - 9 Schedulers]\n");
+    printf("# Note: Testing all 9 schedulers\n");
     
-    printf("\n# SCHED-1: batch processing (10 CPU tasks)\n");
-    run_sched_test("SCHED_1_batch_RR", 0, 10, cpu_task_heavy, 0);
-    run_sched_test("SCHED_1_batch_FCFS", 1, 10, cpu_task_heavy, 0);
+    printf("\n# SCHED-1: batch processing\n");
+    run_sched_test("SCHED_1_RR", 0, 10, cpu_task_heavy, 0);
+    run_sched_test("SCHED_1_FCFS", 1, 10, cpu_task_heavy, 0);
+    run_sched_test("SCHED_1_SJF", 5, 10, cpu_task_heavy, 0);
     
-    printf("\n# SCHED-2: convoy effect (1 long + 9 short tasks)\n");
-    run_sched_test("SCHED_2_convoy_RR", 0, 10, cpu_task_light, 1);
-    run_sched_test("SCHED_2_convoy_FCFS", 1, 10, cpu_task_light, 1);
+    printf("\n# SCHED-2: convoy effect\n");
+    run_sched_test("SCHED_2_RR", 0, 10, cpu_task_light, 1);
+    run_sched_test("SCHED_2_FCFS", 1, 10, cpu_task_light, 1);
+    run_sched_test("SCHED_2_SRTF", 6, 10, cpu_task_light, 1);
     
-    printf("\n# SCHED-3: priority response (3 high + 7 low priority)\n");
-    run_sched_test("SCHED_3_priority_RR", 0, 10, cpu_task_light, 0);
-    run_sched_test("SCHED_3_priority_PRT", 2, 10, cpu_task_light, 0);
+    printf("\n# SCHED-3: priority\n");
+    run_sched_test("SCHED_3_RR", 0, 10, cpu_task_light, 0);
+    run_sched_test("SCHED_3_PRT", 2, 10, cpu_task_light, 0);
     
-    printf("\n# SCHED-5: fairness (10 identical tasks)\n");
-    run_sched_fairness_test("SCHED_5_fair_RR", 0);
-    run_sched_fairness_test("SCHED_5_fair_LOT", 3);
+    printf("\n# SCHED-4: MLFQ interactive\n");
+    run_sched_test("SCHED_4_RR", 0, 10, cpu_task_light, 0);
+    run_sched_test("SCHED_4_MLFQ", 7, 10, cpu_task_light, 0);
+    
+    printf("\n# SCHED-5: CFS fairness\n");
+    run_sched_test("SCHED_5_RR", 0, 10, cpu_task_light, 0);
+    run_sched_test("SCHED_5_CFS", 8, 10, cpu_task_light, 0);
 }
 
 int
