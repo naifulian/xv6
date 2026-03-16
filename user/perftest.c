@@ -1,10 +1,20 @@
+/*
+ * perftest.c - Performance Test Suite for xv6-riscv
+ * 
+ * Baseline Branch Version:
+ *   - Eager Copy (no COW)
+ *   - Eager Allocation (no Lazy)
+ *   - Linked List Allocator (no Buddy)
+ * 
+ * Output Format:
+ *   META:ts=<ticks>:cpus=<n>:branch=baseline:sched=RR
+ *   RESULT:<name>:<avg>:<std>:<unit>:<batch>:<runs>
+ */
+
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "user/user.h"
-
-#define WARMUP_RUNS 2
-#define TEST_RUNS 10
-#define MAX_RESULT 10
+#include "perftest.h"
 
 static int results[MAX_RESULT];
 static int result_count = 0;
@@ -49,10 +59,17 @@ calc_std(int avg)
 }
 
 static void
-print_result(const char *name, int avg, int std, const char *unit)
+print_meta(void)
 {
-    printf("  %s: %d +/- %d %s\n", name, avg, std, unit);
-    printf("RESULT:%s:%d:%d:%s\n", name, avg, std, unit);
+    int ts = uptime();
+    printf("META:ts=%d:cpus=1:branch=baseline:sched=RR\n", ts);
+}
+
+static void
+print_result(const char *name, int avg, int std, const char *unit, int batch, int runs)
+{
+    printf("  %s: %d +/- %d %s (batch=%d, runs=%d)\n", name, avg, std, unit, batch, runs);
+    printf("RESULT:%s:%d:%d:%s:%d:%d\n", name, avg, std, unit, batch, runs);
 }
 
 static int
@@ -87,10 +104,9 @@ alloc_mem(int mb)
         mem_size = 0;
         return;
     }
-    printf("  [DEBUG] Allocated %d MB at %p, writing to each page...\n", mb, mem_base);
+    printf("  [INFO] Allocated %d MB, initializing %d pages...\n", mb, mem_size / 4096);
     for(int i = 0; i < mem_size; i += 4096)
         mem_base[i] = 'A';
-    printf("  [DEBUG] Memory initialized, %d pages written\n", mem_size / 4096);
 }
 
 static void
@@ -103,6 +119,9 @@ free_mem(void)
     }
 }
 
+/*
+ * COW Tests (Baseline: Eager Copy)
+ */
 static void
 run_cow_test(const char *name, void (*test_fn)(void), int batch)
 {
@@ -123,11 +142,11 @@ run_cow_test(const char *name, void (*test_fn)(void), int batch)
     sort_results();
     int avg = calc_avg();
     int std = calc_std(avg);
-    print_result(name, avg, std, "ticks");
+    print_result(name, avg, std, "ticks", batch, TEST_RUNS);
 }
 
 static void
-test_cow_1_no_access(void)
+test_cow_no_access(void)
 {
     int pid = fork();
     if(pid == 0) {
@@ -137,7 +156,7 @@ test_cow_1_no_access(void)
 }
 
 static void
-test_cow_2_readonly(void)
+test_cow_readonly(void)
 {
     int pid = fork();
     if(pid == 0) {
@@ -150,7 +169,7 @@ test_cow_2_readonly(void)
 }
 
 static void
-test_cow_3_partial(void)
+test_cow_partial(void)
 {
     int pid = fork();
     if(pid == 0) {
@@ -165,7 +184,7 @@ test_cow_3_partial(void)
 }
 
 static void
-test_cow_4_fullwrite(void)
+test_cow_fullwrite(void)
 {
     int pid = fork();
     if(pid == 0) {
@@ -178,12 +197,15 @@ test_cow_4_fullwrite(void)
     wait(0);
 }
 
+/*
+ * Lazy Allocation Tests (Baseline: Eager Allocation)
+ */
 static void
 run_lazy_test(const char *name, int access_percent, int batch)
 {
     result_count = 0;
     
-    int total_kb = 1024;
+    int total_kb = LAZY_MEM_SIZE_KB;
     int access_kb = total_kb * access_percent / 100;
     
     for(int w = 0; w < WARMUP_RUNS; w++) {
@@ -211,9 +233,12 @@ run_lazy_test(const char *name, int access_percent, int batch)
     sort_results();
     int avg = calc_avg();
     int std = calc_std(avg);
-    print_result(name, avg, std, "ticks");
+    print_result(name, avg, std, "ticks", batch, TEST_RUNS);
 }
 
+/*
+ * Buddy System Test (Baseline: Linked List Allocator)
+ */
 static void
 run_buddy_test(void)
 {
@@ -240,8 +265,8 @@ run_buddy_test(void)
     sleep(2);
     
     int max_kb = measure_max_alloc() / 1024;
-    printf("  BUDDY_1_max_alloc: %d KB\n", max_kb);
-    printf("RESULT:BUDDY_1_max_alloc:%d:0:kb\n", max_kb);
+    printf("  %s: %d KB\n", TEST_BUDDY_FRAGMENT, max_kb);
+    printf("RESULT:%s:%d:0:kb:1:1\n", TEST_BUDDY_FRAGMENT, max_kb);
     
     for(int i = 1; i < n; i += 2)
         kill(pids[i]);
@@ -256,44 +281,40 @@ print_system_info(void)
     uint64 free_pg = memfree();
     printf("  Total physical pages: %d (%d MB)\n", (int)total, (int)(total * 4 / 1024));
     printf("  Free physical pages:  %d (%d MB)\n", (int)free_pg, (int)(free_pg * 4 / 1024));
-    printf("RESULT:sys_total_pages:%d:0:pages\n", (int)total);
-    printf("RESULT:sys_free_pages:%d:0:pages\n", (int)free_pg);
+    printf("RESULT:%s:%d:0:pages:1:1\n", TEST_SYS_TOTAL_PAGES, (int)total);
+    printf("RESULT:%s:%d:0:pages:1:1\n", TEST_SYS_FREE_PAGES, (int)free_pg);
 }
 
 void
 run_cow_tests(void)
 {
-    printf("\n[COW TESTS - Eager Copy vs COW]\n");
-    printf("# Note: Baseline uses Eager Copy (immediate copy all pages)\n");
-    printf("# All tests: fork() then child does different operations\n");
+    printf("\n[COW TESTS - Eager Copy (no COW)]\n");
     
-    printf("\n[Allocating 5MB for COW tests...]\n");
-    alloc_mem(5);
+    printf("\n[Allocating %d MB for COW tests...]\n", COW_MEM_SIZE_MB);
+    alloc_mem(COW_MEM_SIZE_MB);
     
     if(!mem_base) {
         printf("  [FATAL] Memory allocation failed, skipping COW tests\n");
         return;
     }
     
-    printf("\n# COW-1: fork, child exits immediately (no memory access)\n");
-    printf("#   baseline: copies 5MB anyway (waste)\n");
-    printf("#   testing:  copies nothing (best case)\n");
-    run_cow_test("COW_1_no_access", test_cow_1_no_access, 20);
+    print_meta();
     
-    printf("\n# COW-2: fork, child reads all pages (readonly)\n");
+    printf("\n# Test 1: fork, child exits immediately (no memory access)\n");
+    printf("#   baseline: copies all %d MB (eager copy overhead)\n", COW_MEM_SIZE_MB);
+    run_cow_test(TEST_COW_NO_ACCESS, test_cow_no_access, BATCH_COW_NO_ACCESS);
+    
+    printf("\n# Test 2: fork, child reads all pages (readonly)\n");
     printf("#   baseline: already copied, just reads\n");
-    printf("#   testing:  copies nothing, just reads\n");
-    run_cow_test("COW_2_readonly", test_cow_2_readonly, 20);
+    run_cow_test(TEST_COW_READONLY, test_cow_readonly, BATCH_COW_READONLY);
     
-    printf("\n# COW-3: fork, child writes 30%% of pages\n");
+    printf("\n# Test 3: fork, child writes 30%% of pages\n");
     printf("#   baseline: already copied, just writes\n");
-    printf("#   testing:  copies 30%% on write (COW fault)\n");
-    run_cow_test("COW_3_partial", test_cow_3_partial, 20);
+    run_cow_test(TEST_COW_PARTIAL, test_cow_partial, BATCH_COW_PARTIAL);
     
-    printf("\n# COW-4: fork, child writes all pages (worst case - counter-example)\n");
-    printf("#   baseline: already copied, just writes\n");
-    printf("#   testing:  copies 100%% on write (COW fault overhead)\n");
-    run_cow_test("COW_4_fullwrite", test_cow_4_fullwrite, 20);
+    printf("\n# Test 4: fork, child writes all pages (worst case for COW, best for eager)\n");
+    printf("#   baseline: already copied, just writes (no COW fault overhead)\n");
+    run_cow_test(TEST_COW_FULLWRITE, test_cow_fullwrite, BATCH_COW_FULLWRITE);
     
     free_mem();
 }
@@ -301,33 +322,35 @@ run_cow_tests(void)
 void
 run_lazy_tests(void)
 {
-    printf("\n[LAZY TESTS - Eager Alloc vs Lazy Alloc]\n");
-    printf("# Note: Baseline uses Eager Allocation (immediate allocate all pages)\n");
-    printf("# Testing sbrk(1MB) with different access patterns\n");
+    printf("\n[LAZY TESTS - Eager Allocation (no Lazy)]\n");
     
-    printf("\n# LAZY-1: access 1%% (10KB of 1MB) - best case for lazy\n");
-    printf("#   baseline: allocates 256 pages immediately\n");
-    printf("#   testing:  allocates ~3 pages on demand\n");
-    run_lazy_test("LAZY_1_sparse", 1, 50);
+    print_meta();
     
-    printf("\n# LAZY-2: access 50%% (512KB of 1MB) - middle case\n");
-    printf("#   baseline: allocates 256 pages immediately\n");
-    printf("#   testing:  allocates 128 pages on demand\n");
-    run_lazy_test("LAZY_2_half", 50, 50);
+    printf("\n# Test 1: access 1%% (%d KB of %d KB) - worst case for eager\n", 
+           LAZY_MEM_SIZE_KB / 100, LAZY_MEM_SIZE_KB);
+    printf("#   baseline: allocates all 256 pages immediately\n");
+    run_lazy_test(TEST_LAZY_SPARSE, 1, BATCH_LAZY_SPARSE);
     
-    printf("\n# LAZY-3: access 100%% (1MB) - worst case - counter-example\n");
-    printf("#   baseline: allocates 256 pages immediately\n");
-    printf("#   testing:  allocates 256 pages on demand (page fault overhead)\n");
-    run_lazy_test("LAZY_3_full", 100, 50);
+    printf("\n# Test 2: access 50%% (%d KB of %d KB) - middle case\n", 
+           LAZY_MEM_SIZE_KB / 2, LAZY_MEM_SIZE_KB);
+    printf("#   baseline: allocates all 256 pages immediately\n");
+    run_lazy_test(TEST_LAZY_HALF, 50, BATCH_LAZY_HALF);
+    
+    printf("\n# Test 3: access 100%% (%d KB) - best case for eager\n", 
+           LAZY_MEM_SIZE_KB);
+    printf("#   baseline: allocates all 256 pages immediately (no page fault overhead)\n");
+    run_lazy_test(TEST_LAZY_FULL, 100, BATCH_LAZY_FULL);
 }
 
 void
 run_buddy_tests(void)
 {
-    printf("\n[BUDDY TESTS - List Allocator vs Buddy System]\n");
-    printf("# Note: Baseline uses simple linked-list allocator\n");
-    printf("# Measuring max contiguous allocation after fragmentation\n");
+    printf("\n[BUDDY TESTS - Linked List Allocator (no Buddy)]\n");
     
+    print_meta();
+    
+    printf("\n# Test: measure max contiguous allocation after fragmentation\n");
+    printf("#   baseline: linked list cannot merge, higher fragmentation\n");
     run_buddy_test();
 }
 
