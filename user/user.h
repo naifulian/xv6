@@ -1,3 +1,8 @@
+#ifndef _USER_H_
+#define _USER_H_
+
+#include "kernel/types.h"
+
 #define SBRK_ERROR ((char *)-1)
 
 struct stat;
@@ -25,6 +30,23 @@ struct memstat {
   uint cow_faults;
   uint lazy_allocs;
   uint cow_copy_pages;
+};
+
+// System snapshot structure for monitoring
+struct sys_snapshot {
+  uint64 timestamp;
+  char sched_name[16];
+  int sched_policy;
+  int cpu_usage;
+  uint64 context_switches;
+  uint64 total_ticks;
+  int total_pages;
+  int free_pages;
+  int nr_running;
+  int nr_sleeping;
+  int nr_zombie;
+  int nr_total;
+  int runqueue_len;
 };
 
 // system calls
@@ -86,3 +108,5 @@ void printf(const char*, ...) __attribute__ ((format (printf, 1, 2)));
 // umalloc.c
 void* malloc(uint);
 void free(void*);
+
+#endif /* _USER_H_ */

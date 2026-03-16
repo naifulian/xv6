@@ -1,14 +1,14 @@
 /*
  * perftest.c - Performance Test Suite for xv6-riscv
  * 
- * Testing Branch Version:
- *   - COW enabled
- *   - Lazy Allocation enabled
- *   - Buddy System enabled
- *   - mmap enabled
+ * Baseline Branch Version:
+ *   - Eager Copy (no COW)
+ *   - Eager Allocation (no Lazy)
+ *   - Linked List Allocator (no Buddy)
+ *   - No mmap support
  * 
  * Output Format:
- *   META:ts=<ticks>:cpus=<n>:branch=testing:sched=<name>
+ *   META:ts=<ticks>:cpus=<n>:branch=baseline:sched=RR
  *   RESULT:<name>:<avg>:<std>:<unit>:<batch>:<runs>
  */
 
@@ -19,8 +19,6 @@
 
 static int results[MAX_RESULT];
 static int result_count = 0;
-
-static volatile int g_epoch = 0;
 
 static void
 sort_results(void)
@@ -65,13 +63,7 @@ static void
 print_meta(void)
 {
     int ts = uptime();
-    int sched = getscheduler();
-    const char *sched_names[] = {
-        "RR", "FCFS", "PRIORITY", "SML", "LOTTERY",
-        "SJF", "SRTF", "MLFQ", "CFS"
-    };
-    const char *sname = (sched >= 0 && sched < 9) ? sched_names[sched] : "UNKNOWN";
-    printf("META:ts=%d:cpus=1:branch=testing:sched=%s\n", ts, sname);
+    printf("META:ts=%d:cpus=1:branch=baseline:sched=RR\n", ts);
 }
 
 static void
@@ -129,7 +121,10 @@ free_mem(void)
 }
 
 /*
- * COW Tests
+ * COW Tests (Baseline: Eager Copy)
+ * 
+ * In baseline, fork() always copies all pages immediately.
+ * These tests measure the overhead of eager copying.
  */
 static void
 run_cow_test(const char *name, void (*test_fn)(void), int batch)
@@ -207,7 +202,10 @@ test_cow_fullwrite(void)
 }
 
 /*
- * Lazy Allocation Tests
+ * Lazy Allocation Tests (Baseline: Eager Allocation)
+ * 
+ * In baseline, sbrk() always allocates all pages immediately.
+ * These tests measure the overhead of eager allocation.
  */
 static void
 run_lazy_test(const char *name, int access_percent, int batch)
@@ -218,7 +216,7 @@ run_lazy_test(const char *name, int access_percent, int batch)
     int access_kb = total_kb * access_percent / 100;
     
     for(int w = 0; w < WARMUP_RUNS; w++) {
-        char *p = sbrklazy(total_kb * 1024);
+        char *p = sbrk(total_kb * 1024);
         if(p == (char*)-1) return;
         for(int i = 0; i < access_kb; i += 4) {
             p[i * 1024] = 'X';
@@ -229,7 +227,7 @@ run_lazy_test(const char *name, int access_percent, int batch)
     for(int i = 0; i < TEST_RUNS; i++) {
         int start = uptime();
         for(int b = 0; b < batch; b++) {
-            char *p = sbrklazy(total_kb * 1024);
+            char *p = sbrk(total_kb * 1024);
             if(p == (char*)-1) break;
             for(int j = 0; j < access_kb; j += 4) {
                 p[j * 1024] = 'X';
@@ -246,7 +244,10 @@ run_lazy_test(const char *name, int access_percent, int batch)
 }
 
 /*
- * Buddy System Test
+ * Buddy System Test (Baseline: Linked List Allocator)
+ * 
+ * In baseline, the linked list allocator cannot merge freed blocks,
+ * leading to higher fragmentation.
  */
 static void
 run_buddy_test(void)
@@ -282,113 +283,6 @@ run_buddy_test(void)
     while(wait(0) > 0);
 }
 
-/*
- * mmap Tests
- */
-static void
-run_mmap_test(const char *name, int access_percent, int batch)
-{
-    result_count = 0;
-    
-    int total_kb = MMAP_MEM_SIZE_KB;
-    int access_kb = total_kb * access_percent / 100;
-    
-    char *test_p = mmap(0, 4096, 0x1, 0x20, -1, 0);
-    if(test_p == (char*)-1) {
-        printf("  [ERROR] mmap not supported, test skipped\n");
-        printf("RESULT:%s:-1:0:error:0:0\n", name);
-        return;
-    }
-    munmap(test_p, 4096);
-    
-    for(int w = 0; w < WARMUP_RUNS; w++) {
-        char *p = mmap(0, total_kb * 1024, 0x1, 0x20, -1, 0);
-        if(p == (char*)-1) return;
-        for(int i = 0; i < access_kb; i += 4) {
-            p[i * 1024] = 'X';
-        }
-        munmap(p, total_kb * 1024);
-    }
-    
-    for(int i = 0; i < TEST_RUNS; i++) {
-        int start = uptime();
-        for(int b = 0; b < batch; b++) {
-            char *p = mmap(0, total_kb * 1024, 0x1, 0x20, -1, 0);
-            if(p == (char*)-1) break;
-            for(int j = 0; j < access_kb; j += 4) {
-                p[j * 1024] = 'X';
-            }
-            munmap(p, total_kb * 1024);
-        }
-        results[result_count++] = uptime() - start;
-    }
-    
-    sort_results();
-    int avg = calc_avg();
-    int std = calc_std(avg);
-    print_result(name, avg, std, "ticks", batch, TEST_RUNS);
-}
-
-/*
- * Scheduler Tests
- */
-static void
-cpu_task_heavy(void)
-{
-    volatile uint64 result = 0;
-    for(int i = 0; i < 100000000; i++)
-        result += (uint64)i * i;
-}
-
-static void
-cpu_task_light(void)
-{
-    volatile uint64 result = 0;
-    for(int i = 0; i < 10000000; i++)
-        result += i;
-}
-
-static void
-run_sched_test(const char *name, int sched_class, int ntasks, void (*task_fn)(void))
-{
-    int saved_class = getscheduler();
-    setscheduler(sched_class);
-    
-    result_count = 0;
-    
-    for(int run = 0; run < TEST_RUNS; run++) {
-        g_epoch = uptime();
-        
-        int pids[16];
-        int n = 0;
-        
-        for(int i = 0; i < ntasks && i < 16; i++) {
-            pids[i] = fork();
-            if(pids[i] < 0) break;
-            if(pids[i] == 0) {
-                task_fn();
-                exit(0);
-            }
-            n++;
-        }
-        
-        for(int i = 0; i < n; i++) {
-            int status;
-            wait(&status);
-        }
-        
-        int total_time = uptime() - g_epoch;
-        results[result_count++] = total_time;
-    }
-    
-    sort_results();
-    int avg = calc_avg();
-    int std = calc_std(avg);
-    print_result(name, avg, std, "ticks", ntasks, TEST_RUNS);
-    
-    setscheduler(saved_class);
-}
-
 static void
 print_system_info(void)
 {
@@ -404,7 +298,7 @@ print_system_info(void)
 void
 run_cow_tests(void)
 {
-    printf("\n[COW TESTS - COW enabled]\n");
+    printf("\n[COW TESTS - Eager Copy (no COW)]\n");
     
     printf("\n[Allocating %d MB for COW tests...]\n", COW_MEM_SIZE_MB);
     alloc_mem(COW_MEM_SIZE_MB);
@@ -417,19 +311,19 @@ run_cow_tests(void)
     print_meta();
     
     printf("\n# Test 1: fork, child exits immediately (no memory access)\n");
-    printf("#   testing: copies nothing (best case for COW)\n");
+    printf("#   baseline: copies all %d MB anyway (eager copy overhead)\n", COW_MEM_SIZE_MB);
     run_cow_test(TEST_COW_NO_ACCESS, test_cow_no_access, BATCH_COW_NO_ACCESS);
     
     printf("\n# Test 2: fork, child reads all pages (readonly)\n");
-    printf("#   testing: copies nothing, shared read\n");
+    printf("#   baseline: already copied, just reads\n");
     run_cow_test(TEST_COW_READONLY, test_cow_readonly, BATCH_COW_READONLY);
     
     printf("\n# Test 3: fork, child writes 30%% of pages\n");
-    printf("#   testing: copies 30%% on write (COW fault)\n");
+    printf("#   baseline: already copied, just writes\n");
     run_cow_test(TEST_COW_PARTIAL, test_cow_partial, BATCH_COW_PARTIAL);
     
-    printf("\n# Test 4: fork, child writes all pages (worst case - counter-example)\n");
-    printf("#   testing: copies 100%% on write (COW fault overhead)\n");
+    printf("\n# Test 4: fork, child writes all pages (worst case for COW, best for eager)\n");
+    printf("#   baseline: already copied, just writes (no COW fault overhead)\n");
     run_cow_test(TEST_COW_FULLWRITE, test_cow_fullwrite, BATCH_COW_FULLWRITE);
     
     free_mem();
@@ -438,84 +332,43 @@ run_cow_tests(void)
 void
 run_lazy_tests(void)
 {
-    printf("\n[LAZY TESTS - Lazy Allocation enabled]\n");
+    printf("\n[LAZY TESTS - Eager Allocation (no Lazy)]\n");
     
     print_meta();
     
-    printf("\n# Test 1: access 1%% (%d KB of %d KB) - best case for lazy\n", 
+    printf("\n# Test 1: access 1%% (%d KB of %d KB) - worst case for eager\n", 
            LAZY_MEM_SIZE_KB / 100, LAZY_MEM_SIZE_KB);
-    printf("#   testing: allocates ~3 pages on demand\n");
+    printf("#   baseline: allocates all 256 pages immediately\n");
     run_lazy_test(TEST_LAZY_SPARSE, 1, BATCH_LAZY_SPARSE);
     
     printf("\n# Test 2: access 50%% (%d KB of %d KB) - middle case\n", 
            LAZY_MEM_SIZE_KB / 2, LAZY_MEM_SIZE_KB);
-    printf("#   testing: allocates 128 pages on demand\n");
+    printf("#   baseline: allocates all 256 pages immediately\n");
     run_lazy_test(TEST_LAZY_HALF, 50, BATCH_LAZY_HALF);
     
-    printf("\n# Test 3: access 100%% (%d KB) - worst case - counter-example\n", 
+    printf("\n# Test 3: access 100%% (%d KB) - best case for eager\n", 
            LAZY_MEM_SIZE_KB);
-    printf("#   testing: allocates 256 pages on demand (page fault overhead)\n");
+    printf("#   baseline: allocates all 256 pages immediately (no page fault overhead)\n");
     run_lazy_test(TEST_LAZY_FULL, 100, BATCH_LAZY_FULL);
 }
 
 void
 run_buddy_tests(void)
 {
-    printf("\n[BUDDY TESTS - Buddy System enabled]\n");
+    printf("\n[BUDDY TESTS - Linked List Allocator (no Buddy)]\n");
     
     print_meta();
     
     printf("\n# Test: measure max contiguous allocation after fragmentation\n");
-    printf("#   testing: Buddy System can merge freed blocks\n");
+    printf("#   baseline: linked list cannot merge, higher fragmentation\n");
     run_buddy_test();
-}
-
-void
-run_mmap_tests(void)
-{
-    printf("\n[MMAP TESTS - mmap enabled]\n");
-    
-    print_meta();
-    
-    printf("\n# Test 1: mmap %d KB, access 1%% (best case)\n", MMAP_MEM_SIZE_KB);
-    run_mmap_test(TEST_MMAP_SPARSE, 1, BATCH_MMAP_SPARSE);
-    
-    printf("\n# Test 2: mmap %d KB, access 100%%\n", MMAP_MEM_SIZE_KB);
-    run_mmap_test(TEST_MMAP_FULL, 100, BATCH_MMAP_FULL);
-}
-
-void
-run_sched_tests(void)
-{
-    printf("\n[SCHED TESTS - 9 Schedulers]\n");
-    
-    print_meta();
-    
-    printf("\n# Scenario 1: Throughput (batch processing)\n");
-    run_sched_test(TEST_SCHED_THROUGHPUT_RR, 0, SCHED_NTASKS, cpu_task_heavy);
-    run_sched_test(TEST_SCHED_THROUGHPUT_FCFS, 1, SCHED_NTASKS, cpu_task_heavy);
-    run_sched_test(TEST_SCHED_THROUGHPUT_SJF, 5, SCHED_NTASKS, cpu_task_heavy);
-    
-    printf("\n# Scenario 2: Convoy Effect (short task behind long task)\n");
-    run_sched_test(TEST_SCHED_CONVOY_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_CONVOY_FCFS, 1, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_CONVOY_SRTF, 6, SCHED_NTASKS, cpu_task_light);
-    
-    printf("\n# Scenario 3: Fairness\n");
-    run_sched_test(TEST_SCHED_FAIRNESS_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_FAIRNESS_PRIORITY, 2, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_FAIRNESS_CFS, 8, SCHED_NTASKS, cpu_task_light);
-    
-    printf("\n# Scenario 4: Response Time\n");
-    run_sched_test(TEST_SCHED_RESPONSE_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_RESPONSE_MLFQ, 7, SCHED_NTASKS, cpu_task_light);
 }
 
 int
 main(int argc, char *argv[])
 {
     printf("\n========================================\n");
-    printf("xv6 Performance Test Suite (Testing)\n");
+    printf("xv6 Performance Test Suite (Baseline)\n");
     printf("Config: warmup=%d, runs=%d\n", WARMUP_RUNS, TEST_RUNS);
     printf("========================================\n");
     
@@ -528,25 +381,17 @@ main(int argc, char *argv[])
             run_lazy_tests();
         } else if(strcmp(argv[1], "buddy") == 0) {
             run_buddy_tests();
-        } else if(strcmp(argv[1], "mmap") == 0) {
-            run_mmap_tests();
-        } else if(strcmp(argv[1], "sched") == 0) {
-            run_sched_tests();
         } else if(strcmp(argv[1], "all") == 0) {
             run_cow_tests();
             run_lazy_tests();
             run_buddy_tests();
-            run_mmap_tests();
-            run_sched_tests();
         } else {
-            printf("Usage: perftest [cow|lazy|buddy|mmap|sched|all]\n");
+            printf("Usage: perftest [cow|lazy|buddy|all]\n");
         }
     } else {
         run_cow_tests();
         run_lazy_tests();
         run_buddy_tests();
-        run_mmap_tests();
-        run_sched_tests();
     }
     
     printf("\n========================================\n");

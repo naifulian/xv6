@@ -5,25 +5,6 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
-struct sys_snapshot {
-  uint64 timestamp;
-  
-  int cpu_usage;
-  uint64 context_switches;
-  uint64 total_ticks;
-  
-  int total_pages;
-  int free_pages;
-  
-  int nr_running;
-  int nr_sleeping;
-  int nr_zombie;
-  int nr_total;
-  
-  int sched_policy;
-  int runqueue_len;
-};
-
 void
 test_basic_snapshot(void)
 {

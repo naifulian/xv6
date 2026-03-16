@@ -13,6 +13,9 @@
 struct sys_snapshot {
   uint64 timestamp;
   
+  char sched_name[16];
+  int sched_policy;
+  
   int cpu_usage;
   uint64 context_switches;
   uint64 total_ticks;
@@ -25,7 +28,6 @@ struct sys_snapshot {
   int nr_zombie;
   int nr_total;
   
-  int sched_policy;
   int runqueue_len;
 };
 
@@ -70,6 +72,10 @@ take_snapshot(struct sys_snapshot *snap)
   
   snap->timestamp = ticks;
   snap->sched_policy = current_policy;
+  
+  const char *sname = sched_policy_name(current_policy);
+  strncpy(snap->sched_name, sname, 15);
+  snap->sched_name[15] = '\0';
   
   struct cpu_stats cstats;
   get_cpu_stats(&cstats);
