@@ -1,0 +1,271 @@
+{
+  "generated_at": "2026-03-22T17:49:04.973061",
+  "baseline": {
+    "metadata": {
+      "timestamp": 3905,
+      "cpus": 1,
+      "branch": "baseline",
+      "sched": "RR"
+    },
+    "results": {
+      "SYS_TOTAL_PAGES": {
+        "avg": 32734,
+        "std": 0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1
+      },
+      "SYS_FREE_PAGES": {
+        "avg": 32563,
+        "std": 0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1
+      },
+      "COW_NO_ACCESS": {
+        "avg": 106,
+        "std": 2,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10
+      },
+      "COW_READONLY": {
+        "avg": 111,
+        "std": 2,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10
+      },
+      "COW_PARTIAL": {
+        "avg": 20,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10
+      },
+      "COW_FULLWRITE": {
+        "avg": 21,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10
+      },
+      "LAZY_SPARSE": {
+        "avg": 47,
+        "std": 5,
+        "unit": "ticks",
+        "batch": 200,
+        "runs": 10
+      },
+      "LAZY_HALF": {
+        "avg": 12,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "LAZY_FULL": {
+        "avg": 12,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "BUDDY_FRAGMENT": {
+        "avg": 16384,
+        "std": 0,
+        "unit": "kb",
+        "batch": 1,
+        "runs": 1
+      }
+    }
+  },
+  "testing": {
+    "metadata": {
+      "timestamp": 1753,
+      "cpus": 1,
+      "branch": "testing",
+      "sched": "RR"
+    },
+    "results": {
+      "SYS_TOTAL_PAGES": {
+        "avg": 32768,
+        "std": 0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1
+      },
+      "SYS_FREE_PAGES": {
+        "avg": 32490,
+        "std": 0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1
+      },
+      "COW_NO_ACCESS": {
+        "avg": 7,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10
+      },
+      "COW_READONLY": {
+        "avg": 7,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10
+      },
+      "COW_PARTIAL": {
+        "avg": 17,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10
+      },
+      "COW_FULLWRITE": {
+        "avg": 56,
+        "std": 2,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10
+      },
+      "LAZY_SPARSE": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 200,
+        "runs": 10
+      },
+      "LAZY_HALF": {
+        "avg": 12,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "LAZY_FULL": {
+        "avg": 25,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "BUDDY_FRAGMENT": {
+        "avg": 16384,
+        "std": 0,
+        "unit": "kb",
+        "batch": 1,
+        "runs": 1
+      },
+      "MMAP_SPARSE": {
+        "avg": 0,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "MMAP_FULL": {
+        "avg": 25,
+        "std": 2,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10
+      },
+      "SCHED_THROUGHPUT_RR": {
+        "avg": 23,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_THROUGHPUT_FCFS": {
+        "avg": 25,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_THROUGHPUT_SJF": {
+        "avg": 25,
+        "std": 1,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_CONVOY_RR": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_CONVOY_FCFS": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_CONVOY_SRTF": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_FAIRNESS_RR": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_FAIRNESS_PRIORITY": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_FAIRNESS_CFS": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_RESPONSE_RR": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      },
+      "SCHED_RESPONSE_MLFQ": {
+        "avg": 2,
+        "std": 0,
+        "unit": "ticks",
+        "batch": 10,
+        "runs": 10
+      }
+    }
+  },
+  "summary": {
+    "baseline_valid": 10,
+    "baseline_expected": 10,
+    "testing_valid": 23,
+    "testing_expected": 23,
+    "improvements": {
+      "cow_best_case": 93.39622641509433,
+      "cow_readonly": 93.69369369369369,
+      "cow_partial": 15.0,
+      "cow_fullwrite": -166.66666666666666,
+      "lazy_sparse": 95.74468085106383,
+      "lazy_half": 0.0,
+      "lazy_full": -108.33333333333333,
+      "buddy_fragment": 0.0
+    },
+    "scheduler_spread_score": 2.0
+  }
+}

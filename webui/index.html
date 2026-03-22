@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xv6 扩展项目监控面板</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">xv6-riscv Graduation Project</p>
+        <h1>系统扩展实验与运行监控</h1>
+        <p class="hero-copy">同一页面同时展示模块三的离线实验结果，以及模块四导出的运行期系统快照。</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-card">
+          <span>实验数据</span>
+          <strong id="results-status">加载中</strong>
+        </div>
+        <div class="meta-card">
+          <span>监控快照</span>
+          <strong id="live-status">加载中</strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Overview</p>
+            <h2>实验摘要</h2>
+          </div>
+        </div>
+        <div id="summary-cards" class="card-grid"></div>
+      </section>
+
+      <section class="panel two-col">
+        <div>
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Runtime</p>
+              <h2>实时快照趋势</h2>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <article class="mini-panel">
+              <h3>CPU Usage</h3>
+              <div id="cpu-chart" class="sparkline"></div>
+            </article>
+            <article class="mini-panel">
+              <h3>Free Pages</h3>
+              <div id="mem-chart" class="sparkline"></div>
+            </article>
+            <article class="mini-panel">
+              <h3>Runqueue Length</h3>
+              <div id="rq-chart" class="sparkline"></div>
+            </article>
+            <article class="mini-panel stat-cluster">
+              <h3>Latest Snapshot</h3>
+              <div id="live-stats" class="key-stats"></div>
+            </article>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Processes</p>
+              <h2>最新进程表</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>PID</th>
+                  <th>Name</th>
+                  <th>State</th>
+                  <th>Scheduler</th>
+                  <th>rutime</th>
+                  <th>retime</th>
+                  <th>stime</th>
+                </tr>
+              </thead>
+              <tbody id="process-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Figures</p>
+            <h2>论文可用图表</h2>
+          </div>
+        </div>
+        <div class="figure-grid">
+          <figure><img src="figures/fig1_cow_comparison.png" alt="COW"><figcaption>COW 对比</figcaption></figure>
+          <figure><img src="figures/fig2_lazy_comparison.png" alt="Lazy"><figcaption>Lazy Allocation 对比</figcaption></figure>
+          <figure><img src="figures/fig3_buddy_comparison.png" alt="Buddy"><figcaption>Buddy 对比</figcaption></figure>
+          <figure><img src="figures/fig5_scheduler_throughput.png" alt="Scheduler"><figcaption>调度器吞吐量</figcaption></figure>
+          <figure><img src="figures/fig6_scheduler_scenarios.png" alt="Scenario"><figcaption>调度场景图</figcaption></figure>
+          <figure><img src="figures/fig7_overall_radar.png" alt="Radar"><figcaption>综合质量雷达图</figcaption></figure>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

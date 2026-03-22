@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-03-22T17:54:32.532806",
+  "source": "webui/data/sysmon.raw",
+  "samples": [],
+  "latest_processes": [],
+  "summary": {
+    "sample_count": 0,
+    "latest_seq": -1,
+    "latest_scheduler": null
+  }
+}
