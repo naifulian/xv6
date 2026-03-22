@@ -293,7 +293,8 @@ run_mmap_test(const char *name, int access_percent, int batch)
     int total_kb = MMAP_MEM_SIZE_KB;
     int access_kb = total_kb * access_percent / 100;
     
-    char *test_p = mmap(0, 4096, 0x1, 0x20, -1, 0);
+    // xv6 mmap currently requires MAP_PRIVATE | MAP_ANONYMOUS.
+    char *test_p = mmap(0, 4096, 0x3, 0x22, -1, 0);
     if(test_p == (char*)-1) {
         printf("  [ERROR] mmap not supported, test skipped\n");
         printf("RESULT:%s:-1:0:error:0:0\n", name);
@@ -302,7 +303,7 @@ run_mmap_test(const char *name, int access_percent, int batch)
     munmap(test_p, 4096);
     
     for(int w = 0; w < WARMUP_RUNS; w++) {
-        char *p = mmap(0, total_kb * 1024, 0x1, 0x20, -1, 0);
+        char *p = mmap(0, total_kb * 1024, 0x3, 0x22, -1, 0);
         if(p == (char*)-1) return;
         for(int i = 0; i < access_kb; i += 4) {
             p[i * 1024] = 'X';
@@ -313,7 +314,7 @@ run_mmap_test(const char *name, int access_percent, int batch)
     for(int i = 0; i < TEST_RUNS; i++) {
         int start = uptime();
         for(int b = 0; b < batch; b++) {
-            char *p = mmap(0, total_kb * 1024, 0x1, 0x20, -1, 0);
+            char *p = mmap(0, total_kb * 1024, 0x3, 0x22, -1, 0);
             if(p == (char*)-1) break;
             for(int j = 0; j < access_kb; j += 4) {
                 p[j * 1024] = 'X';

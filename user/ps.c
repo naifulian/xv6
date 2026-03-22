@@ -11,7 +11,7 @@ static char *state_names[] = {
 };
 
 static char *sched_names[] = {
-  "DEFAULT", "FCFS", "PRIOR", "SML", "LOT"
+  "DEFAULT", "FCFS", "PRIOR", "SML", "LOT", "SJF", "SRTF", "MLFQ", "CFS"
 };
 
 int
@@ -26,7 +26,7 @@ main(int argc, char *argv[])
       show_sched = atoi(argv[++i]);
     } else if(strcmp(argv[i], "-h") == 0) {
       printf("Usage: ps [-s <scheduler>]\n");
-      printf("  -s  Filter by scheduler (0-4)\n");
+      printf("  -s  Filter by scheduler (0-8)\n");
       exit(0);
     }
   }
@@ -54,7 +54,7 @@ main(int argc, char *argv[])
     }
     
     char *sch_name = "???";
-    if(p->sched_class >= 0 && p->sched_class <= 4) {
+    if(p->sched_class >= 0 && p->sched_class <= 8) {
       sch_name = sched_names[p->sched_class];
     }
     
