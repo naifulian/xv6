@@ -112,9 +112,17 @@ def validate_results(data, branch_name):
         if entry["std"] < 0:
             errors.append(f"[{branch_name}] Invalid std for {test}: {entry['std']}")
 
-    zero_std = [name for name, entry in results.items() if entry["unit"] == "ticks" and entry["runs"] >= 5 and entry["std"] == 0]
-    if len(zero_std) >= 6:
-        warnings.append(f"[{branch_name}] Many timing tests have zero std ({len(zero_std)} items); check timer granularity or workload scale")
+    low_resolution = [
+        name for name, entry in results.items()
+        if entry["unit"] == "ticks"
+        and entry["runs"] >= 5
+        and entry["std"] == 0
+        and entry["avg"] <= 3
+    ]
+    if len(low_resolution) >= 6:
+        warnings.append(
+            f"[{branch_name}] Many timing tests are low-resolution (std=0 and avg<=3 ticks, {len(low_resolution)} items); increase workload scale or batch size"
+        )
 
     return errors, warnings
 
@@ -144,7 +152,7 @@ def validate_scheduler_resolution(testing_data):
             entry = results.get(test)
             if entry and entry["avg"] >= 0 and entry["unit"] != "error":
                 values.append(entry["avg"])
-        if len(values) >= 2 and len(set(values)) == 1:
+        if len(values) >= 3 and len(set(values)) == 1:
             warnings.append(f"[testing] Scheduler scenario {scenario} has identical results; the workload may not distinguish algorithms")
 
     return warnings

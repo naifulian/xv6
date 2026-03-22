@@ -120,7 +120,7 @@
 #define BATCH_LAZY_HALF         50
 #define BATCH_LAZY_FULL         50
 
-#define BATCH_MMAP_SPARSE       50
+#define BATCH_MMAP_SPARSE       400
 #define BATCH_MMAP_FULL         50
 
 #endif /* _PERFTEST_H_ */

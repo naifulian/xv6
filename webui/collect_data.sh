@@ -12,6 +12,7 @@ set -e
 
 LOG_DIR="log"
 TIMEOUT=300  # 5 minutes timeout for QEMU
+QEMU_CPUS=1
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -65,12 +66,9 @@ collect_branch() {
     git checkout ${branch}
     
     # Build
-    log_info "Building xv6..."
+    log_info "Building xv6 for a stable single-core experiment run..."
     make clean > /dev/null 2>&1 || true
-    if ! make qemu 2>&1 | head -1 | grep -q "qemu-system"; then
-        # Build without running
-        make > /dev/null 2>&1
-    fi
+    make CPUS=${QEMU_CPUS} > /dev/null 2>&1
     
     # Run perftest using expect
     log_info "Running perftest (this may take several minutes)..."
@@ -82,7 +80,7 @@ collect_branch() {
 #!/usr/bin/expect -f
 set timeout ${TIMEOUT}
 
-spawn make qemu
+spawn make CPUS=${QEMU_CPUS} qemu
 
 # Wait for shell prompt
 expect {

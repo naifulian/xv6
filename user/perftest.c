@@ -20,7 +20,7 @@
 static int results[MAX_RESULT];
 static int result_count = 0;
 
-static volatile int g_epoch = 0;
+static volatile uint64 g_sink = 1;
 
 static void
 sort_results(void)
@@ -79,6 +79,18 @@ print_result(const char *name, int avg, int std, const char *unit, int batch, in
 {
     printf("  %s: %d +/- %d %s (batch=%d, runs=%d)\n", name, avg, std, unit, batch, runs);
     printf("RESULT:%s:%d:%d:%s:%d:%d\n", name, avg, std, unit, batch, runs);
+}
+
+static void
+cpu_spin(int loops)
+{
+    volatile uint64 acc = g_sink + 0x9e3779b97f4a7c15ULL;
+    for(int i = 0; i < loops; i++) {
+        acc ^= (uint64)(i + 1) * 2654435761ULL;
+        acc = (acc << 7) | (acc >> 57);
+        acc += 0x85ebca6bULL;
+    }
+    g_sink ^= acc;
 }
 
 static int
@@ -333,60 +345,283 @@ run_mmap_test(const char *name, int access_percent, int batch)
 /*
  * Scheduler Tests
  */
-static void
-cpu_task_heavy(void)
+static int
+is_child_pid(int pid, int *pids, int npids)
 {
-    volatile uint64 result = 0;
-    for(int i = 0; i < 100000000; i++)
-        result += (uint64)i * i;
+    for(int i = 0; i < npids; i++) {
+        if(pids[i] == pid)
+            return 1;
+    }
+    return 0;
 }
 
 static void
-cpu_task_light(void)
+cleanup_children(int *pids, int npids)
 {
-    volatile uint64 result = 0;
-    for(int i = 0; i < 10000000; i++)
-        result += i;
+    for(int i = 0; i < npids; i++) {
+        if(pids[i] > 0)
+            kill(pids[i]);
+    }
+    for(int i = 0; i < npids; i++) {
+        if(pids[i] > 0)
+            wait(0);
+    }
+}
+
+static int
+measure_throughput_once(void)
+{
+    static const int workloads[] = {
+        120000000, 80000000, 50000000, 30000000, 18000000, 12000000,
+    };
+    int npids = 0;
+    int start = uptime();
+
+    for(int i = 0; i < 6; i++) {
+        int pid = fork();
+        if(pid < 0)
+            break;
+        if(pid == 0) {
+            cpu_spin(workloads[i]);
+            exit(0);
+        }
+        npids++;
+    }
+
+    for(int i = 0; i < npids; i++)
+        wait(0);
+    return uptime() - start;
+}
+
+static int
+measure_convoy_once(void)
+{
+    static const int long_work = 220000000;
+    static const int short_work[4] = {8000000, 10000000, 12000000, 14000000};
+    int pipefd[2];
+    int npids = 0;
+    int start;
+    int done;
+    int sum = 0;
+    int short_count = 0;
+
+    if(pipe(pipefd) < 0)
+        return -1;
+
+    start = uptime();
+
+    int pid = fork();
+    if(pid == 0) {
+        close(pipefd[0]);
+        cpu_spin(long_work);
+        close(pipefd[1]);
+        exit(0);
+    }
+    if(pid < 0) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return -1;
+    }
+    npids++;
+
+    for(int i = 0; i < 4; i++) {
+        pid = fork();
+        if(pid < 0)
+            break;
+        if(pid == 0) {
+            close(pipefd[0]);
+            cpu_spin(short_work[i]);
+            done = uptime() - start;
+            write(pipefd[1], &done, sizeof(done));
+            close(pipefd[1]);
+            exit(0);
+        }
+        npids++;
+    }
+
+    close(pipefd[1]);
+    while(read(pipefd[0], &done, sizeof(done)) == sizeof(done)) {
+        sum += done;
+        short_count++;
+    }
+    close(pipefd[0]);
+
+    for(int i = 0; i < npids; i++)
+        wait(0);
+
+    if(short_count == 0)
+        return -1;
+    return sum / short_count;
+}
+
+static int
+measure_fairness_once(void)
+{
+    static const int priorities[3] = {3, 10, 18};
+    int startfd[2];
+    int pids[3];
+    char token = 'S';
+    int npids = 0;
+    int nproc;
+    int min_rutime = 0x7fffffff;
+    int max_rutime = 0;
+    struct pstat table[64];
+    int fairness_gap = -1;
+    int policy = getscheduler();
+
+    if(pipe(startfd) < 0)
+        return -1;
+
+    for(int i = 0; i < 3; i++) {
+        int pid = fork();
+        if(pid < 0)
+            break;
+        if(pid == 0) {
+            char ch;
+            close(startfd[1]);
+            if(read(startfd[0], &ch, 1) != 1) {
+                close(startfd[0]);
+                exit(1);
+            }
+            close(startfd[0]);
+            while(1)
+                cpu_spin(4000000);
+        }
+        pids[npids++] = pid;
+        if(policy == 2)
+            setpriority(pid, priorities[i]);
+    }
+
+    if(npids < 3) {
+        close(startfd[0]);
+        close(startfd[1]);
+        cleanup_children(pids, npids);
+        return -1;
+    }
+
+    if(policy == 2)
+        setpriority(getpid(), 1);
+
+    close(startfd[0]);
+    for(int i = 0; i < npids; i++)
+        write(startfd[1], &token, 1);
+    close(startfd[1]);
+
+    sleep(120);
+
+    nproc = getptable(table, 64);
+    for(int i = 0; i < nproc; i++) {
+        if(is_child_pid(table[i].pid, pids, npids)) {
+            if(table[i].rutime < min_rutime)
+                min_rutime = table[i].rutime;
+            if(table[i].rutime > max_rutime)
+                max_rutime = table[i].rutime;
+        }
+    }
+
+    if(min_rutime != 0x7fffffff)
+        fairness_gap = max_rutime - min_rutime;
+
+    cleanup_children(pids, npids);
+    setpriority(getpid(), 10);
+    return fairness_gap;
+}
+
+static int
+measure_response_once(void)
+{
+    int pipefd[2];
+    int pids[3];
+    int npids = 0;
+    int response = -1;
+    int start;
+
+    if(pipe(pipefd) < 0)
+        return -1;
+
+    for(int i = 0; i < 2; i++) {
+        int pid = fork();
+        if(pid < 0)
+            break;
+        if(pid == 0) {
+            close(pipefd[0]);
+            close(pipefd[1]);
+            while(1)
+                cpu_spin(4000000);
+        }
+        pids[npids++] = pid;
+    }
+
+    if(npids < 2) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        cleanup_children(pids, npids);
+        return -1;
+    }
+
+    sleep(15);
+    start = uptime();
+
+    int pid = fork();
+    if(pid == 0) {
+        close(pipefd[0]);
+        cpu_spin(6000000);
+        response = uptime() - start;
+        write(pipefd[1], &response, sizeof(response));
+        close(pipefd[1]);
+        exit(0);
+    }
+    if(pid < 0) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        cleanup_children(pids, npids);
+        return -1;
+    }
+    pids[npids++] = pid;
+
+    close(pipefd[1]);
+    if(read(pipefd[0], &response, sizeof(response)) != sizeof(response))
+        response = -1;
+    close(pipefd[0]);
+
+    cleanup_children(pids, npids);
+    return response;
 }
 
 static void
-run_sched_test(const char *name, int sched_class, int ntasks, void (*task_fn)(void))
+run_sched_measurement(const char *name, int sched_class, int batch, int (*measure_fn)(void))
 {
     int saved_class = getscheduler();
-    setscheduler(sched_class);
-    
-    result_count = 0;
-    
-    for(int run = 0; run < TEST_RUNS; run++) {
-        g_epoch = uptime();
-        
-        int pids[16];
-        int n = 0;
-        
-        for(int i = 0; i < ntasks && i < 16; i++) {
-            pids[i] = fork();
-            if(pids[i] < 0) break;
-            if(pids[i] == 0) {
-                task_fn();
-                exit(0);
-            }
-            n++;
-        }
-        
-        for(int i = 0; i < n; i++) {
-            int status;
-            wait(&status);
-        }
-        
-        int total_time = uptime() - g_epoch;
-        results[result_count++] = total_time;
+    if(setscheduler(sched_class) < 0) {
+        printf("  [ERROR] failed to switch scheduler to %d\n", sched_class);
+        printf("RESULT:%s:-1:0:error:%d:0\n", name, batch);
+        return;
     }
-    
-    sort_results();
-    int avg = calc_avg();
-    int std = calc_std(avg);
-    print_result(name, avg, std, "ticks", ntasks, TEST_RUNS);
-    
+
+    result_count = 0;
+
+    for(int w = 0; w < WARMUP_RUNS; w++)
+        measure_fn();
+
+    for(int run = 0; run < TEST_RUNS; run++) {
+        int value = measure_fn();
+        if(value < 0)
+            break;
+        results[result_count++] = value;
+    }
+
+    if(result_count < 3) {
+        printf("  [ERROR] insufficient scheduler samples\n");
+        printf("RESULT:%s:-1:0:error:%d:%d\n", name, batch, result_count);
+    } else {
+        int avg = 0;
+        int std = 0;
+        sort_results();
+        avg = calc_avg();
+        std = calc_std(avg);
+        print_result(name, avg, std, "ticks", batch, result_count);
+    }
+
     setscheduler(saved_class);
 }
 
@@ -492,24 +727,24 @@ run_sched_tests(void)
     
     print_meta();
     
-    printf("\n# Scenario 1: Throughput (batch processing)\n");
-    run_sched_test(TEST_SCHED_THROUGHPUT_RR, 0, SCHED_NTASKS, cpu_task_heavy);
-    run_sched_test(TEST_SCHED_THROUGHPUT_FCFS, 1, SCHED_NTASKS, cpu_task_heavy);
-    run_sched_test(TEST_SCHED_THROUGHPUT_SJF, 5, SCHED_NTASKS, cpu_task_heavy);
+    printf("\n# Scenario 1: Throughput (mixed batch makespan, 6 tasks)\n");
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_RR, 0, 6, measure_throughput_once);
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_FCFS, 1, 6, measure_throughput_once);
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_SJF, 5, 6, measure_throughput_once);
     
-    printf("\n# Scenario 2: Convoy Effect (short task behind long task)\n");
-    run_sched_test(TEST_SCHED_CONVOY_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_CONVOY_FCFS, 1, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_CONVOY_SRTF, 6, SCHED_NTASKS, cpu_task_light);
+    printf("\n# Scenario 2: Convoy Effect (1 long + 4 short tasks, average short completion time)\n");
+    run_sched_measurement(TEST_SCHED_CONVOY_RR, 0, 4, measure_convoy_once);
+    run_sched_measurement(TEST_SCHED_CONVOY_FCFS, 1, 4, measure_convoy_once);
+    run_sched_measurement(TEST_SCHED_CONVOY_SRTF, 6, 4, measure_convoy_once);
     
-    printf("\n# Scenario 3: Fairness\n");
-    run_sched_test(TEST_SCHED_FAIRNESS_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_FAIRNESS_PRIORITY, 2, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_FAIRNESS_CFS, 8, SCHED_NTASKS, cpu_task_light);
+    printf("\n# Scenario 3: Fairness (CPU-time spread after 120 ticks, lower is better)\n");
+    run_sched_measurement(TEST_SCHED_FAIRNESS_RR, 0, 120, measure_fairness_once);
+    run_sched_measurement(TEST_SCHED_FAIRNESS_PRIORITY, 2, 120, measure_fairness_once);
+    run_sched_measurement(TEST_SCHED_FAIRNESS_CFS, 8, 120, measure_fairness_once);
     
-    printf("\n# Scenario 4: Response Time\n");
-    run_sched_test(TEST_SCHED_RESPONSE_RR, 0, SCHED_NTASKS, cpu_task_light);
-    run_sched_test(TEST_SCHED_RESPONSE_MLFQ, 7, SCHED_NTASKS, cpu_task_light);
+    printf("\n# Scenario 4: Response Time (2 CPU hogs + 1 interactive task)\n");
+    run_sched_measurement(TEST_SCHED_RESPONSE_RR, 0, 2, measure_response_once);
+    run_sched_measurement(TEST_SCHED_RESPONSE_MLFQ, 7, 2, measure_response_once);
 }
 
 int
