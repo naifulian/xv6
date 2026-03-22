@@ -15,3 +15,11 @@ mkfs
 kernel/kernel
 user/usys.S
 .gdbinit
+.cache/
+compile_commands.json
+log/
+webui/data/
+webui/figures/
+webui/__pycache__/
+log
+docs
