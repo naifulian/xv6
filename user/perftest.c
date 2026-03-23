@@ -82,6 +82,18 @@ print_result(const char *name, int avg, int std, const char *unit, int batch, in
 }
 
 static void
+print_samples(const char *name)
+{
+    printf("SAMPLES:%s:%d:", name, result_count);
+    for(int i = 0; i < result_count; i++) {
+        if(i > 0)
+            printf(",");
+        printf("%d", results[i]);
+    }
+    printf("\n");
+}
+
+static void
 cpu_spin(int loops)
 {
     volatile uint64 acc = g_sink + 0x9e3779b97f4a7c15ULL;
@@ -163,6 +175,7 @@ run_cow_test(const char *name, void (*test_fn)(void), int batch)
     sort_results();
     int avg = calc_avg();
     int std = calc_std(avg);
+    print_samples(name);
     print_result(name, avg, std, "ticks", batch, TEST_RUNS);
 }
 
@@ -254,6 +267,7 @@ run_lazy_test(const char *name, int access_percent, int batch)
     sort_results();
     int avg = calc_avg();
     int std = calc_std(avg);
+    print_samples(name);
     print_result(name, avg, std, "ticks", batch, TEST_RUNS);
 }
 
@@ -287,6 +301,9 @@ run_buddy_test(void)
     
     int max_kb = measure_max_alloc() / 1024;
     printf("  %s: %d KB\n", TEST_BUDDY_FRAGMENT, max_kb);
+    results[0] = max_kb;
+    result_count = 1;
+    print_samples(TEST_BUDDY_FRAGMENT);
     printf("RESULT:%s:%d:0:kb:1:1\n", TEST_BUDDY_FRAGMENT, max_kb);
     
     for(int i = 1; i < n; i += 2)
@@ -339,6 +356,7 @@ run_mmap_test(const char *name, int access_percent, int batch)
     sort_results();
     int avg = calc_avg();
     int std = calc_std(avg);
+    print_samples(name);
     print_result(name, avg, std, "ticks", batch, TEST_RUNS);
 }
 
@@ -372,25 +390,76 @@ static int
 measure_throughput_once(void)
 {
     static const int workloads[] = {
-        120000000, 80000000, 50000000, 30000000, 18000000, 12000000,
+        300000000, 180000000, 70000000, 20000000, 4000000, 1000000,
     };
+    int startfd[2];
+    int donefd[2];
+    char token = 'S';
     int npids = 0;
-    int start = uptime();
+    int start;
+    int done;
+    int sum = 0;
+    int completed = 0;
+
+    if(pipe(startfd) < 0)
+        return -1;
+    if(pipe(donefd) < 0) {
+        close(startfd[0]);
+        close(startfd[1]);
+        return -1;
+    }
+
+    start = uptime();
 
     for(int i = 0; i < 6; i++) {
         int pid = fork();
         if(pid < 0)
             break;
         if(pid == 0) {
+            char ch;
+            close(startfd[1]);
+            close(donefd[0]);
+            if(read(startfd[0], &ch, 1) != 1) {
+                close(startfd[0]);
+                close(donefd[1]);
+                exit(1);
+            }
+            close(startfd[0]);
             cpu_spin(workloads[i]);
+            done = uptime() - start;
+            write(donefd[1], &done, sizeof(done));
+            close(donefd[1]);
             exit(0);
         }
         npids++;
     }
 
+    if(npids == 0) {
+        close(startfd[0]);
+        close(startfd[1]);
+        close(donefd[0]);
+        close(donefd[1]);
+        return -1;
+    }
+
+    close(startfd[0]);
+    for(int i = 0; i < npids; i++)
+        write(startfd[1], &token, 1);
+    close(startfd[1]);
+
+    close(donefd[1]);
+    while(read(donefd[0], &done, sizeof(done)) == sizeof(done)) {
+        sum += done;
+        completed++;
+    }
+    close(donefd[0]);
+
     for(int i = 0; i < npids; i++)
         wait(0);
-    return uptime() - start;
+
+    if(completed == 0)
+        return -1;
+    return sum / completed;
 }
 
 static int
@@ -455,24 +524,68 @@ measure_convoy_once(void)
 }
 
 static int
+collect_rutime_stats(int *pids, int npids, int *min_rutime, int *max_rutime, int *sum_rutime)
+{
+    struct pstat table[64];
+    int nproc = getptable(table, 64);
+    int matched = 0;
+
+    *min_rutime = 0x7fffffff;
+    *max_rutime = 0;
+    *sum_rutime = 0;
+
+    for(int i = 0; i < nproc; i++) {
+        if(is_child_pid(table[i].pid, pids, npids)) {
+            matched++;
+            if(table[i].rutime < *min_rutime)
+                *min_rutime = table[i].rutime;
+            if(table[i].rutime > *max_rutime)
+                *max_rutime = table[i].rutime;
+            *sum_rutime += table[i].rutime;
+        }
+    }
+
+    if(matched == 0)
+        *min_rutime = 0;
+    return matched;
+}
+
+static int
+wait_for_total_rutime(int *pids, int npids, int total_target, int timeout_ticks)
+{
+    int min_rutime = 0;
+    int max_rutime = 0;
+    int sum_rutime = 0;
+    int deadline = uptime() + timeout_ticks;
+
+    while(uptime() < deadline) {
+        int matched = collect_rutime_stats(pids, npids, &min_rutime, &max_rutime, &sum_rutime);
+        if(matched == npids && sum_rutime >= total_target)
+            return 0;
+        sleep(SCHED_FAIRNESS_POLL_TICKS);
+    }
+
+    return -1;
+}
+
+static int
 measure_fairness_once(void)
 {
-    static const int priorities[3] = {3, 10, 18};
+    static const int priorities[SCHED_FAIRNESS_PROCS] = {3, 10, 18};
     int startfd[2];
-    int pids[3];
+    int pids[SCHED_FAIRNESS_PROCS];
     char token = 'S';
     int npids = 0;
-    int nproc;
-    int min_rutime = 0x7fffffff;
+    int min_rutime = 0;
     int max_rutime = 0;
-    struct pstat table[64];
-    int fairness_gap = -1;
+    int sum_rutime = 0;
+    int fairness_gap_bp = -1;
     int policy = getscheduler();
 
     if(pipe(startfd) < 0)
         return -1;
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < SCHED_FAIRNESS_PROCS; i++) {
         int pid = fork();
         if(pid < 0)
             break;
@@ -492,54 +605,45 @@ measure_fairness_once(void)
             setpriority(pid, priorities[i]);
     }
 
-    if(npids < 3) {
+    if(npids < SCHED_FAIRNESS_PROCS) {
         close(startfd[0]);
         close(startfd[1]);
         cleanup_children(pids, npids);
         return -1;
     }
 
-    if(policy == 2)
-        setpriority(getpid(), 1);
-
     close(startfd[0]);
     for(int i = 0; i < npids; i++)
         write(startfd[1], &token, 1);
     close(startfd[1]);
 
-    sleep(120);
-
-    nproc = getptable(table, 64);
-    for(int i = 0; i < nproc; i++) {
-        if(is_child_pid(table[i].pid, pids, npids)) {
-            if(table[i].rutime < min_rutime)
-                min_rutime = table[i].rutime;
-            if(table[i].rutime > max_rutime)
-                max_rutime = table[i].rutime;
+    if(wait_for_total_rutime(pids, npids, SCHED_FAIRNESS_TOTAL_TARGET, SCHED_FAIRNESS_TIMEOUT) == 0) {
+        if(collect_rutime_stats(pids, npids, &min_rutime, &max_rutime, &sum_rutime) == npids && sum_rutime > 0) {
+            int mean_rutime = sum_rutime / npids;
+            if(mean_rutime > 0)
+                fairness_gap_bp = ((max_rutime - min_rutime) * 10000) / mean_rutime;
         }
     }
 
-    if(min_rutime != 0x7fffffff)
-        fairness_gap = max_rutime - min_rutime;
-
     cleanup_children(pids, npids);
-    setpriority(getpid(), 10);
-    return fairness_gap;
+    return fairness_gap_bp;
 }
 
 static int
 measure_response_once(void)
 {
     int pipefd[2];
-    int pids[3];
+    int pids[SCHED_RESPONSE_HOGS + SCHED_RESPONSE_TASKS];
     int npids = 0;
     int response = -1;
     int start;
+    int sum = 0;
+    int completed = 0;
 
     if(pipe(pipefd) < 0)
         return -1;
 
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < SCHED_RESPONSE_HOGS; i++) {
         int pid = fork();
         if(pid < 0)
             break;
@@ -552,44 +656,52 @@ measure_response_once(void)
         pids[npids++] = pid;
     }
 
-    if(npids < 2) {
+    if(npids < SCHED_RESPONSE_HOGS) {
         close(pipefd[0]);
         close(pipefd[1]);
         cleanup_children(pids, npids);
         return -1;
     }
 
-    sleep(15);
+    if(wait_for_total_rutime(pids, npids, SCHED_RESPONSE_BACKGROUND_TARGET, SCHED_FAIRNESS_TIMEOUT) < 0) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        cleanup_children(pids, npids);
+        return -1;
+    }
+
     start = uptime();
 
-    int pid = fork();
-    if(pid == 0) {
-        close(pipefd[0]);
-        cpu_spin(6000000);
-        response = uptime() - start;
-        write(pipefd[1], &response, sizeof(response));
-        close(pipefd[1]);
-        exit(0);
+    for(int i = 0; i < SCHED_RESPONSE_TASKS; i++) {
+        int pid = fork();
+        if(pid < 0)
+            break;
+        if(pid == 0) {
+            close(pipefd[0]);
+            cpu_spin(SCHED_RESPONSE_BASE_WORK + (i * SCHED_RESPONSE_WORK_STEP));
+            response = uptime() - start;
+            write(pipefd[1], &response, sizeof(response));
+            close(pipefd[1]);
+            exit(0);
+        }
+        pids[npids++] = pid;
     }
-    if(pid < 0) {
-        close(pipefd[0]);
-        close(pipefd[1]);
-        cleanup_children(pids, npids);
-        return -1;
-    }
-    pids[npids++] = pid;
 
     close(pipefd[1]);
-    if(read(pipefd[0], &response, sizeof(response)) != sizeof(response))
-        response = -1;
+    while(read(pipefd[0], &response, sizeof(response)) == sizeof(response)) {
+        sum += response;
+        completed++;
+    }
     close(pipefd[0]);
 
     cleanup_children(pids, npids);
-    return response;
+    if(completed == 0)
+        return -1;
+    return sum / completed;
 }
 
 static void
-run_sched_measurement(const char *name, int sched_class, int batch, int (*measure_fn)(void))
+run_sched_measurement(const char *name, int sched_class, int batch, const char *unit, int (*measure_fn)(void))
 {
     int saved_class = getscheduler();
     if(setscheduler(sched_class) < 0) {
@@ -619,7 +731,8 @@ run_sched_measurement(const char *name, int sched_class, int batch, int (*measur
         sort_results();
         avg = calc_avg();
         std = calc_std(avg);
-        print_result(name, avg, std, "ticks", batch, result_count);
+        print_samples(name);
+        print_result(name, avg, std, unit, batch, result_count);
     }
 
     setscheduler(saved_class);
@@ -721,30 +834,39 @@ run_mmap_tests(void)
 }
 
 void
+run_memory_tests(void)
+{
+    run_cow_tests();
+    run_lazy_tests();
+    run_buddy_tests();
+    run_mmap_tests();
+}
+
+void
 run_sched_tests(void)
 {
     printf("\n[SCHED TESTS - 9 Schedulers]\n");
     
     print_meta();
     
-    printf("\n# Scenario 1: Throughput (mixed batch makespan, 6 tasks)\n");
-    run_sched_measurement(TEST_SCHED_THROUGHPUT_RR, 0, 6, measure_throughput_once);
-    run_sched_measurement(TEST_SCHED_THROUGHPUT_FCFS, 1, 6, measure_throughput_once);
-    run_sched_measurement(TEST_SCHED_THROUGHPUT_SJF, 5, 6, measure_throughput_once);
+    printf("\n# Scenario 1: Throughput (mixed completion time, 6 skewed CPU-bound tasks)\n");
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_RR, 0, 6, "ticks", measure_throughput_once);
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_FCFS, 1, 6, "ticks", measure_throughput_once);
+    run_sched_measurement(TEST_SCHED_THROUGHPUT_SJF, 5, 6, "ticks", measure_throughput_once);
     
     printf("\n# Scenario 2: Convoy Effect (1 long + 4 short tasks, average short completion time)\n");
-    run_sched_measurement(TEST_SCHED_CONVOY_RR, 0, 4, measure_convoy_once);
-    run_sched_measurement(TEST_SCHED_CONVOY_FCFS, 1, 4, measure_convoy_once);
-    run_sched_measurement(TEST_SCHED_CONVOY_SRTF, 6, 4, measure_convoy_once);
+    run_sched_measurement(TEST_SCHED_CONVOY_RR, 0, 4, "ticks", measure_convoy_once);
+    run_sched_measurement(TEST_SCHED_CONVOY_FCFS, 1, 4, "ticks", measure_convoy_once);
+    run_sched_measurement(TEST_SCHED_CONVOY_SRTF, 6, 4, "ticks", measure_convoy_once);
     
-    printf("\n# Scenario 3: Fairness (CPU-time spread after 120 ticks, lower is better)\n");
-    run_sched_measurement(TEST_SCHED_FAIRNESS_RR, 0, 120, measure_fairness_once);
-    run_sched_measurement(TEST_SCHED_FAIRNESS_PRIORITY, 2, 120, measure_fairness_once);
-    run_sched_measurement(TEST_SCHED_FAIRNESS_CFS, 8, 120, measure_fairness_once);
+    printf("\n# Scenario 3: Fairness (normalized CPU-service gap at fixed service budget, lower is better)\n");
+    run_sched_measurement(TEST_SCHED_FAIRNESS_RR, 0, SCHED_FAIRNESS_TARGET_PER_PROC, "bp", measure_fairness_once);
+    run_sched_measurement(TEST_SCHED_FAIRNESS_PRIORITY, 2, SCHED_FAIRNESS_TARGET_PER_PROC, "bp", measure_fairness_once);
+    run_sched_measurement(TEST_SCHED_FAIRNESS_CFS, 8, SCHED_FAIRNESS_TARGET_PER_PROC, "bp", measure_fairness_once);
     
-    printf("\n# Scenario 4: Response Time (2 CPU hogs + 1 interactive task)\n");
-    run_sched_measurement(TEST_SCHED_RESPONSE_RR, 0, 2, measure_response_once);
-    run_sched_measurement(TEST_SCHED_RESPONSE_MLFQ, 7, 2, measure_response_once);
+    printf("\n# Scenario 4: Response Time (%d CPU hogs warmed by service budget + %d interactive tasks)\n", SCHED_RESPONSE_HOGS, SCHED_RESPONSE_TASKS);
+    run_sched_measurement(TEST_SCHED_RESPONSE_RR, 0, SCHED_RESPONSE_TASKS, "ticks", measure_response_once);
+    run_sched_measurement(TEST_SCHED_RESPONSE_MLFQ, 7, SCHED_RESPONSE_TASKS, "ticks", measure_response_once);
 }
 
 int
@@ -766,22 +888,18 @@ main(int argc, char *argv[])
             run_buddy_tests();
         } else if(strcmp(argv[1], "mmap") == 0) {
             run_mmap_tests();
+        } else if(strcmp(argv[1], "memory") == 0) {
+            run_memory_tests();
         } else if(strcmp(argv[1], "sched") == 0) {
             run_sched_tests();
         } else if(strcmp(argv[1], "all") == 0) {
-            run_cow_tests();
-            run_lazy_tests();
-            run_buddy_tests();
-            run_mmap_tests();
+            run_memory_tests();
             run_sched_tests();
         } else {
-            printf("Usage: perftest [cow|lazy|buddy|mmap|sched|all]\n");
+            printf("Usage: perftest [cow|lazy|buddy|mmap|memory|sched|all]\n");
         }
     } else {
-        run_cow_tests();
-        run_lazy_tests();
-        run_buddy_tests();
-        run_mmap_tests();
+        run_memory_tests();
         run_sched_tests();
     }
     

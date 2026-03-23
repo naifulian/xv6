@@ -1,271 +1,1761 @@
 {
-  "generated_at": "2026-03-22T17:49:04.973061",
+  "generated_at": "2026-03-23T12:12:51.888363",
   "baseline": {
+    "branch": "baseline",
     "metadata": {
-      "timestamp": 3905,
+      "timestamp": 3302,
       "cpus": 1,
       "branch": "baseline",
       "sched": "RR"
     },
     "results": {
-      "SYS_TOTAL_PAGES": {
-        "avg": 32734,
-        "std": 0,
-        "unit": "pages",
-        "batch": 1,
-        "runs": 1
-      },
-      "SYS_FREE_PAGES": {
-        "avg": 32563,
-        "std": 0,
-        "unit": "pages",
-        "batch": 1,
-        "runs": 1
-      },
-      "COW_NO_ACCESS": {
-        "avg": 106,
-        "std": 2,
-        "unit": "ticks",
-        "batch": 100,
-        "runs": 10
-      },
-      "COW_READONLY": {
-        "avg": 111,
-        "std": 2,
-        "unit": "ticks",
-        "batch": 100,
-        "runs": 10
-      },
-      "COW_PARTIAL": {
-        "avg": 20,
-        "std": 1,
-        "unit": "ticks",
-        "batch": 20,
-        "runs": 10
-      },
-      "COW_FULLWRITE": {
-        "avg": 21,
-        "std": 1,
-        "unit": "ticks",
-        "batch": 20,
-        "runs": 10
-      },
-      "LAZY_SPARSE": {
-        "avg": 47,
-        "std": 5,
-        "unit": "ticks",
-        "batch": 200,
-        "runs": 10
-      },
-      "LAZY_HALF": {
-        "avg": 12,
-        "std": 1,
-        "unit": "ticks",
-        "batch": 50,
-        "runs": 10
-      },
-      "LAZY_FULL": {
-        "avg": 12,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 50,
-        "runs": 10
-      },
       "BUDDY_FRAGMENT": {
-        "avg": 16384,
-        "std": 0,
+        "avg": 16384.0,
+        "std": 0.0,
         "unit": "kb",
         "batch": 1,
-        "runs": 1
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 16384.0,
+        "max": 16384.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          16384.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 16384.0,
+            "std": 0.0,
+            "unit": "kb",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_FULLWRITE": {
+        "avg": 24.0,
+        "std": 1.0,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 24.0,
+        "max": 24.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          24.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 24.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_NO_ACCESS": {
+        "avg": 108.0,
+        "std": 3.0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 108.0,
+        "max": 108.0,
+        "ci95": 0.0,
+        "inner_std_avg": 3.0,
+        "round_cv_percent": null,
+        "values": [
+          108.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 108.0,
+            "std": 3.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_PARTIAL": {
+        "avg": 21.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 21.0,
+        "max": 21.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          21.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 21.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_READONLY": {
+        "avg": 108.0,
+        "std": 3.0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 108.0,
+        "max": 108.0,
+        "ci95": 0.0,
+        "inner_std_avg": 3.0,
+        "round_cv_percent": null,
+        "values": [
+          108.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 108.0,
+            "std": 3.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_FULL": {
+        "avg": 10.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 10.0,
+        "max": 10.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          10.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 10.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_HALF": {
+        "avg": 11.0,
+        "std": 1.0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 11.0,
+        "max": 11.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          11.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 11.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_SPARSE": {
+        "avg": 41.0,
+        "std": 2.0,
+        "unit": "ticks",
+        "batch": 200,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 41.0,
+        "max": 41.0,
+        "ci95": 0.0,
+        "inner_std_avg": 2.0,
+        "round_cv_percent": null,
+        "values": [
+          41.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 41.0,
+            "std": 2.0,
+            "unit": "ticks",
+            "batch": 200,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SYS_FREE_PAGES": {
+        "avg": 32563.0,
+        "std": 0.0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 32563.0,
+        "max": 32563.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          32563.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 32563.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SYS_TOTAL_PAGES": {
+        "avg": 32734.0,
+        "std": 0.0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 32734.0,
+        "max": 32734.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          32734.0
+        ],
+        "per_run": [
+          {
+            "run_id": "legacy_01",
+            "path": "log/baseline/perftest.log",
+            "avg": 32734.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       }
+    },
+    "runs": [
+      {
+        "run_id": "legacy_01",
+        "metadata": {
+          "timestamp": 3302,
+          "cpus": 1,
+          "branch": "baseline",
+          "sched": "RR"
+        },
+        "results": {
+          "SYS_TOTAL_PAGES": {
+            "avg": 32734.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          },
+          "SYS_FREE_PAGES": {
+            "avg": 32563.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          },
+          "COW_NO_ACCESS": {
+            "avg": 108.0,
+            "std": 3.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          },
+          "COW_READONLY": {
+            "avg": 108.0,
+            "std": 3.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          },
+          "COW_PARTIAL": {
+            "avg": 21.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          },
+          "COW_FULLWRITE": {
+            "avg": 24.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          },
+          "LAZY_SPARSE": {
+            "avg": 41.0,
+            "std": 2.0,
+            "unit": "ticks",
+            "batch": 200,
+            "runs": 10
+          },
+          "LAZY_HALF": {
+            "avg": 11.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          },
+          "LAZY_FULL": {
+            "avg": 10.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          },
+          "BUDDY_FRAGMENT": {
+            "avg": 16384.0,
+            "std": 0.0,
+            "unit": "kb",
+            "batch": 1,
+            "runs": 1
+          }
+        },
+        "error": null,
+        "source": {
+          "path": "log/baseline/perftest.log",
+          "exists": true,
+          "size_bytes": 20094,
+          "lines": 154,
+          "sha256": "83d7801f65a489d73795c2c73986add6a62a491e766b1304ec49d479f2de3bf8",
+          "modified_at": 1774185412.6463559,
+          "kind": "legacy",
+          "sanitized_from_raw": false
+        },
+        "summary": {
+          "run_id": "legacy_01",
+          "status": "complete",
+          "source_kind": "legacy",
+          "path": "log/baseline/perftest.log",
+          "required_present": 10,
+          "required_total": 10,
+          "missing_required": [],
+          "manifest": {}
+        },
+        "manifest_row": {}
+      }
+    ],
+    "manifest": [],
+    "run_statuses": [
+      {
+        "run_id": "legacy_01",
+        "status": "complete",
+        "source_kind": "legacy",
+        "path": "log/baseline/perftest.log",
+        "required_present": 10,
+        "required_total": 10,
+        "missing_required": [],
+        "manifest": {}
+      }
+    ],
+    "collection_summary": {
+      "runs_total": 1,
+      "complete_runs": 1,
+      "partial_runs": 0,
+      "empty_runs": 0,
+      "raw_only_runs": 0,
+      "manifest_rows": 0,
+      "unique_commits": [],
+      "unique_commands": [],
+      "unique_cpus": []
+    },
+    "source_files": [
+      {
+        "path": "log/baseline/perftest.log",
+        "exists": true,
+        "size_bytes": 20094,
+        "lines": 154,
+        "sha256": "83d7801f65a489d73795c2c73986add6a62a491e766b1304ec49d479f2de3bf8",
+        "modified_at": 1774185412.6463559,
+        "kind": "legacy",
+        "sanitized_from_raw": false
+      }
+    ],
+    "branch_dir": "log/baseline",
+    "legacy_log": {
+      "path": "log/baseline/perftest.log",
+      "exists": true,
+      "size_bytes": 20094,
+      "lines": 154,
+      "sha256": "83d7801f65a489d73795c2c73986add6a62a491e766b1304ec49d479f2de3bf8",
+      "modified_at": 1774185412.6463559
     }
   },
   "testing": {
+    "branch": "testing",
     "metadata": {
-      "timestamp": 1753,
+      "timestamp": 1285,
       "cpus": 1,
       "branch": "testing",
       "sched": "RR"
     },
     "results": {
-      "SYS_TOTAL_PAGES": {
-        "avg": 32768,
-        "std": 0,
-        "unit": "pages",
-        "batch": 1,
-        "runs": 1
-      },
-      "SYS_FREE_PAGES": {
-        "avg": 32490,
-        "std": 0,
-        "unit": "pages",
-        "batch": 1,
-        "runs": 1
-      },
-      "COW_NO_ACCESS": {
-        "avg": 7,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 100,
-        "runs": 10
-      },
-      "COW_READONLY": {
-        "avg": 7,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 100,
-        "runs": 10
-      },
-      "COW_PARTIAL": {
-        "avg": 17,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 20,
-        "runs": 10
-      },
-      "COW_FULLWRITE": {
-        "avg": 56,
-        "std": 2,
-        "unit": "ticks",
-        "batch": 20,
-        "runs": 10
-      },
-      "LAZY_SPARSE": {
-        "avg": 2,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 200,
-        "runs": 10
-      },
-      "LAZY_HALF": {
-        "avg": 12,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 50,
-        "runs": 10
-      },
-      "LAZY_FULL": {
-        "avg": 25,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 50,
-        "runs": 10
-      },
       "BUDDY_FRAGMENT": {
-        "avg": 16384,
-        "std": 0,
+        "avg": 16384.0,
+        "std": 0.0,
         "unit": "kb",
         "batch": 1,
-        "runs": 1
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 16384.0,
+        "max": 16384.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          16384.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 16384.0,
+            "std": 0.0,
+            "unit": "kb",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
-      "MMAP_SPARSE": {
-        "avg": 0,
-        "std": 0,
+      "COW_FULLWRITE": {
+        "avg": 44.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 44.0,
+        "max": 44.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          44.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 44.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_NO_ACCESS": {
+        "avg": 5.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 5.0,
+        "max": 5.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          5.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 5.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_PARTIAL": {
+        "avg": 14.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 20,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 14.0,
+        "max": 14.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          14.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 14.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "COW_READONLY": {
+        "avg": 6.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 100,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 6.0,
+        "max": 6.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          6.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 6.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_FULL": {
+        "avg": 19.0,
+        "std": 0.0,
         "unit": "ticks",
         "batch": 50,
-        "runs": 10
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 19.0,
+        "max": 19.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          19.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 19.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_HALF": {
+        "avg": 9.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 50,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 9.0,
+        "max": 9.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          9.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 9.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "LAZY_SPARSE": {
+        "avg": 1.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 200,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 1.0,
+        "max": 1.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          1.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 1.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 200,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
       "MMAP_FULL": {
-        "avg": 25,
-        "std": 2,
+        "avg": 20.0,
+        "std": 0.0,
         "unit": "ticks",
         "batch": 50,
-        "runs": 10
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 20.0,
+        "max": 20.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          20.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 20.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
-      "SCHED_THROUGHPUT_RR": {
-        "avg": 23,
-        "std": 1,
+      "MMAP_SPARSE": {
+        "avg": 2.0,
+        "std": 0.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
-      },
-      "SCHED_THROUGHPUT_FCFS": {
-        "avg": 25,
-        "std": 1,
-        "unit": "ticks",
-        "batch": 10,
-        "runs": 10
-      },
-      "SCHED_THROUGHPUT_SJF": {
-        "avg": 25,
-        "std": 1,
-        "unit": "ticks",
-        "batch": 10,
-        "runs": 10
-      },
-      "SCHED_CONVOY_RR": {
-        "avg": 2,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 400,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 2.0,
+        "max": 2.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          2.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 2.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 400,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
       "SCHED_CONVOY_FCFS": {
-        "avg": 2,
-        "std": 0,
+        "avg": 27.0,
+        "std": 1.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 4,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 27.0,
+        "max": 27.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          27.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 27.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SCHED_CONVOY_RR": {
+        "avg": 4.0,
+        "std": 1.0,
+        "unit": "ticks",
+        "batch": 4,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 4.0,
+        "max": 4.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          4.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 4.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
       "SCHED_CONVOY_SRTF": {
-        "avg": 2,
-        "std": 0,
+        "avg": 27.0,
+        "std": 1.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
-      },
-      "SCHED_FAIRNESS_RR": {
-        "avg": 2,
-        "std": 0,
-        "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 4,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 27.0,
+        "max": 27.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          27.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 27.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
       "SCHED_FAIRNESS_PRIORITY": {
-        "avg": 2,
-        "std": 0,
+        "avg": 120.0,
+        "std": 0.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 120,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 120.0,
+        "max": 120.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          120.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 120.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 120,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
-      "SCHED_FAIRNESS_CFS": {
-        "avg": 2,
-        "std": 0,
+      "SCHED_FAIRNESS_RR": {
+        "avg": 0.0,
+        "std": 0.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 120,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 0.0,
+        "max": 0.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          0.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 0.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 120,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
-      "SCHED_RESPONSE_RR": {
-        "avg": 2,
-        "std": 0,
+      "SCHED_THROUGHPUT_FCFS": {
+        "avg": 36.0,
+        "std": 1.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 6,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 36.0,
+        "max": 36.0,
+        "ci95": 0.0,
+        "inner_std_avg": 1.0,
+        "round_cv_percent": null,
+        "values": [
+          36.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 36.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       },
-      "SCHED_RESPONSE_MLFQ": {
-        "avg": 2,
-        "std": 0,
+      "SCHED_THROUGHPUT_RR": {
+        "avg": 35.0,
+        "std": 0.0,
         "unit": "ticks",
-        "batch": 10,
-        "runs": 10
+        "batch": 6,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 35.0,
+        "max": 35.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          35.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 35.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SCHED_THROUGHPUT_SJF": {
+        "avg": 35.0,
+        "std": 0.0,
+        "unit": "ticks",
+        "batch": 6,
+        "runs": 10,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 35.0,
+        "max": 35.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          35.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 35.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SYS_FREE_PAGES": {
+        "avg": 32490.0,
+        "std": 0.0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 32490.0,
+        "max": 32490.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          32490.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 32490.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
+      },
+      "SYS_TOTAL_PAGES": {
+        "avg": 32768.0,
+        "std": 0.0,
+        "unit": "pages",
+        "batch": 1,
+        "runs": 1,
+        "round_count": 1,
+        "rounds_total": 1,
+        "rounds_present": 1,
+        "invalid_rounds": 0,
+        "min": 32768.0,
+        "max": 32768.0,
+        "ci95": 0.0,
+        "inner_std_avg": 0.0,
+        "round_cv_percent": null,
+        "values": [
+          32768.0
+        ],
+        "per_run": [
+          {
+            "run_id": "run01",
+            "path": "log/testing/runs/run01_raw.log",
+            "avg": 32768.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          }
+        ],
+        "sample_count": 0,
+        "sample_avg": null,
+        "sample_std": 0.0,
+        "sample_ci95": 0.0,
+        "sample_min": null,
+        "sample_max": null,
+        "sample_values": [],
+        "per_run_samples": []
       }
+    },
+    "runs": [
+      {
+        "run_id": "run01",
+        "metadata": {
+          "timestamp": 1285,
+          "cpus": 1,
+          "branch": "testing",
+          "sched": "RR"
+        },
+        "results": {
+          "SYS_TOTAL_PAGES": {
+            "avg": 32768.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          },
+          "SYS_FREE_PAGES": {
+            "avg": 32490.0,
+            "std": 0.0,
+            "unit": "pages",
+            "batch": 1,
+            "runs": 1
+          },
+          "COW_NO_ACCESS": {
+            "avg": 5.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          },
+          "COW_READONLY": {
+            "avg": 6.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 100,
+            "runs": 10
+          },
+          "COW_PARTIAL": {
+            "avg": 14.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          },
+          "COW_FULLWRITE": {
+            "avg": 44.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 20,
+            "runs": 10
+          },
+          "LAZY_SPARSE": {
+            "avg": 1.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 200,
+            "runs": 10
+          },
+          "LAZY_HALF": {
+            "avg": 9.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          },
+          "LAZY_FULL": {
+            "avg": 19.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          },
+          "BUDDY_FRAGMENT": {
+            "avg": 16384.0,
+            "std": 0.0,
+            "unit": "kb",
+            "batch": 1,
+            "runs": 1
+          },
+          "MMAP_SPARSE": {
+            "avg": 2.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 400,
+            "runs": 10
+          },
+          "MMAP_FULL": {
+            "avg": 20.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 50,
+            "runs": 10
+          },
+          "SCHED_THROUGHPUT_RR": {
+            "avg": 35.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          },
+          "SCHED_THROUGHPUT_FCFS": {
+            "avg": 36.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          },
+          "SCHED_THROUGHPUT_SJF": {
+            "avg": 35.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 6,
+            "runs": 10
+          },
+          "SCHED_CONVOY_RR": {
+            "avg": 4.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          },
+          "SCHED_CONVOY_FCFS": {
+            "avg": 27.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          },
+          "SCHED_CONVOY_SRTF": {
+            "avg": 27.0,
+            "std": 1.0,
+            "unit": "ticks",
+            "batch": 4,
+            "runs": 10
+          },
+          "SCHED_FAIRNESS_RR": {
+            "avg": 0.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 120,
+            "runs": 10
+          },
+          "SCHED_FAIRNESS_PRIORITY": {
+            "avg": 120.0,
+            "std": 0.0,
+            "unit": "ticks",
+            "batch": 120,
+            "runs": 10
+          }
+        },
+        "error": null,
+        "source": {
+          "path": "log/testing/runs/run01_raw.log",
+          "exists": true,
+          "size_bytes": 42008,
+          "lines": 256,
+          "sha256": "4508d9feb9dc2713a13cf23bba56646ef46e1fd53fc8f30a307cb63875dbf9ea",
+          "modified_at": 1774233628.3454294,
+          "kind": "raw",
+          "sanitized_from_raw": true
+        },
+        "summary": {
+          "run_id": "run01",
+          "status": "partial",
+          "source_kind": "raw",
+          "path": "log/testing/runs/run01_raw.log",
+          "required_present": 20,
+          "required_total": 23,
+          "missing_required": [
+            "SCHED_FAIRNESS_CFS",
+            "SCHED_RESPONSE_RR",
+            "SCHED_RESPONSE_MLFQ"
+          ],
+          "manifest": {}
+        },
+        "manifest_row": {}
+      }
+    ],
+    "manifest": [],
+    "run_statuses": [
+      {
+        "run_id": "run01",
+        "status": "partial",
+        "source_kind": "raw",
+        "path": "log/testing/runs/run01_raw.log",
+        "required_present": 20,
+        "required_total": 23,
+        "missing_required": [
+          "SCHED_FAIRNESS_CFS",
+          "SCHED_RESPONSE_RR",
+          "SCHED_RESPONSE_MLFQ"
+        ],
+        "manifest": {}
+      }
+    ],
+    "collection_summary": {
+      "runs_total": 1,
+      "complete_runs": 0,
+      "partial_runs": 1,
+      "empty_runs": 0,
+      "raw_only_runs": 1,
+      "manifest_rows": 0,
+      "unique_commits": [],
+      "unique_commands": [],
+      "unique_cpus": []
+    },
+    "source_files": [
+      {
+        "path": "log/testing/runs/run01_raw.log",
+        "exists": true,
+        "size_bytes": 42008,
+        "lines": 256,
+        "sha256": "4508d9feb9dc2713a13cf23bba56646ef46e1fd53fc8f30a307cb63875dbf9ea",
+        "modified_at": 1774233628.3454294,
+        "kind": "raw",
+        "sanitized_from_raw": true
+      }
+    ],
+    "branch_dir": "log/testing",
+    "legacy_log": {
+      "path": "log/testing/perftest.log",
+      "exists": false,
+      "size_bytes": 0,
+      "lines": 0,
+      "sha256": null,
+      "modified_at": null
     }
   },
   "summary": {
     "baseline_valid": 10,
     "baseline_expected": 10,
-    "testing_valid": 23,
+    "baseline_rounds": 1,
+    "testing_valid": 20,
     "testing_expected": 23,
+    "testing_rounds": 1,
     "improvements": {
-      "cow_best_case": 93.39622641509433,
-      "cow_readonly": 93.69369369369369,
-      "cow_partial": 15.0,
-      "cow_fullwrite": -166.66666666666666,
-      "lazy_sparse": 95.74468085106383,
-      "lazy_half": 0.0,
-      "lazy_full": -108.33333333333333,
+      "cow_best_case": 95.37037037037037,
+      "cow_readonly": 94.44444444444444,
+      "cow_partial": 33.333333333333336,
+      "cow_fullwrite": -83.33333333333333,
+      "lazy_sparse": 97.5609756097561,
+      "lazy_half": 18.181818181818183,
+      "lazy_full": -90.0,
       "buddy_fragment": 0.0
     },
-    "scheduler_spread_score": 2.0
-  }
+    "scheduler_spread_score": 43.98148148148148
+  },
+  "quality": {
+    "coverage_percent": 90.91,
+    "repeatability_percent": 0.0,
+    "scheduler_spread_score": 43.98,
+    "stability_score": 71.0,
+    "readiness_score": 54.81,
+    "baseline_rounds_detected": 1,
+    "testing_rounds_detected": 1,
+    "low_resolution_tests": [
+      {
+        "branch": "testing",
+        "test": "LAZY_SPARSE",
+        "avg": 1.0,
+        "std": 0.0
+      },
+      {
+        "branch": "testing",
+        "test": "MMAP_SPARSE",
+        "avg": 2.0,
+        "std": 0.0
+      },
+      {
+        "branch": "testing",
+        "test": "SCHED_FAIRNESS_RR",
+        "avg": 0.0,
+        "std": 0.0
+      }
+    ],
+    "high_variation_tests": [
+      {
+        "branch": "testing",
+        "test": "SCHED_CONVOY_RR",
+        "cv_percent": 25.0
+      }
+    ],
+    "counterexamples": [
+      {
+        "test": "COW_FULLWRITE",
+        "label": "COW Write 100%",
+        "delta_percent": -83.33
+      },
+      {
+        "test": "LAZY_FULL",
+        "label": "Lazy Access 100%",
+        "delta_percent": -90.0
+      }
+    ]
+  },
+  "scheduler_analysis": {
+    "throughput": {
+      "rows": [
+        {
+          "test": "SCHED_THROUGHPUT_RR",
+          "algorithm": "RR",
+          "avg": 35.0,
+          "error_bar": 0.0,
+          "std": 0.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 1
+        },
+        {
+          "test": "SCHED_THROUGHPUT_FCFS",
+          "algorithm": "FCFS",
+          "avg": 36.0,
+          "error_bar": 1.0,
+          "std": 1.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 3
+        },
+        {
+          "test": "SCHED_THROUGHPUT_SJF",
+          "algorithm": "SJF",
+          "avg": 35.0,
+          "error_bar": 0.0,
+          "std": 0.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 2
+        }
+      ],
+      "winner": "RR",
+      "spread_percent": 2.7777777777777777
+    },
+    "convoy": {
+      "rows": [
+        {
+          "test": "SCHED_CONVOY_RR",
+          "algorithm": "RR",
+          "avg": 4.0,
+          "error_bar": 1.0,
+          "std": 1.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 1
+        },
+        {
+          "test": "SCHED_CONVOY_FCFS",
+          "algorithm": "FCFS",
+          "avg": 27.0,
+          "error_bar": 1.0,
+          "std": 1.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 2
+        },
+        {
+          "test": "SCHED_CONVOY_SRTF",
+          "algorithm": "SRTF",
+          "avg": 27.0,
+          "error_bar": 1.0,
+          "std": 1.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 3
+        }
+      ],
+      "winner": "RR",
+      "spread_percent": 85.18518518518519
+    },
+    "fairness": {
+      "rows": [
+        {
+          "test": "SCHED_FAIRNESS_RR",
+          "algorithm": "RR",
+          "avg": 0.0,
+          "error_bar": 0.0,
+          "std": 0.0,
+          "unit": "ticks",
+          "round_count": 1
+        },
+        {
+          "test": "SCHED_FAIRNESS_PRIORITY",
+          "algorithm": "PRIORITY",
+          "avg": 120.0,
+          "error_bar": 0.0,
+          "std": 0.0,
+          "unit": "ticks",
+          "round_count": 1,
+          "rank": 1
+        },
+        {
+          "test": "SCHED_FAIRNESS_CFS",
+          "algorithm": "CFS",
+          "avg": 0,
+          "error_bar": 0,
+          "std": 0,
+          "unit": "ticks",
+          "round_count": 0
+        }
+      ],
+      "winner": "PRIORITY",
+      "spread_percent": 0.0
+    },
+    "response": {
+      "rows": [
+        {
+          "test": "SCHED_RESPONSE_RR",
+          "algorithm": "RR",
+          "avg": 0,
+          "error_bar": 0,
+          "std": 0,
+          "unit": "ticks",
+          "round_count": 0
+        },
+        {
+          "test": "SCHED_RESPONSE_MLFQ",
+          "algorithm": "MLFQ",
+          "avg": 0,
+          "error_bar": 0,
+          "std": 0,
+          "unit": "ticks",
+          "round_count": 0
+        }
+      ],
+      "winner": null,
+      "spread_percent": 0.0
+    }
+  },
+  "artifacts": {
+    "results_json": "webui/data/results.json",
+    "results_long_csv": "webui/data/results_long.csv",
+    "round_results_csv": "webui/data/round_results.csv",
+    "comparison_csv": "webui/data/comparison_summary.csv",
+    "scheduler_csv": "webui/data/scheduler_summary.csv",
+    "report_md": "webui/reports/experiment_report.md",
+    "latex_table": "webui/reports/thesis_memory_table.tex",
+    "figures_dir": "webui/figures"
+  },
+  "recommendations": [
+    "[baseline] add at least 2 more complete round(s) with `./webui/analyze_all.sh collect --rounds 3 --resume` before using the results as formal thesis evidence.",
+    "[testing] add at least 3 more complete round(s) with `./webui/analyze_all.sh collect --rounds 3 --resume` before using the results as formal thesis evidence.",
+    "[testing] keep partial runs (run01) as audit evidence only; do not count them as formal rounds.",
+    "[testing] rerun with `--resume` if you want clean, complete replacements for recovered raw-only runs (run01).",
+    "[testing] increase `LAZY_SPARSE` batch beyond 200 to move it out of the 1-3 tick range.",
+    "[testing] increase `MMAP_SPARSE` batch beyond 400 to move it out of the 1-3 tick range.",
+    "[testing] increase `SCHED_FAIRNESS_RR` batch beyond 120 to move it out of the 1-3 tick range."
+  ]
 }

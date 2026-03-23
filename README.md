@@ -131,42 +131,30 @@ tests/
 #### 数据收集架构
 
 **设计理念：**
-- 内核态数据收集：通过系统调用获取系统状态
-- 用户态数据导出：将数据保存到文件
-- Python 数据分析：解析数据，生成图表
+- baseline / testing 多轮对比
+- memory / scheduler 分离 boot 采集
+- 自动校验 + 自动出图 + 论文产物导出
 
 **架构设计：**
 
 ```
-数据流程：
-xv6 测试程序 → 系统调用 → 日志文件 → Python 解析 → JSON 数据
-
-系统调用：
-├── getstats()           # CPU 统计信息
-├── getsnapshot()        # 系统快照
-├── getptable()          # 进程表
-└── getmemstat()         # 内存统计
-
-数据处理：
-scripts/
-├── collect_data.py      # 收集数据
-├── parse_log.py         # 解析日志
-├── generate_json.py     # 生成 JSON
-└── analyze_data.py      # 数据分析
+实验链路：
+user/perftest.c
+  -> META / RESULT / SAMPLES
+  -> webui/collect_data.sh
+  -> webui/experiment_data.py
+  -> webui/validate_logs.py
+  -> webui/plot_results.py
+  -> webui/data/*.json / *.csv / webui/figures/*.png
 ```
 
-**数据格式：**
+**当前能力：**
 
-```json
-{
-  "timestamp": "2024-01-01 12:00:00",
-  "schedulers": {
-    "DEFAULT": {"cpu_usage": 15, "context_switches": 253},
-    "SJF": {...}
-  },
-  "memory": {"total_pages": 32768, "free_pages": 32491}
-}
-```
+- 多轮 round-level 聚合
+- raw sample-level 数据保留
+- partial run manifest 审计
+- Markdown / CSV / LaTeX 论文产物导出
+- 详见 `docs/architecture/4.数据收集与分析.md` 与 `docs/architecture/模块三/实验框架整改设计.md`
 
 ### 模块四：Web 展示界面
 
@@ -297,8 +285,9 @@ xv6/
 ### 🚧 模块三：实验数据收集与分析
 
 - [x] 数据收集机制
-- [ ] Python 分析脚本
-- [ ] 图表生成
+- [x] Python 分析脚本
+- [x] 图表生成
+- [x] 多轮校验与报告导出
 
 ### 🚧 模块四：Web 展示界面
 

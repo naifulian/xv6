@@ -102,10 +102,20 @@
 /*
  * Default Test Parameters
  */
-#define COW_MEM_SIZE_MB     5       // 5MB for COW tests
-#define LAZY_MEM_SIZE_KB    1024    // 1MB for Lazy tests
-#define MMAP_MEM_SIZE_KB    1024    // 1MB for mmap tests
-#define SCHED_NTASKS        10      // Number of tasks for scheduler tests
+#define COW_MEM_SIZE_MB                 5       // 5MB for COW tests
+#define LAZY_MEM_SIZE_KB                1024    // 1MB for Lazy tests
+#define MMAP_MEM_SIZE_KB                1024    // 1MB for mmap tests
+#define SCHED_NTASKS                    10      // Number of tasks for scheduler tests
+#define SCHED_FAIRNESS_PROCS            3       // Number of CPU-bound tasks in the fairness scenario
+#define SCHED_FAIRNESS_TARGET_PER_PROC  120     // Target CPU service per task before scoring fairness
+#define SCHED_FAIRNESS_TOTAL_TARGET     (SCHED_FAIRNESS_PROCS * SCHED_FAIRNESS_TARGET_PER_PROC)
+#define SCHED_FAIRNESS_TIMEOUT          1200    // Guard timeout; scoring itself is based on CPU service budget
+#define SCHED_FAIRNESS_POLL_TICKS       4       // Poll interval for fairness progress
+#define SCHED_RESPONSE_HOGS             3       // Number of background CPU hogs before interactive tasks arrive
+#define SCHED_RESPONSE_TASKS            6       // Number of interactive tasks in response scenario
+#define SCHED_RESPONSE_BACKGROUND_TARGET 120    // Total background rutime before spawning interactive tasks
+#define SCHED_RESPONSE_BASE_WORK        8000000 // Base interactive workload
+#define SCHED_RESPONSE_WORK_STEP        1500000 // Extra work added to later interactive tasks
 
 /*
  * Batch sizes for different tests
@@ -116,11 +126,11 @@
 #define BATCH_COW_PARTIAL       20
 #define BATCH_COW_FULLWRITE     20
 
-#define BATCH_LAZY_SPARSE       200
+#define BATCH_LAZY_SPARSE       800
 #define BATCH_LAZY_HALF         50
 #define BATCH_LAZY_FULL         50
 
-#define BATCH_MMAP_SPARSE       400
+#define BATCH_MMAP_SPARSE       800
 #define BATCH_MMAP_FULL         50
 
 #endif /* _PERFTEST_H_ */

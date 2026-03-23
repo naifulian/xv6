@@ -23,3 +23,5 @@ docs/
 log/
 webui/figures
 webui/data
+webui/reports
+webui/__pycache__
