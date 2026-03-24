@@ -24,11 +24,9 @@
 #define ASSERT_NE(a, b, msg) \
     do { if((a) == (b)) { printf("  FAIL: %s (both %d)\n", msg, (a)); exit(1); } } while(0)
 
-// Wait status macros (for wait() system call)
-#define WIFEXITED(status)  (((status) & 0x7f) == 0)
-#define WEXITSTATUS(status) (((status) >> 8) & 0xff)
-#define WIFSIGNALED(status) ((((status) & 0x7f) + 1) > 0 && (((status) & 0x7f) + 1) < 0x7f)
-#define WTERMSIG(status) ((status) & 0x7f)
+// xv6 wait() returns the child's raw exit code directly.
+#define XV6_WAIT_SUCCESS(status) ((status) == 0)
+#define XV6_WAIT_CODE(status)    (status)
 
 // Test case structure
 struct test_case {

@@ -124,16 +124,18 @@ int run_test(int index) {
     } else if(pid > 0) {
         // Parent: wait for child
         int status;
-        wait(&status);
+        int waited = wait(&status);
 
-        if(WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+        if(waited < 0) {
+            printf("Result: FAILED (wait returned %d)\n", waited);
+            return 1;
+        }
+
+        if(XV6_WAIT_SUCCESS(status)) {
             printf("Result: PASSED\n");
             return 0;
-        } else if(WIFSIGNALED(status)) {
-            printf("Result: FAILED (killed by signal %d)\n", WTERMSIG(status));
-            return 1;
         } else {
-            printf("Result: FAILED (exit status %d)\n", WEXITSTATUS(status));
+            printf("Result: FAILED (exit status %d)\n", XV6_WAIT_CODE(status));
             return 1;
         }
     } else {

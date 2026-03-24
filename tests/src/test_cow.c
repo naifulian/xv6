@@ -58,12 +58,14 @@ void test_cow_fork_exec(void) {
     printf("  OK: all children exited\n");
     printf("  RESULT: COW faults=%d, pages copied=%d\n", cow_faults, cow_copies);
 
-    // Assertion: COW should not copy pages for exec-only children
-    if(cow_copies == 0) {
-        printf("  PASS: COW worked - no pages copied for exec-only children\n");
-    } else {
-        printf("  INFO: %d pages were copied (some exec overhead)\n", cow_copies);
+    int max_exec_overhead = count * 4;
+    if(cow_faults > max_exec_overhead || cow_copies > max_exec_overhead) {
+        printf("  FAIL: exec-only children triggered excessive COW faults=%d copies=%d\n", cow_faults, cow_copies);
+        sbrk(-1024 * 1024);
+        exit(1);
     }
+    printf("  PASS: exec-only children stayed within small COW overhead (%d/%d)\n",
+           cow_copies, max_exec_overhead);
 
     sbrk(-1024 * 1024);  // Free memory
 }
@@ -141,13 +143,13 @@ void test_cow_partial_write(void) {
     }
     printf("  OK: parent data unchanged (COW works)\n");
 
-    // Assertion: COW copies should be approximately write_pages * count
     int expected_copies = write_pages * count;
-    if(cow_copies >= expected_copies * 0.8 && cow_copies <= expected_copies * 1.2) {
-        printf("  PASS: COW copied ~%d pages (expected ~%d)\n", cow_copies, expected_copies);
-    } else {
-        printf("  INFO: COW copied %d pages (expected ~%d)\n", cow_copies, expected_copies);
+    if(cow_copies * 5 < expected_copies * 4 || cow_copies * 5 > expected_copies * 6) {
+        printf("  FAIL: COW copied %d pages (expected about %d)\n", cow_copies, expected_copies);
+        sbrk(-1024 * 1024);
+        exit(1);
     }
+    printf("  PASS: COW copied about %d pages as expected\n", expected_copies);
 
     sbrk(-1024 * 1024);
 }
@@ -222,10 +224,13 @@ void test_cow_full_write(void) {
     }
     printf("  OK: parent data unchanged (COW works)\n");
 
-    // Assertion: In worst case, all pages should be copied
     int expected_copies = 64 * count;
-    printf("  INFO: COW worst case - copied %d pages (expected ~%d)\n", cow_copies, expected_copies);
-    printf("  NOTE: This is COW worst case - no memory savings\n");
+    if(cow_copies * 5 < expected_copies * 4 || cow_copies * 5 > expected_copies * 6) {
+        printf("  FAIL: COW worst case copied %d pages (expected about %d)\n", cow_copies, expected_copies);
+        sbrk(-256 * 1024);
+        exit(1);
+    }
+    printf("  PASS: COW worst case copied about %d pages as expected\n", expected_copies);
 
     sbrk(-256 * 1024);
 }
@@ -299,12 +304,12 @@ void test_cow_multiple_forks(void) {
     }
     printf("  OK: parent data unchanged (COW works)\n");
 
-    // Assertion: No COW copies should occur for read-only children
-    if(cow_copies == 0) {
-        printf("  PASS: COW optimal - no pages copied for %d read-only forks\n", count);
-    } else {
-        printf("  INFO: %d pages were copied (some overhead)\n", cow_copies);
+    if(cow_faults != 0 || cow_copies != 0) {
+        printf("  FAIL: read-only forks triggered COW faults=%d copies=%d\n", cow_faults, cow_copies);
+        sbrk(-512 * 1024);
+        exit(1);
     }
+    printf("  PASS: read-only forks triggered no COW copies\n");
 
     sbrk(-512 * 1024);
 }
@@ -343,7 +348,13 @@ void test_cow_fork_exec_chain(void) {
     int cow_copies = after.cow_copy_pages - copy_before;
 
     printf("  RESULT: COW faults=%d, pages copied=%d\n", cow_faults, cow_copies);
-    printf("  OK: fork+exec chain test completed\n");
+    int max_exec_overhead = count * 4;
+    if(cow_faults > max_exec_overhead || cow_copies > max_exec_overhead) {
+        printf("  FAIL: fork+exec chain triggered excessive COW faults=%d copies=%d\n", cow_faults, cow_copies);
+        exit(1);
+    }
+    printf("  PASS: fork+exec chain stayed within small COW overhead (%d/%d)\n",
+           cow_copies, max_exec_overhead);
 }
 
 // Test case: memory sharing with fork
@@ -419,10 +430,17 @@ void test_cow_memory_sharing(void) {
     }
     printf("  OK: all %d pages unchanged (COW works)\n", pages);
 
-    // Memory should be reclaimed after children exit
-    if(free_after >= free_before) {
-        printf("  PASS: memory properly reclaimed after children exit\n");
+    if(free_after < free_before) {
+        printf("  FAIL: memory was not fully reclaimed after children exit (%d -> %d)\n", free_before, free_after);
+        sbrk(-size);
+        exit(1);
     }
+    if(cow_faults != 0 || cow_copies != 0) {
+        printf("  FAIL: read-only sharing triggered COW faults=%d copies=%d\n", cow_faults, cow_copies);
+        sbrk(-size);
+        exit(1);
+    }
+    printf("  PASS: memory sharing stayed copy-free and was fully reclaimed\n");
 
     sbrk(-size);
 }
