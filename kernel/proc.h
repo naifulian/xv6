@@ -41,11 +41,11 @@ extern struct cpu cpus[NCPU];
 // return-to-user path via usertrapret() doesn't return through
 // the entire kernel call stack.
 struct trapframe {
-  /*   0 */ uint64 kernel_satp;   // kernel page table
-  /*   8 */ uint64 kernel_sp;     // top of process's kernel stack
-  /*  16 */ uint64 kernel_trap;   // usertrap()
-  /*  24 */ uint64 epc;           // saved user program counter
-  /*  32 */ uint64 kernel_hartid; // saved kernel tp
+  /*   0 */ uint64 kernel_satp;
+  /*   8 */ uint64 kernel_sp;
+  /*  16 */ uint64 kernel_trap;
+  /*  24 */ uint64 epc;
+  /*  32 */ uint64 kernel_hartid;
   /*  40 */ uint64 ra;
   /*  48 */ uint64 sp;
   /*  56 */ uint64 gp;
@@ -81,38 +81,50 @@ struct trapframe {
 
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+#define NVMA 16
+
+struct vma {
+  uint64 addr;
+  uint64 length;
+  int prot;
+  int flags;
+  int valid;
+};
+
 // Per-process state
 struct proc {
   struct spinlock lock;
 
   // p->lock must be held when using these:
-  enum procstate state;        // Process state
-  void *chan;                  // If non-zero, sleeping on chan
-  int killed;                  // If non-zero, have been killed
-  int xstate;                  // Exit status to be returned to parent's wait
-  int pid;                     // Process ID
+  enum procstate state;
+  void *chan;
+  int killed;
+  int xstate;
+  int pid;
 
   // wait_lock must be held when using this:
-  struct proc *parent;         // Parent process
+  struct proc *parent;
 
   // these are private to the process, so p->lock need not be held.
-  uint64 kstack;               // Virtual address of kernel stack
-  uint64 sz;                   // Size of process memory (bytes)
-  pagetable_t pagetable;       // User page table
-  struct trapframe *trapframe; // data page for trampoline.S
-  struct context context;      // swtch() here to run process
-  struct file *ofile[NOFILE];  // Open files
-  struct inode *cwd;           // Current directory
-  char name[16];               // Process name (debugging)
+  uint64 kstack;
+  uint64 sz;
+  uint64 heap_end;
+  pagetable_t pagetable;
+  struct trapframe *trapframe;
+  struct context context;
+  struct file *ofile[NOFILE];
+  struct inode *cwd;
+  char name[16];
+  struct vma vmas[NVMA];
 
   // Scheduler-related fields (for new scheduling algorithms)
-  int priority;                // Process priority (1-20 for PRIORITY, 1-3 for SML)
-  int tickets;                 // Lottery tickets (default 1)
-  uint64 ctime;                // Process creation time (in ticks, for FCFS)
-  int rutime;                  // Running time (clock ticks)
-  int retime;                  // Ready/waiting time (clock ticks)
-  int stime;                   // Sleeping time (clock ticks)
-  int sched_class;             // SML queue class (1=high, 2=medium, 3=low)
+  int priority;
+  int tickets;
+  uint64 ctime;
+  int rutime;
+  int retime;
+  int stime;
+  int sched_class;
 };
 
 extern struct proc proc[NPROC];

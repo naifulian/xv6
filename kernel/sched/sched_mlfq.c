@@ -1,8 +1,5 @@
 // MLFQ (Multi-Level Feedback Queue) scheduler
 // Multi-level queue with dynamic priority adjustment
-// New processes start at highest priority
-// Processes demoted after using time slice
-// I/O-bound processes promoted (interactive tasks)
 
 #include "kernel/types.h"
 #include "kernel/param.h"
@@ -25,16 +22,15 @@ static void
 mlfq_proc_init(struct proc *p)
 {
   if(p == 0) {
-    for(int i = 0; i < NQUEUE; i++) {
+    for(int i = 0; i < NQUEUE; i++)
       rr_index[i] = 0;
-    }
     for(int i = 0; i < NPROC; i++) {
       queue_level[i] = DEFAULT_QUEUE_LEVEL;
       time_in_queue[i] = 0;
     }
     return;
   }
-  
+
   int idx = p - proc;
   queue_level[idx] = DEFAULT_QUEUE_LEVEL;
   time_in_queue[idx] = 0;
@@ -45,20 +41,18 @@ mlfq_pick_next(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  
+
   for(int q = 0; q < NQUEUE; q++) {
     for(int i = 0; i < NPROC; i++) {
       int idx = (rr_index[q] + i) % NPROC;
       p = &proc[idx];
-      
+
       acquire(&p->lock);
       if(p->state == RUNNABLE && queue_level[idx] == q) {
         rr_index[q] = (idx + 1) % NPROC;
-        
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
-        
         c->proc = 0;
         release(&p->lock);
         return p;
@@ -66,46 +60,50 @@ mlfq_pick_next(void)
       release(&p->lock);
     }
   }
-  
+
   return 0;
 }
 
-void
-mlfq_timeslice_end(struct proc *p)
+static void
+mlfq_proc_tick(struct proc *p)
 {
-  if(p == 0) return;
-  
+  if(p == 0)
+    return;
+
   int idx = p - proc;
-  if(queue_level[idx] < NQUEUE - 1) {
-    queue_level[idx]++;
+  int level = queue_level[idx];
+  if(level < 0 || level >= NQUEUE)
+    return;
+
+  time_in_queue[idx]++;
+  if(time_in_queue[idx] >= timeslice[level]) {
+    if(queue_level[idx] < NQUEUE - 1)
+      queue_level[idx]++;
+    time_in_queue[idx] = 0;
   }
-  time_in_queue[idx] = 0;
 }
 
-void
-mlfq_boost_priority(struct proc *p)
+static void
+mlfq_proc_wakeup(struct proc *p)
 {
-  if(p == 0) return;
-  
+  if(p == 0)
+    return;
+
   int idx = p - proc;
-  if(queue_level[idx] > 0) {
+  if(queue_level[idx] > 0)
     queue_level[idx]--;
-  }
-}
-
-int
-mlfq_get_timeslice(struct proc *p)
-{
-  if(p == 0) return timeslice[0];
-  
-  int idx = p - proc;
-  return timeslice[queue_level[idx]];
+  time_in_queue[idx] = 0;
 }
 
 static void
 mlfq_proc_exit(struct proc *p)
 {
-  if(p == 0) return;
+  if(p == 0)
+    return;
+
+  int idx = p - proc;
+  queue_level[idx] = DEFAULT_QUEUE_LEVEL;
+  time_in_queue[idx] = 0;
 }
 
 struct sched_ops mlfq_ops = {
@@ -113,4 +111,6 @@ struct sched_ops mlfq_ops = {
   .proc_init = mlfq_proc_init,
   .pick_next = mlfq_pick_next,
   .proc_exit = mlfq_proc_exit,
+  .proc_tick = mlfq_proc_tick,
+  .proc_wakeup = mlfq_proc_wakeup,
 };

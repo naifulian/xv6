@@ -36,11 +36,14 @@ proc_mapstacks(pagetable_t kpgtbl)
   struct proc *p;
   
   for(p = proc; p < &proc[NPROC]; p++) {
-    char *pa = kalloc();
-    if(pa == 0)
-      panic("kalloc");
-    uint64 va = KSTACK((int) (p - proc));
-    kvmmap(kpgtbl, va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
+    uint64 va = KSTACK((int)(p - proc));
+
+    for(int i = 0; i < KSTACK_PAGES; i++) {
+      char *pa = kalloc();
+      if(pa == 0)
+        panic("kalloc");
+      kvmmap(kpgtbl, va + i * PGSIZE, (uint64)pa, PGSIZE, PTE_R | PTE_W);
+    }
   }
 }
 
@@ -90,6 +93,54 @@ myproc(void)
   return p;
 }
 
+void
+proc_vm_init(struct proc *p)
+{
+  p->heap_end = 0;
+  memset(p->vmas, 0, sizeof(p->vmas));
+}
+
+struct vma*
+proc_find_vma(struct proc *p, uint64 va)
+{
+  for(int i = 0; i < NVMA; i++) {
+    if(p->vmas[i].valid == 0)
+      continue;
+    if(va >= p->vmas[i].addr && va < p->vmas[i].addr + p->vmas[i].length)
+      return &p->vmas[i];
+  }
+  return 0;
+}
+
+uint64
+proc_mmap_limit(struct proc *p)
+{
+  uint64 limit = TRAPFRAME;
+
+  for(int i = 0; i < NVMA; i++) {
+    if(p->vmas[i].valid && p->vmas[i].addr < limit)
+      limit = p->vmas[i].addr;
+  }
+
+  return limit;
+}
+
+uint64
+proc_vm_top(struct proc *p)
+{
+  uint64 top = p->heap_end;
+
+  for(int i = 0; i < NVMA; i++) {
+    if(p->vmas[i].valid) {
+      uint64 end = p->vmas[i].addr + p->vmas[i].length;
+      if(end > top)
+        top = end;
+    }
+  }
+
+  return top;
+}
+
 int
 allocpid()
 {
@@ -134,6 +185,8 @@ found:
   p->retime = 0;
   p->stime = 0;
   p->sched_class = DEFAULT_SML_CLASS;
+  proc_vm_init(p);
+  sched_proc_init_hook(p);
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -154,7 +207,7 @@ found:
   // which returns to user space.
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
-  p->context.sp = p->kstack + PGSIZE;
+  p->context.sp = p->kstack + KSTACK_PAGES * PGSIZE;
   
   sched_proc_created();
 
@@ -174,6 +227,7 @@ freeproc(struct proc *p)
     proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
   p->sz = 0;
+  proc_vm_init(p);
   p->pid = 0;
   p->parent = 0;
   p->name[0] = 0;
@@ -248,21 +302,30 @@ userinit(void)
 int
 growproc(int n)
 {
-  uint64 sz;
   struct proc *p = myproc();
+  uint64 old_heap = p->heap_end;
+  uint64 new_heap;
 
-  sz = p->sz;
   if(n > 0){
-    if(sz + n > TRAPFRAME) {
+    new_heap = old_heap + n;
+    if(new_heap < old_heap)
       return -1;
-    }
-    if((sz = uvmalloc(p->pagetable, sz, sz + n, PTE_W)) == 0) {
+    if(new_heap > proc_mmap_limit(p))
       return -1;
-    }
+    if(uvmalloc(p->pagetable, old_heap, new_heap, PTE_W) == 0)
+      return -1;
+    p->heap_end = new_heap;
+    if(new_heap > p->sz)
+      p->sz = new_heap;
   } else if(n < 0){
-    sz = uvmdealloc(p->pagetable, sz, sz + n);
+    uint64 shrink = (uint64)(-n);
+    if(shrink > old_heap)
+      return -1;
+    new_heap = old_heap - shrink;
+    p->heap_end = uvmdealloc(p->pagetable, old_heap, new_heap);
+    p->sz = proc_vm_top(p);
   }
-  p->sz = sz;
+
   return 0;
 }
 
@@ -287,6 +350,8 @@ kfork(void)
     return -1;
   }
   np->sz = p->sz;
+  np->heap_end = p->heap_end;
+  memmove(np->vmas, p->vmas, sizeof(p->vmas));
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
@@ -367,9 +432,10 @@ kexit(int status)
   
   acquire(&p->lock);
 
+  sched_proc_exit_hook(p);
   p->xstate = status;
   p->state = ZOMBIE;
-  
+
   sched_proc_exited();
 
   release(&wait_lock);
@@ -580,6 +646,7 @@ wakeup(void *chan)
       acquire(&p->lock);
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
+        sched_proc_wakeup_hook(p);
       }
       release(&p->lock);
     }

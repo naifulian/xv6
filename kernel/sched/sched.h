@@ -4,48 +4,45 @@
 #ifndef SCHED_H
 #define SCHED_H
 
-#include "kernel/types.h"  // For uint64, int types
-#include "kernel/param.h"  // For NPROC
+#include "kernel/types.h"
+#include "kernel/param.h"
 
-// Forward declaration to avoid circular dependency
 struct proc;
 
-// Scheduling policy enumeration
 enum sched_policy {
-    SCHED_DEFAULT,    // Round-Robin (default)
-    SCHED_FCFS,       // First-Come-First-Served
-    SCHED_PRIORITY,   // Priority Scheduling
-    SCHED_SML,        // Static Multilevel Queue
-    SCHED_LOTTERY,    // Lottery Scheduling
-    SCHED_SJF,        // Shortest Job First (新增)
-    SCHED_SRTF,       // Shortest Remaining Time First (新增)
-    SCHED_MLFQ,       // Multi-Level Feedback Queue (新增)
-    SCHED_CFS,        // Completely Fair Scheduler (新增)
+    SCHED_DEFAULT,
+    SCHED_FCFS,
+    SCHED_PRIORITY,
+    SCHED_SML,
+    SCHED_LOTTERY,
+    SCHED_SJF,
+    SCHED_SRTF,
+    SCHED_MLFQ,
+    SCHED_CFS,
 };
 
-// Scheduler operations interface (Strategy Pattern)
 struct sched_ops {
     const char *name;
-    // Process initialization hook (optional, can be NULL)
     void (*proc_init)(struct proc *p);
-    // Select next process to run (required)
     struct proc* (*pick_next)(void);
-    // Process exit cleanup hook (optional, can be NULL)
     void (*proc_exit)(struct proc *p);
+    void (*proc_tick)(struct proc *p);
+    void (*proc_wakeup)(struct proc *p);
 };
 
-// Global variables (defined in sched.c)
-extern enum sched_policy current_policy;  // Current scheduling policy
-extern struct sched_ops *current_ops;     // Current scheduler operations
+extern enum sched_policy current_policy;
+extern struct sched_ops *current_ops;
 
-// Core scheduler functions
 void sched_init(void);
 struct proc* sched_pick_next(void);
 void sched_update_stats(void);
 int sched_set_policy(int policy);
 const char* sched_policy_name(int policy);
+void sched_proc_init_hook(struct proc *p);
+void sched_proc_exit_hook(struct proc *p);
+void sched_proc_tick_hook(struct proc *p);
+void sched_proc_wakeup_hook(struct proc *p);
 
-// CPU statistics functions
 void sched_stats_init(void);
 void sched_tick(void);
 void sched_idle_tick(void);
@@ -56,15 +53,14 @@ void sched_proc_exited(void);
 void sched_syscall(void);
 int sys_getstats_kernel(void);
 
-// Default values for scheduler fields
-#define DEFAULT_PRIORITY    10    // Default priority for PRIORITY scheduler
-#define DEFAULT_SML_CLASS    2    // Default class for SML scheduler (medium)
-#define DEFAULT_TICKETS      1    // Default tickets for LOTTERY scheduler
-#define MIN_PRIORITY         1    // Minimum priority value (highest priority)
-#define MAX_PRIORITY         20   // Maximum priority value (lowest priority)
-#define MIN_SML_CLASS        1    // Minimum SML class (highest priority)
-#define MAX_SML_CLASS        3    // Maximum SML class (lowest priority)
-#define MIN_TICKETS          1    // Minimum tickets
-#define MAX_TICKETS          100  // Maximum tickets
+#define DEFAULT_PRIORITY    10
+#define DEFAULT_SML_CLASS    2
+#define DEFAULT_TICKETS      1
+#define MIN_PRIORITY         1
+#define MAX_PRIORITY         20
+#define MIN_SML_CLASS        1
+#define MAX_SML_CLASS        3
+#define MIN_TICKETS          1
+#define MAX_TICKETS          100
 
-#endif // SCHED_H
+#endif

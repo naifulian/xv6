@@ -1,6 +1,5 @@
 // Core scheduler module for xv6-riscv
 // Supports runtime dynamic switching between scheduling algorithms
-// Similar to Linux scheduler architecture
 
 #include "kernel/types.h"
 #include "kernel/param.h"
@@ -11,25 +10,21 @@
 #include "kernel/sched/sched.h"
 #include "kernel/defs.h"
 
-// Lock for scheduler policy switching
 static struct spinlock sched_lock;
 
-// Current active scheduling policy
 enum sched_policy current_policy = SCHED_DEFAULT;
-struct sched_ops *current_ops = 0;  // Will be set in sched_init()
+struct sched_ops *current_ops = 0;
 
-// Forward declarations for each scheduler's operations
-extern struct sched_ops default_ops;   // sched_default.c
-extern struct sched_ops fcfs_ops;      // sched_fcfs.c
-extern struct sched_ops priority_ops;  // sched_priority.c
-extern struct sched_ops sml_ops;       // sched_sml.c
-extern struct sched_ops lottery_ops;   // sched_lottery.c
-extern struct sched_ops sjf_ops;       // sched_sjf.c
-extern struct sched_ops srtf_ops;      // sched_srtf.c
-extern struct sched_ops mlfq_ops;      // sched_mlfq.c
-extern struct sched_ops cfs_ops;       // sched_cfs.c
+extern struct sched_ops default_ops;
+extern struct sched_ops fcfs_ops;
+extern struct sched_ops priority_ops;
+extern struct sched_ops sml_ops;
+extern struct sched_ops lottery_ops;
+extern struct sched_ops sjf_ops;
+extern struct sched_ops srtf_ops;
+extern struct sched_ops mlfq_ops;
+extern struct sched_ops cfs_ops;
 
-// Scheduler operations table (maps policy to implementation)
 static struct sched_ops* sched_ops_table[SCHED_CFS + 1] = {
     [SCHED_DEFAULT]  = &default_ops,
     [SCHED_FCFS]     = &fcfs_ops,
@@ -42,62 +37,92 @@ static struct sched_ops* sched_ops_table[SCHED_CFS + 1] = {
     [SCHED_CFS]      = &cfs_ops,
 };
 
-// Initialize the scheduler subsystem
-// Called from main() during kernel initialization
+static void
+sched_init_policy_state(struct sched_ops *ops)
+{
+  if(ops == 0 || ops->proc_init == 0)
+    return;
+
+  ops->proc_init(0);
+  for(struct proc *p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    int active = p->state != UNUSED;
+    release(&p->lock);
+    if(active)
+      ops->proc_init(p);
+  }
+}
+
 void
 sched_init(void)
 {
-  // Initialize the scheduler lock
   initlock(&sched_lock, "sched");
-
-  // Set initial policy to DEFAULT (Round-Robin)
   current_policy = SCHED_DEFAULT;
   current_ops = &default_ops;
-
-  // Call proc_init hook for default scheduler
-  if(current_ops->proc_init) {
-    current_ops->proc_init(0);
-  }
+  sched_init_policy_state(current_ops);
 }
 
-// Select the next process to run
-// Delegates to the current scheduler's pick_next() function
-// Returns the selected process with its lock held
 struct proc*
 sched_pick_next(void)
 {
-  if(current_ops && current_ops->pick_next) {
-    return current_ops->pick_next();
-  }
-  // Should never happen if sched_init() was called
+  struct sched_ops *ops = current_ops;
+  if(ops && ops->pick_next)
+    return ops->pick_next();
   panic("sched_pick_next: no scheduler operations");
 }
 
-// Switch to a different scheduling policy at runtime
-// Similar to Linux's sched_setScheduler() system call
 int
 sched_set_policy(int policy)
 {
-  // Validate policy number
-  if(policy < 0 || policy > SCHED_CFS) {
+  struct sched_ops *new_ops;
+
+  if(policy < 0 || policy > SCHED_CFS)
     return -1;
-  }
+  new_ops = sched_ops_table[policy];
+  if(new_ops == 0)
+    return -1;
 
-  // Check if the scheduler is implemented
-  if(sched_ops_table[policy] == 0) {
-    return -1;  // Policy not yet implemented
-  }
+  sched_init_policy_state(new_ops);
 
-  // Switch to new policy with lock protection
   acquire(&sched_lock);
   current_policy = policy;
-  current_ops = sched_ops_table[policy];
+  current_ops = new_ops;
   release(&sched_lock);
-
   return 0;
 }
 
-// Get the name of a scheduling policy
+void
+sched_proc_init_hook(struct proc *p)
+{
+  struct sched_ops *ops = current_ops;
+  if(ops && ops->proc_init)
+    ops->proc_init(p);
+}
+
+void
+sched_proc_exit_hook(struct proc *p)
+{
+  struct sched_ops *ops = current_ops;
+  if(ops && ops->proc_exit)
+    ops->proc_exit(p);
+}
+
+void
+sched_proc_tick_hook(struct proc *p)
+{
+  struct sched_ops *ops = current_ops;
+  if(ops && ops->proc_tick)
+    ops->proc_tick(p);
+}
+
+void
+sched_proc_wakeup_hook(struct proc *p)
+{
+  struct sched_ops *ops = current_ops;
+  if(ops && ops->proc_wakeup)
+    ops->proc_wakeup(p);
+}
+
 const char*
 sched_policy_name(int policy)
 {

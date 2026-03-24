@@ -18,6 +18,16 @@ struct memstat {
   uint cow_copy_pages;
 };
 
+static int
+alloc_vma_slot(struct proc *p)
+{
+  for(int i = 0; i < NVMA; i++) {
+    if(p->vmas[i].valid == 0)
+      return i;
+  }
+  return -1;
+}
+
 uint64
 sys_exit(void)
 {
@@ -50,27 +60,27 @@ sys_wait(void)
 uint64
 sys_sbrk(void)
 {
-  uint64 addr;
+  struct proc *p = myproc();
+  uint64 addr = p->heap_end;
+  uint64 new_heap;
   int t;
   int n;
 
   argint(0, &n);
   argint(1, &t);
-  addr = myproc()->sz;
 
   if(t == SBRK_EAGER || n < 0) {
-    if(growproc(n) < 0) {
+    if(growproc(n) < 0)
       return -1;
-    }
   } else {
-    // Lazily allocate memory for this process: increase its memory
-    // size but don't allocate memory. If the processes uses the
-    // memory, vmfault() will allocate it.
-    if(addr + n < addr)
+    new_heap = addr + n;
+    if(new_heap < addr)
       return -1;
-    if(addr + n > TRAPFRAME)
+    if(new_heap > proc_mmap_limit(p))
       return -1;
-    myproc()->sz += n;
+    p->heap_end = new_heap;
+    if(new_heap > p->sz)
+      p->sz = new_heap;
   }
   return addr;
 }
@@ -106,8 +116,6 @@ sys_kill(void)
   return kkill(pid);
 }
 
-// return how many clock tick interrupts have occurred
-// since start.
 uint64
 sys_uptime(void)
 {
@@ -119,32 +127,23 @@ sys_uptime(void)
   return xticks;
 }
 
-// Set the scheduling policy
-// Argument: policy number (0=DEFAULT, 1=FCFS, 2=PRIORITY, 3=SML, 4=LOTTERY)
 uint64
 sys_setscheduler(void)
 {
   int policy;
 
   argint(0, &policy);
-
   if(sched_set_policy(policy) < 0)
     return -1;
-
   return 0;
 }
 
-// Get the current scheduling policy
-// Returns: policy number
 uint64
 sys_getscheduler(void)
 {
   return current_policy;
 }
 
-// mmap system call
-// Simplified version: supports MAP_ANONYMOUS | MAP_PRIVATE only
-// Parameters: addr (ignored), length, prot, flags, fd (ignored), offset (ignored)
 uint64
 sys_mmap(void)
 {
@@ -158,40 +157,41 @@ sys_mmap(void)
   argaddr(4, &fd);
   argaddr(5, &offset);
 
-  // Only support MAP_ANONYMOUS | MAP_PRIVATE for now
-  if((flags & 0x02) == 0)  // MAP_PRIVATE = 0x02
+  if((flags & MAP_PRIVATE) == 0 || (flags & MAP_ANONYMOUS) == 0)
     return -1;
-  if((flags & 0x20) == 0)  // MAP_ANONYMOUS = 0x20
+  if(fd != (uint64)-1 || offset != 0)
     return -1;
-
-  // Check length
+  if((prot & (PROT_READ | PROT_WRITE)) == 0)
+    return -1;
   if(length == 0)
     return 0;
 
-  // Align to page boundary
   length = PGROUNDUP(length);
-
-  // Find a valid virtual address (after current sz)
-  uint64 new_addr = p->sz;
-
-  // Check for overflow
-  if(new_addr + length > MAXVA)
+  int slot = alloc_vma_slot(p);
+  if(slot < 0)
     return -1;
 
-  // Lazy allocation: just update process size, don't allocate physical pages yet
-  // Pages will be allocated on demand (page fault) via vmfault()
-  p->sz += length;
+  uint64 new_addr = PGROUNDUP(p->sz);
+  if(new_addr + length > TRAPFRAME)
+    return -1;
+
+  p->vmas[slot].addr = new_addr;
+  p->vmas[slot].length = length;
+  p->vmas[slot].prot = (int)prot;
+  p->vmas[slot].flags = (int)flags;
+  p->vmas[slot].valid = 1;
+  p->sz = new_addr + length;
 
   return new_addr;
 }
 
-// munmap system call
-// Parameters: addr, length
 uint64
 sys_munmap(void)
 {
   uint64 addr, length;
   struct proc *p = myproc();
+  struct vma *vma = 0;
+  int split_slot = -1;
 
   argaddr(0, &addr);
   argaddr(1, &length);
@@ -202,18 +202,51 @@ sys_munmap(void)
   addr = PGROUNDDOWN(addr);
   length = PGROUNDUP(length);
 
-  if(addr >= p->sz || addr + length > p->sz)
+  for(int i = 0; i < NVMA; i++) {
+    if(p->vmas[i].valid == 0)
+      continue;
+    uint64 start = p->vmas[i].addr;
+    uint64 end = start + p->vmas[i].length;
+    if(addr >= start && addr + length <= end) {
+      vma = &p->vmas[i];
+      if(addr > start && addr + length < end) {
+        split_slot = alloc_vma_slot(p);
+        if(split_slot < 0)
+          return -1;
+      }
+      break;
+    }
+  }
+
+  if(vma == 0)
     return -1;
 
   uvmunmap(p->pagetable, addr, length / PGSIZE, 1);
 
-  if(addr + length == p->sz)
-    p->sz = addr;
+  uint64 start = vma->addr;
+  uint64 end = start + vma->length;
+  uint64 unmap_end = addr + length;
 
+  if(addr == start && unmap_end == end) {
+    vma->valid = 0;
+  } else if(addr == start) {
+    vma->addr = unmap_end;
+    vma->length = end - unmap_end;
+  } else if(unmap_end == end) {
+    vma->length = addr - start;
+  } else {
+    p->vmas[split_slot].addr = unmap_end;
+    p->vmas[split_slot].length = end - unmap_end;
+    p->vmas[split_slot].prot = vma->prot;
+    p->vmas[split_slot].flags = vma->flags;
+    p->vmas[split_slot].valid = 1;
+    vma->length = addr - start;
+  }
+
+  p->sz = proc_vm_top(p);
   return 0;
 }
 
-// Process info structure for user space
 struct pstat {
   int pid;
   int state;
@@ -227,9 +260,6 @@ struct pstat {
   char name[16];
 };
 
-// Get process table snapshot
-// Parameters: addr (buffer pointer), max_count (max entries)
-// Returns: number of processes copied
 uint64
 sys_getptable(void)
 {
@@ -269,7 +299,6 @@ sys_getptable(void)
     release(&p->lock);
   }
 
-  // Copy to user space
   struct proc *cur = myproc();
   if(copyout(cur->pagetable, addr, (char *)buf, count * sizeof(struct pstat)) < 0) {
     kfree((void *)buf);
@@ -280,9 +309,6 @@ sys_getptable(void)
   return count;
 }
 
-// Get memory statistics
-// Parameters: addr (memstat structure pointer)
-// Returns: 0 on success, -1 on failure
 uint64
 sys_getmemstat(void)
 {
@@ -291,21 +317,16 @@ sys_getmemstat(void)
   struct proc *p = myproc();
 
   argaddr(0, &addr);
-
   if(addr == 0)
     return -1;
 
   fill_memstat(&buf);
-
   if(copyout(p->pagetable, addr, (char*)&buf, sizeof(buf)) < 0)
     return -1;
 
   return 0;
 }
 
-// Set process priority
-// Parameters: pid, priority (1-20)
-// Returns: 0 on success, -1 on failure
 uint64
 sys_setpriority(void)
 {
@@ -331,8 +352,6 @@ sys_setpriority(void)
   return -1;
 }
 
-// Get CPU statistics
-// Returns: 0 on success
 uint64
 sys_getstats(void)
 {

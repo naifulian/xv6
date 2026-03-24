@@ -9,6 +9,7 @@
 #include "kernel/spinlock.h"
 #include "kernel/proc.h"
 #include "kernel/defs.h"
+#include "kernel/sched/sched.h"
 
 struct cpu_stats {
   uint64 total_ticks;
@@ -133,13 +134,18 @@ void
 sched_update_stats(void)
 {
   struct proc *p;
-
   struct proc *current = myproc();
+  int running = 0;
+
   if(current) {
     acquire(&current->lock);
-    if(current->state == RUNNING)
+    if(current->state == RUNNING) {
       current->rutime++;
+      running = 1;
+    }
     release(&current->lock);
+    if(running)
+      sched_proc_tick_hook(current);
   } else {
     sched_idle_tick();
   }
@@ -160,6 +166,6 @@ sched_update_stats(void)
     }
     release(&p->lock);
   }
-  
+
   sched_tick();
 }

@@ -7,6 +7,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "fs.h"
+#include "vm.h"
 
 /*
  * the kernel's page table.
@@ -406,6 +407,53 @@ uvmclear(pagetable_t pagetable, uint64 va)
   *pte &= ~PTE_U;
 }
 
+static int
+vma_prot_to_perm(int prot)
+{
+  int perm = PTE_U;
+
+  if(prot & PROT_READ)
+    perm |= PTE_R;
+  if(prot & PROT_WRITE)
+    perm |= PTE_W | PTE_R;
+
+  return perm;
+}
+
+static int
+vmfault_region(struct proc *p, uint64 va, int write, int *perm)
+{
+  struct vma *vma;
+
+  if(va < PGSIZE)
+    return 0;
+  if(va < p->heap_end) {
+    *perm = PTE_U | PTE_R | PTE_W;
+    return 1;
+  }
+
+  vma = proc_find_vma(p, va);
+  if(vma == 0)
+    return 0;
+  if(write && (vma->prot & PROT_WRITE) == 0)
+    return 0;
+  if(!write && (vma->prot & PROT_READ) == 0)
+    return 0;
+
+  *perm = vma_prot_to_perm(vma->prot);
+  return 1;
+}
+
+static int
+pte_allows_access(pte_t pte, int write)
+{
+  if((pte & PTE_V) == 0 || (pte & PTE_U) == 0)
+    return 0;
+  if(write)
+    return (pte & PTE_W) != 0;
+  return (pte & PTE_R) != 0 || (pte & PTE_X) != 0;
+}
+
 // Copy from kernel to user.
 // Copy len bytes from src to virtual address dstva in a given page table.
 // Return 0 on success, -1 on error.
@@ -422,24 +470,17 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 
     pte = walk(pagetable, va0, 0);
     if(pte == 0 || (*pte & PTE_V) == 0) {
-      // Page not mapped, try lazy allocation
-      if((pa0 = vmfault(pagetable, va0, 0)) == 0) {
+      if((pa0 = vmfault(pagetable, va0, 0)) == 0)
         return -1;
-      }
     } else if((*pte & PTE_W) == 0 && (*pte & PTE_COW) != 0) {
-      // COW page: need to copy before writing
-      if(cow_alloc(pagetable, va0) < 0) {
+      if(cow_alloc(pagetable, va0) < 0)
         return -1;
-      }
     }
 
-    // Get physical address after any COW allocation
     pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0) {
+    if(pa0 == 0)
       return -1;
-    }
 
-    // Verify page is writable
     pte = walk(pagetable, va0, 0);
     if(pte == 0 || (*pte & PTE_W) == 0)
       return -1;
@@ -468,9 +509,8 @@ copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
     va0 = PGROUNDDOWN(srcva);
     pa0 = walkaddr(pagetable, va0);
     if(pa0 == 0) {
-      if((pa0 = vmfault(pagetable, va0, 0)) == 0) {
+      if((pa0 = vmfault(pagetable, va0, 1)) == 0)
         return -1;
-      }
     }
     n = PGSIZE - (srcva - va0);
     if(n > len)
@@ -497,8 +537,10 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
   while(got_null == 0 && max > 0){
     va0 = PGROUNDDOWN(srcva);
     pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
-      return -1;
+    if(pa0 == 0) {
+      if((pa0 = vmfault(pagetable, va0, 1)) == 0)
+        return -1;
+    }
     n = PGSIZE - (srcva - va0);
     if(n > max)
       n = max;
@@ -520,11 +562,9 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 
     srcva = va0 + PGSIZE;
   }
-  if(got_null){
+  if(got_null)
     return 0;
-  } else {
-    return -1;
-  }
+  return -1;
 }
 
 // allocate and map user memory if process is referencing a page
@@ -535,32 +575,34 @@ uint64
 vmfault(pagetable_t pagetable, uint64 va, int read)
 {
   uint64 mem;
+  int perm;
   struct proc *p = myproc();
+  int write = (read == 0);
 
-  if(va < PGSIZE || va >= p->sz)
+  if(va >= MAXVA || va >= p->sz)
     return 0;
   va = PGROUNDDOWN(va);
 
-  // Check if page is already mapped
+  if(vmfault_region(p, va, write, &perm) == 0)
+    return 0;
+
   pte_t *pte = walk(pagetable, va, 0);
   if(pte != 0 && (*pte & PTE_V) != 0) {
-    // Page is already mapped, return its physical address
-    return PTE2PA(*pte);
+    if(pte_allows_access(*pte, write))
+      return PTE2PA(*pte);
+    return 0;
   }
 
-  // Allocate and map a new page
-  mem = (uint64) kalloc();
+  mem = (uint64)kalloc();
   if(mem == 0)
     return 0;
-  memset((void *) mem, 0, PGSIZE);
-  if (mappages(p->pagetable, va, PGSIZE, mem, PTE_W|PTE_U|PTE_R) != 0) {
+  memset((void *)mem, 0, PGSIZE);
+  if(mappages(pagetable, va, PGSIZE, mem, perm) != 0) {
     kfree((void *)mem);
     return 0;
   }
 
-  // Increment lazy allocation counter
   lazy_alloc_inc();
-
   return mem;
 }
 
