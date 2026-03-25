@@ -21,6 +21,7 @@ compile_commands.json
 CLAUDE.md
 docs/
 log/
+/log
 experiments/logs/
 webui/figures
 webui/data
