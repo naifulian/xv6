@@ -257,21 +257,6 @@ def plot_lazy_comparison(baseline, testing):
     save_figure(fig, 'fig2_lazy_comparison')
 
 
-def plot_buddy_comparison(baseline, testing):
-    base = avg(baseline, 'BUDDY_FRAGMENT')
-    test = avg(testing, 'BUDDY_FRAGMENT')
-    if not (base or test):
-        return
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    bars = ax.bar(['Baseline', 'Buddy'], [base, test], color=['#2563eb', '#059669'], width=0.55)
-    ax.set_ylabel('Max Contiguous Allocation (KB)', fontweight='bold')
-    ax.set_title('Buddy Fragmentation Comparison', fontweight='bold')
-    for bar, value in zip(bars, [base, test]):
-        ax.text(bar.get_x() + bar.get_width() / 2, value, format_value(value), ha='center', va='bottom', fontweight='bold')
-    save_figure(fig, 'fig3_buddy_comparison')
-
-
 def plot_memory_overall(baseline, testing):
     tests = ['COW_NO_ACCESS', 'COW_READONLY', 'COW_PARTIAL', 'COW_FULLWRITE', 'LAZY_SPARSE', 'LAZY_HALF', 'LAZY_FULL']
     labels = ['COW-No Access', 'COW-Read', 'COW-30%', 'COW-100%', 'Lazy-1%', 'Lazy-50%', 'Lazy-100%']
@@ -353,11 +338,10 @@ def plot_overall_radar(baseline, testing):
     valid_baseline = sum(1 for name in COMMON_REQUIRED if is_valid(entry(baseline, name)))
     valid_testing = sum(1 for name in TESTING_REQUIRED if is_valid(entry(testing, name)))
     completeness = (valid_baseline + valid_testing) * 100.0 / (len(COMMON_REQUIRED) + len(TESTING_REQUIRED))
-    categories = ['COW', 'Lazy', 'Buddy', 'Scheduler', 'Completeness']
+    categories = ['COW', 'Lazy', 'Scheduler', 'Completeness']
     values = [
         min(100.0, max(0.0, mean_positive([improvement(baseline, testing, name) for name in ['COW_NO_ACCESS', 'COW_READONLY', 'COW_PARTIAL']]))),
         min(100.0, max(0.0, mean_positive([improvement(baseline, testing, name) for name in ['LAZY_SPARSE', 'LAZY_HALF']]))),
-        min(100.0, max(0.0, improvement(baseline, testing, 'BUDDY_FRAGMENT', bigger_is_better=True) or 0.0)),
         min(100.0, max(0.0, compute_scheduler_spread(testing))),
         min(100.0, max(0.0, completeness)),
     ]
@@ -464,6 +448,7 @@ def compute_scheduler_analysis(testing):
 def compute_quality_report(baseline_data, testing_data):
     baseline = baseline_data['results']
     testing = testing_data['results']
+    tracked_tests = set(COMMON_REQUIRED) | set(TESTING_REQUIRED)
     low_resolution = []
     high_variation = []
     counterexamples = []
@@ -471,8 +456,11 @@ def compute_quality_report(baseline_data, testing_data):
 
     for branch_name, dataset, results in (('baseline', baseline_data, baseline), ('testing', testing_data, testing)):
         for item in dataset.get('aggregation_errors', []):
-            aggregation_errors.append({'branch': branch_name, 'test': item['test'], 'message': item['message']})
+            if item['test'] in tracked_tests:
+                aggregation_errors.append({'branch': branch_name, 'test': item['test'], 'message': item['message']})
         for name, result in results.items():
+            if name not in tracked_tests:
+                continue
             flags = quality_flags(name, result)
             for row in low_resolution_runs(result):
                 low_resolution.append({
@@ -539,7 +527,6 @@ def compute_summary(baseline_data, testing_data):
             'lazy_sparse': improvement(baseline, testing, 'LAZY_SPARSE'),
             'lazy_half': improvement(baseline, testing, 'LAZY_HALF'),
             'lazy_full': improvement(baseline, testing, 'LAZY_FULL'),
-            'buddy_fragment': improvement(baseline, testing, 'BUDDY_FRAGMENT', bigger_is_better=True),
         },
         'scheduler_spread_score': compute_scheduler_spread(testing),
     }
@@ -785,6 +772,9 @@ def save_markdown_report(payload):
         '',
         '## Memory Optimization Summary',
         '',
+        '- Formal thesis memory conclusions in this version are limited to COW and Lazy Allocation.',
+        '- Buddy and mmap results may still appear in raw JSON/logs for compatibility, but they are not part of the formal comparison table or thesis claims.',
+        '',
         '| Test | Baseline | Testing | Delta | Interval | Interpretation |',
         '| --- | ---: | ---: | ---: | --- | --- |',
     ])
@@ -882,7 +872,6 @@ def main():
     ensure_output_dirs()
     plot_cow_comparison(baseline, testing)
     plot_lazy_comparison(baseline, testing)
-    plot_buddy_comparison(baseline, testing)
     plot_memory_overall(baseline, testing)
     plot_scheduler_comparison(testing)
     plot_scheduler_scenarios(testing)

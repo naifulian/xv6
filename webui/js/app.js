@@ -27,7 +27,7 @@ function renderSummary(results) {
   container.appendChild(createCard('Testing 完整度', `${summary.testing_valid || 0}/${summary.testing_expected || 0}`, '模块三关键指标有效项'));
   container.appendChild(createCard('COW 最佳场景', formatPercent(improvements.cow_best_case), 'fork 后不访问内存'));
   container.appendChild(createCard('Lazy 稀疏访问', formatPercent(improvements.lazy_sparse), '访问 1% 页面'));
-  container.appendChild(createCard('Buddy 连续空间', formatPercent(improvements.buddy_fragment), '更大越好'));
+  container.appendChild(createCard('COW 只读场景', formatPercent(improvements.cow_readonly), 'fork 后共享只读页面'));
   container.appendChild(createCard('调度分离度', formatPercent(summary.scheduler_spread_score), '越高说明越能拉开场景差异'));
   container.appendChild(createCard('基线有效项', `${summary.baseline_valid || 0}/${summary.baseline_expected || 0}`, '用于对比的 baseline 数据'));
 }

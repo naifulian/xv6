@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-25T10:25:01.297419",
+  "generated_at": "2026-03-25T12:48:02.627005",
   "baseline": {
     "branch": "baseline",
     "metadata": {
@@ -1602,8 +1602,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/baseline/runs/run01_clean.log",
-          "required_present": 10,
-          "required_total": 10,
+          "required_present": 9,
+          "required_total": 9,
           "missing_required": [],
           "manifest": {
             "run_id": "run01",
@@ -1829,8 +1829,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/baseline/runs/run02_clean.log",
-          "required_present": 10,
-          "required_total": 10,
+          "required_present": 9,
+          "required_total": 9,
           "missing_required": [],
           "manifest": {
             "run_id": "run02",
@@ -2056,8 +2056,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/baseline/runs/run03_clean.log",
-          "required_present": 10,
-          "required_total": 10,
+          "required_present": 9,
+          "required_total": 9,
           "missing_required": [],
           "manifest": {
             "run_id": "run03",
@@ -2175,8 +2175,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/baseline/runs/run01_clean.log",
-        "required_present": 10,
-        "required_total": 10,
+        "required_present": 9,
+        "required_total": 9,
         "missing_required": [],
         "manifest": {
           "run_id": "run01",
@@ -2205,8 +2205,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/baseline/runs/run02_clean.log",
-        "required_present": 10,
-        "required_total": 10,
+        "required_present": 9,
+        "required_total": 9,
         "missing_required": [],
         "manifest": {
           "run_id": "run02",
@@ -2235,8 +2235,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/baseline/runs/run03_clean.log",
-        "required_present": 10,
-        "required_total": 10,
+        "required_present": 9,
+        "required_total": 9,
         "missing_required": [],
         "manifest": {
           "run_id": "run03",
@@ -6360,8 +6360,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/testing/runs/run01_clean.log",
-          "required_present": 23,
-          "required_total": 23,
+          "required_present": 20,
+          "required_total": 20,
           "missing_required": [],
           "manifest": {
             "run_id": "run01",
@@ -6837,8 +6837,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/testing/runs/run02_clean.log",
-          "required_present": 23,
-          "required_total": 23,
+          "required_present": 20,
+          "required_total": 20,
           "missing_required": [],
           "manifest": {
             "run_id": "run02",
@@ -7314,8 +7314,8 @@
           "status": "complete",
           "source_kind": "clean",
           "path": "log/thesis_final/testing/runs/run03_clean.log",
-          "required_present": 23,
-          "required_total": 23,
+          "required_present": 20,
+          "required_total": 20,
           "missing_required": [],
           "manifest": {
             "run_id": "run03",
@@ -7433,8 +7433,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/testing/runs/run01_clean.log",
-        "required_present": 23,
-        "required_total": 23,
+        "required_present": 20,
+        "required_total": 20,
         "missing_required": [],
         "manifest": {
           "run_id": "run01",
@@ -7463,8 +7463,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/testing/runs/run02_clean.log",
-        "required_present": 23,
-        "required_total": 23,
+        "required_present": 20,
+        "required_total": 20,
         "missing_required": [],
         "manifest": {
           "run_id": "run02",
@@ -7493,8 +7493,8 @@
         "status": "complete",
         "source_kind": "clean",
         "path": "log/thesis_final/testing/runs/run03_clean.log",
-        "required_present": 23,
-        "required_total": 23,
+        "required_present": 20,
+        "required_total": 20,
         "missing_required": [],
         "manifest": {
           "run_id": "run03",
@@ -7580,11 +7580,11 @@
     }
   },
   "summary": {
-    "baseline_valid": 10,
-    "baseline_expected": 10,
+    "baseline_valid": 9,
+    "baseline_expected": 9,
     "baseline_rounds": 3,
-    "testing_valid": 23,
-    "testing_expected": 23,
+    "testing_valid": 20,
+    "testing_expected": 20,
     "testing_rounds": 3,
     "improvements": {
       "cow_best_case": 93.80128205128206,
@@ -7593,8 +7593,7 @@
       "cow_fullwrite": -186.70000000000002,
       "lazy_sparse": 95.41561265699197,
       "lazy_half": -46.18937644341801,
-      "lazy_full": -225.0,
-      "buddy_fragment": 0.0
+      "lazy_full": -225.0
     },
     "scheduler_spread_score": 64.67227418867743
   },
@@ -7602,8 +7601,8 @@
     "coverage_percent": 100.0,
     "repeatability_percent": 100.0,
     "scheduler_spread_score": 64.67,
-    "stability_score": 10.0,
-    "readiness_score": 74.93,
+    "stability_score": 20.0,
+    "readiness_score": 76.93,
     "baseline_rounds_detected": 3,
     "testing_rounds_detected": 3,
     "low_resolution_tests": [],
@@ -7647,16 +7646,6 @@
         "branch": "testing",
         "test": "LAZY_SPARSE",
         "cv_percent": 14.78
-      },
-      {
-        "branch": "testing",
-        "test": "MMAP_FULL",
-        "cv_percent": 28.2
-      },
-      {
-        "branch": "testing",
-        "test": "MMAP_SPARSE",
-        "cv_percent": 13.09
       },
       {
         "branch": "testing",

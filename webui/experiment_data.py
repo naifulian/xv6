@@ -22,12 +22,9 @@ COMMON_REQUIRED = [
     'LAZY_SPARSE',
     'LAZY_HALF',
     'LAZY_FULL',
-    'BUDDY_FRAGMENT',
 ]
 
 TESTING_REQUIRED = COMMON_REQUIRED + [
-    'MMAP_SPARSE',
-    'MMAP_FULL',
     'SCHED_THROUGHPUT_RR',
     'SCHED_THROUGHPUT_FCFS',
     'SCHED_THROUGHPUT_SJF',
@@ -82,7 +79,6 @@ MEMORY_COMPARISON_TESTS = [
     'LAZY_SPARSE',
     'LAZY_HALF',
     'LAZY_FULL',
-    'BUDDY_FRAGMENT',
 ]
 
 META_PATTERN = re.compile(r'META:ts=(\d+):cpus=(\d+):branch=(\w+):sched=(\w+)')
