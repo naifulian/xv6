@@ -4,7 +4,9 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-LOG_DIR="$ROOT/log"
+LOG_DIR="${XV6_LOG_DIR:-$ROOT/log}"
+BASELINE_ROOT="${BASELINE_ROOT:-}"
+TESTING_ROOT="${TESTING_ROOT:-}"
 TIMEOUT="${TIMEOUT:-1800}"
 QEMU_CPUS="${QEMU_CPUS:-1}"
 ROUNDS="${ROUNDS:-3}"
@@ -39,6 +41,9 @@ Environment overrides:
   QEMU_CPUS    QEMU CPU count (default: 1)
   TIMEOUT      Timeout per round in seconds (default: 1800)
   PERFTEST_CMD Command sent inside xv6 (default: perftest all)
+  XV6_LOG_DIR  Log root for collected datasets (default: $ROOT/log)
+  BASELINE_ROOT Alternate source root for baseline collection
+  TESTING_ROOT Alternate source root for testing collection
 
 Options:
   --cmd CMD    Override the xv6 command; default `perftest all` expands to separate memory/scheduler boots on testing
@@ -82,13 +87,37 @@ hash_file() {
     fi
 }
 
+branch_source_root() {
+    local branch="$1"
+
+    case "$branch" in
+        baseline)
+            if [ -n "$BASELINE_ROOT" ]; then
+                printf "%s\n" "$BASELINE_ROOT"
+            else
+                printf "%s\n" "$ROOT"
+            fi
+            ;;
+        testing)
+            if [ -n "$TESTING_ROOT" ]; then
+                printf "%s\n" "$TESTING_ROOT"
+            else
+                printf "%s\n" "$ROOT"
+            fi
+            ;;
+        *)
+            printf "%s\n" "$ROOT"
+            ;;
+    esac
+}
+
 command_plan_for_branch() {
     local branch="$1"
 
     case "$PERFTEST_CMD" in
         "perftest all")
             if [ "$branch" = "testing" ]; then
-                printf '%s\n' "perftest memory" "perftest sched"
+                printf '%s\n' "perftest memory" "perftest sched_core" "perftest sched_fairness" "perftest sched_response"
             else
                 printf '%s\n' "perftest memory"
             fi
@@ -131,9 +160,18 @@ required_result_count() {
             "perftest sched")
                 required=$((required + 13))
                 ;;
+            "perftest sched_core")
+                required=$((required + 8))
+                ;;
+            "perftest sched_fairness")
+                required=$((required + 5))
+                ;;
+            "perftest sched_response")
+                required=$((required + 4))
+                ;;
             "perftest all")
                 if [ "$branch" = "testing" ]; then
-                    required=$((required + 25))
+                    required=$((required + 29))
                 else
                     required=$((required + 10))
                 fi
@@ -229,39 +267,43 @@ upsert_manifest_row() {
     local branch="$3"
     local commit="$4"
     local collected_at="$5"
-    local raw_log="$6"
-    local clean_log="$7"
-    local clean_sha="$8"
-    local result_count="$9"
-    local required_count="${10}"
-    local status="${11}"
-    local source_kind="${12}"
-    local recovered_from_raw="${13}"
-    local commands_planned="${14}"
-    local commands_completed="${15}"
-    local failed_command="${16}"
-    local exit_code="${17}"
+    local cpus="$6"
+    local timeout_s="$7"
+    local command="$8"
+    local raw_log="$9"
+    local clean_log="${10}"
+    local clean_sha="${11}"
+    local result_count="${12}"
+    local required_count="${13}"
+    local status="${14}"
+    local source_kind="${15}"
+    local recovered_from_raw="${16}"
+    local commands_planned="${17}"
+    local commands_completed="${18}"
+    local failed_command="${19}"
+    local exit_code="${20}"
     local tmp="${manifest}.tmp"
 
     ensure_manifest_header "$manifest"
     awk -F'\t' -v run_id="$run_id" 'NR == 1 || $1 != run_id' "$manifest" > "$tmp"
     mv "$tmp" "$manifest"
     printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-        "$run_id" "$branch" "$commit" "$collected_at" "$QEMU_CPUS" "$TIMEOUT" "$(plan_description_for_branch "$branch")" \
+        "$run_id" "$branch" "$commit" "$collected_at" "$cpus" "$timeout_s" "$command" \
         "$raw_log" "$clean_log" "$clean_sha" "$result_count" "$required_count" "$status" "$source_kind" "$recovered_from_raw" \
         "$commands_planned" "$commands_completed" "$failed_command" "$exit_code" >> "$manifest"
 }
 
 run_round_command() {
-    local raw_log="$1"
-    local command="$2"
+    local repo_root="$1"
+    local raw_log="$2"
+    local command="$3"
     local status=0
 
     cat > /tmp/xv6_perftest.exp <<EOF
 #!/usr/bin/expect -f
 set timeout $TIMEOUT
-cd $ROOT
-spawn make CPUS=$QEMU_CPUS qemu
+cd $repo_root
+spawn make -C $repo_root CPUS=$QEMU_CPUS qemu
 expect {
     "init: starting sh" { }
     timeout {
@@ -286,18 +328,20 @@ EOF
 
     printf '[COLLECT] command=%s phase=begin at=%s\n' "$command" "$(date -Iseconds)" >> "$raw_log"
     if /tmp/xv6_perftest.exp >> "$raw_log" 2>&1; then
-        printf '[COLLECT] command=%s phase=end status=ok exit_code=0 at=%s\n' "$command" "$(date -Iseconds)" >> "$raw_log"
-        return 0
+        status=0
+        printf '[COLLECT] command=%s phase=end status=ok exit_code=%d at=%s\n' "$command" "$status" "$(date -Iseconds)" >> "$raw_log"
+        return "$status"
+    else
+        status=$?
+        printf '[COLLECT] command=%s phase=end status=failed exit_code=%d at=%s\n' "$command" "$status" "$(date -Iseconds)" >> "$raw_log"
+        return "$status"
     fi
-
-    status=$?
-    printf '[COLLECT] command=%s phase=end status=failed exit_code=%d at=%s\n' "$command" "$status" "$(date -Iseconds)" >> "$raw_log"
-    return "$status"
 }
 
 run_round() {
-    local raw_log="$1"
-    local branch="$2"
+    local repo_root="$1"
+    local raw_log="$2"
+    local branch="$3"
 
     RUN_COMMANDS_PLANNED=0
     RUN_COMMANDS_COMPLETED=0
@@ -306,11 +350,14 @@ run_round() {
     : > "$raw_log"
     while IFS= read -r command; do
         [ -n "$command" ] || continue
+        local command_status=0
         RUN_COMMANDS_PLANNED=$((RUN_COMMANDS_PLANNED + 1))
-        if run_round_command "$raw_log" "$command"; then
+        if run_round_command "$repo_root" "$raw_log" "$command"; then
+            command_status=0
             RUN_COMMANDS_COMPLETED=$((RUN_COMMANDS_COMPLETED + 1))
         else
-            RUN_EXIT_CODE=$?
+            command_status=$?
+            RUN_EXIT_CODE="$command_status"
             RUN_FAILED_COMMAND="$command"
             return "$RUN_EXIT_CODE"
         fi
@@ -364,11 +411,14 @@ command_progress_from_raw() {
         return
     fi
 
-    completed=$(grep -c '^\[COLLECT\] command=.* phase=end status=ok' "$raw_log" 2>/dev/null || true)
-    failed_line=$(grep '^\[COLLECT\] command=.* phase=end status=failed' "$raw_log" 2>/dev/null | tail -n 1 || true)
+    completed=$(tr -d '\r' < "$raw_log" | grep -c '^\[COLLECT\] command=.* phase=end status=ok' || true)
+    failed_line=$({ tr -d '\r' < "$raw_log" | grep '^\[COLLECT\] command=.* phase=end status=failed' | tail -n 1; } || true)
     if [ -n "$failed_line" ]; then
         exit_code=$(printf '%s\n' "$failed_line" | sed -E 's/.* exit_code=([0-9]+) at=.*/\1/')
         failed_command=$(printf '%s\n' "$failed_line" | sed -E 's/^\[COLLECT\] command=(.*) phase=end status=failed exit_code=[0-9]+ at=.*$/\1/')
+        if [ "$exit_code" -eq 0 ]; then
+            exit_code=1
+        fi
     fi
 
     printf '%s\t%s\t%s\n' "$completed" "$exit_code" "$failed_command"
@@ -408,8 +458,21 @@ scan_existing_runs() {
         local commands_completed=0
         local failed_command=""
         local exit_code=0
+        local manifest_line=""
+        local manifest_commit=""
+        local manifest_collected_at=""
+        local manifest_cpus=""
+        local manifest_timeout=""
+        local manifest_command=""
+        local manifest_required_count=""
+        local manifest_commands_planned=""
 
         [ -n "$run_id" ] || continue
+
+        manifest_line=$(awk -F'\t' -v run_id="$run_id" 'NR > 1 && $1 == run_id { print; exit }' "$manifest")
+        if [ -n "$manifest_line" ]; then
+            IFS=$'\t' read -r _ _ manifest_commit manifest_collected_at manifest_cpus manifest_timeout manifest_command _ _ _ _ manifest_required_count _ _ _ manifest_commands_planned _ _ _ <<< "$manifest_line"
+        fi
 
         if [ -f "$raw_log" ] && [ ! -f "$clean_log" ]; then
             sanitize_raw_log "$raw_log" "$clean_log"
@@ -432,14 +495,23 @@ scan_existing_runs() {
         if [ -f "$raw_log" ]; then
             IFS=$'\t' read -r commands_completed exit_code failed_command < <(command_progress_from_raw "$raw_log")
         fi
+        if [ -n "$manifest_required_count" ]; then
+            required_count="$manifest_required_count"
+        fi
+        if [ -n "$manifest_commands_planned" ]; then
+            commands_planned="$manifest_commands_planned"
+        fi
         if [ "$commands_completed" -eq 0 ] && [ "$result_count" -ge "$required_count" ]; then
             commands_completed="$commands_planned"
             exit_code=0
         fi
 
         status=$(classify_run_status "$branch" "$result_count" "$commands_planned" "$commands_completed" "$exit_code")
-        collected_at=$(date -Iseconds -r "$source_log" 2>/dev/null || date -Iseconds)
-        upsert_manifest_row "$manifest" "$run_id" "$branch" "$commit" "$collected_at" "$raw_log" "$clean_log" "$clean_sha" "$result_count" "$required_count" "$status" "$source_kind" "$recovered_from_raw" "$commands_planned" "$commands_completed" "$failed_command" "$exit_code"
+        collected_at="${manifest_collected_at:-$(date -Iseconds -r "$source_log" 2>/dev/null || date -Iseconds)}"
+        upsert_manifest_row "$manifest" "$run_id" "$branch" "${manifest_commit:-$commit}" "$collected_at" \
+            "${manifest_cpus:-$QEMU_CPUS}" "${manifest_timeout:-$TIMEOUT}" "${manifest_command:-$(plan_description_for_branch "$branch")}" \
+            "$raw_log" "$clean_log" "$clean_sha" "$result_count" "$required_count" "$status" "$source_kind" "$recovered_from_raw" \
+            "$commands_planned" "$commands_completed" "$failed_command" "$exit_code"
 
         if [ "$status" = "complete" ]; then
             complete_runs=$((complete_runs + 1))
@@ -457,6 +529,8 @@ scan_existing_runs() {
 
 collect_branch() {
     local branch="$1"
+    local repo_root
+    local repo_branch
     local output_dir="$LOG_DIR/$branch"
     local runs_dir="$output_dir/runs"
     local manifest="$output_dir/manifest.tsv"
@@ -467,22 +541,35 @@ collect_branch() {
     local max_index=0
     local next_index=1
 
+    repo_root=$(branch_source_root "$branch")
     required_count=$(required_result_count "$branch")
     commands_planned=$(planned_command_count "$branch")
     prepare_branch_output "$output_dir"
 
     log_info "Collecting branch $branch with target $ROUNDS complete round(s)"
     log_info "Plan for $branch: $(plan_description_for_branch "$branch")"
+    log_info "Source root for $branch: $repo_root"
     if [ "$RESUME" -eq 1 ]; then
         log_info "Resume mode is enabled; existing runs will be reused when possible"
     fi
 
-    git -C "$ROOT" checkout "$branch" >/dev/null
-    ACTIVE_BRANCH="$branch"
+    if [ "$repo_root" = "$ROOT" ]; then
+        git -C "$ROOT" checkout "$branch" >/dev/null
+        ACTIVE_BRANCH="$branch"
+    else
+        ACTIVE_BRANCH=""
+        repo_branch="$(git -C "$repo_root" branch --show-current 2>/dev/null || true)"
+        if [ -n "$repo_branch" ] && [ "$repo_branch" != "$branch" ]; then
+            log_warn "[$branch] source root is on branch '$repo_branch'; collection label will still be '$branch'"
+        fi
+    fi
 
-    make -C "$ROOT" clean >/dev/null 2>&1 || true
-    make -C "$ROOT" CPUS="$QEMU_CPUS" >/dev/null 2>&1
-    commit="$(git -C "$ROOT" rev-parse HEAD)"
+    make -C "$repo_root" clean >/dev/null 2>&1 || true
+    make -C "$repo_root" CPUS="$QEMU_CPUS" >/dev/null 2>&1
+    commit="$(git -C "$repo_root" rev-parse HEAD)"
+    if ! git -C "$repo_root" diff --quiet --ignore-submodules HEAD -- 2>/dev/null; then
+        commit="${commit}-dirty"
+    fi
 
     if [ "$RESUME" -eq 1 ]; then
         read -r complete_runs max_index < <(scan_existing_runs "$branch" "$output_dir" "$manifest" "$commit")
@@ -509,7 +596,7 @@ collect_branch() {
         collected_at="$(date -Iseconds)"
 
         log_info "  [$branch] $run_id"
-        if run_round "$raw_log" "$branch"; then
+        if run_round "$repo_root" "$raw_log" "$branch"; then
             run_rc=0
         else
             run_rc=$?
@@ -528,7 +615,10 @@ collect_branch() {
         fi
         result_count="$(grep -c '^RESULT:' "$clean_log" || true)"
         status=$(classify_run_status "$branch" "$result_count" "$commands_planned" "$RUN_COMMANDS_COMPLETED" "$run_rc")
-        upsert_manifest_row "$manifest" "$run_id" "$branch" "$commit" "$collected_at" "$raw_log" "$clean_log" "$clean_sha" "$result_count" "$required_count" "$status" "clean" "0" "$commands_planned" "$RUN_COMMANDS_COMPLETED" "$RUN_FAILED_COMMAND" "$run_rc"
+        upsert_manifest_row "$manifest" "$run_id" "$branch" "$commit" "$collected_at" \
+            "$QEMU_CPUS" "$TIMEOUT" "$(plan_description_for_branch "$branch")" \
+            "$raw_log" "$clean_log" "$clean_sha" "$result_count" "$required_count" "$status" "clean" "0" \
+            "$commands_planned" "$RUN_COMMANDS_COMPLETED" "$RUN_FAILED_COMMAND" "$run_rc"
         sync_latest_logs "$output_dir"
 
         if [ "$status" != "complete" ]; then

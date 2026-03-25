@@ -22,6 +22,7 @@ from experiment_data import (
     TESTING_REQUIRED,
     TEST_META,
     load_branch_dataset,
+    result_is_valid,
 )
 
 OUTPUT_DIR = Path('webui/figures')
@@ -57,7 +58,7 @@ def entry(results, name):
 
 
 def is_valid(result):
-    return bool(result) and result.get('avg', -1) >= 0 and result.get('unit') != 'error'
+    return result_is_valid(result)
 
 
 def metric_value(results, name):
@@ -130,12 +131,33 @@ def format_value(value):
     return f'{value:.2f}'
 
 
+def low_resolution_runs(result):
+    flagged = []
+    if not result:
+        return flagged
+
+    for row in result.get('per_run', []):
+        if row.get('status') != 'complete':
+            continue
+        if row.get('unit') != 'ticks':
+            continue
+        if row.get('avg', 0) > 3 or row.get('std', 0) != 0:
+            continue
+        if row.get('runs', 0) < 5:
+            continue
+        flagged.append(row)
+
+    return flagged
+
+
 def quality_flags(name, result):
     flags = []
+    if result.get('consistency_error'):
+        flags.append('mixed_signature')
     if not is_valid(result):
         flags.append('invalid')
         return flags
-    if result.get('unit') == 'ticks' and result.get('runs', 0) >= 5 and result.get('avg', 0) <= 3 and result.get('std', 0) == 0:
+    if low_resolution_runs(result):
         flags.append('low_resolution')
     value_cv = cv_percent(result)
     if value_cv is not None and value_cv >= 10.0:
@@ -151,7 +173,13 @@ def quality_flags(name, result):
     return flags
 
 
-def comparison_comment(delta):
+def comparison_comment(delta, relation):
+    if relation == 'invalid-dataset':
+        return 'invalid mixed dataset'
+    if relation == 'insufficient-rounds':
+        return 'trend only; add complete rounds'
+    if relation == 'overlap':
+        return 'difference not clearly separated'
     if delta is None:
         return 'N/A'
     if delta >= 20:
@@ -166,12 +194,16 @@ def comparison_comment(delta):
 
 
 def interval_relation(base_result, test_result):
+    if (base_result or {}).get('consistency_error') or (test_result or {}).get('consistency_error'):
+        return 'invalid-dataset'
     if not is_valid(base_result) or not is_valid(test_result):
         return 'n/a'
-    base_err = base_result.get('ci95') if base_result.get('round_count', 0) >= 2 else base_result.get('std', 0)
-    test_err = test_result.get('ci95') if test_result.get('round_count', 0) >= 2 else test_result.get('std', 0)
+    if base_result.get('round_count', 0) < 2 or test_result.get('round_count', 0) < 2:
+        return 'insufficient-rounds'
+    base_err = base_result.get('ci95')
+    test_err = test_result.get('ci95')
     if base_err is None or test_err is None:
-        return 'single-run'
+        return 'insufficient-rounds'
     base_low = base_result['avg'] - base_err
     base_high = base_result['avg'] + base_err
     test_low = test_result['avg'] - test_err
@@ -435,12 +467,22 @@ def compute_quality_report(baseline_data, testing_data):
     low_resolution = []
     high_variation = []
     counterexamples = []
+    aggregation_errors = []
 
-    for branch_name, results in (('baseline', baseline), ('testing', testing)):
+    for branch_name, dataset, results in (('baseline', baseline_data, baseline), ('testing', testing_data, testing)):
+        for item in dataset.get('aggregation_errors', []):
+            aggregation_errors.append({'branch': branch_name, 'test': item['test'], 'message': item['message']})
         for name, result in results.items():
             flags = quality_flags(name, result)
-            if 'low_resolution' in flags:
-                low_resolution.append({'branch': branch_name, 'test': name, 'avg': result['avg'], 'std': result['std']})
+            for row in low_resolution_runs(result):
+                low_resolution.append({
+                    'branch': branch_name,
+                    'test': name,
+                    'run_id': row.get('run_id', ''),
+                    'avg': row.get('avg'),
+                    'std': row.get('std'),
+                    'batch': row.get('batch'),
+                })
             if 'high_variation' in flags:
                 high_variation.append({'branch': branch_name, 'test': name, 'cv_percent': round(cv_percent(result), 2)})
 
@@ -461,7 +503,7 @@ def compute_quality_report(baseline_data, testing_data):
     )
     repeatability = repeatable_items * 100.0 / (len(COMMON_REQUIRED) + len(TESTING_REQUIRED))
     scheduler_spread = compute_scheduler_spread(testing)
-    stability_score = max(0.0, 100.0 - min(100.0, len(low_resolution) * 8.0 + len(high_variation) * 5.0))
+    stability_score = max(0.0, 100.0 - min(100.0, len(low_resolution) * 8.0 + len(high_variation) * 5.0 + len(aggregation_errors) * 12.0))
     readiness_score = round((0.35 * coverage) + (0.25 * repeatability) + (0.20 * scheduler_spread) + (0.20 * stability_score), 2)
 
     return {
@@ -474,6 +516,7 @@ def compute_quality_report(baseline_data, testing_data):
         'testing_rounds_detected': len(testing_data['runs']),
         'low_resolution_tests': low_resolution,
         'high_variation_tests': high_variation,
+        'aggregation_errors': aggregation_errors,
         'counterexamples': counterexamples,
     }
 
@@ -534,6 +577,7 @@ def build_long_rows(baseline_data, testing_data):
                 'avg_per_batch': '' if per_batch_avg(result) is None else round(per_batch_avg(result), 4),
                 'cv_percent': '' if cv_percent(result) is None else round(cv_percent(result), 2),
                 'inner_std_avg': result.get('inner_std_avg', ''),
+                'consistency_error': result.get('consistency_error', ''),
                 'quality_flags': ','.join(quality_flags(test_name, result)),
             })
     return rows
@@ -548,6 +592,10 @@ def build_round_rows(baseline_data, testing_data):
                 rows.append({
                     'branch': branch_name,
                     'run_id': run['run_id'],
+                    'run_status': run['summary']['status'],
+                    'source_kind': run['source']['kind'],
+                    'manifest_commit': run['manifest_row'].get('commit', ''),
+                    'manifest_command': run['manifest_row'].get('command', ''),
                     'source_path': run['source']['path'],
                     'test': test_name,
                     'label': meta['label'],
@@ -572,6 +620,7 @@ def build_comparison_rows(baseline_data, testing_data):
         base = entry(baseline, test_name)
         test = entry(testing, test_name)
         delta = improvement(baseline, testing, test_name, bigger_is_better=(meta['objective'] == 'higher'))
+        relation = interval_relation(base, test)
         rows.append({
             'test': test_name,
             'label': meta['label'],
@@ -585,8 +634,8 @@ def build_comparison_rows(baseline_data, testing_data):
             'testing_rounds': test.get('round_count', 0),
             'unit': test.get('unit') or base.get('unit', ''),
             'improvement_percent': '' if delta is None else round(delta, 2),
-            'interval_relation': interval_relation(base, test),
-            'comment': comparison_comment(delta),
+            'interval_relation': relation,
+            'comment': comparison_comment(delta, relation),
         })
     return rows
 
@@ -653,6 +702,8 @@ def collection_summary_lines(label, dataset):
     partial_runs = [run['run_id'] for run in dataset.get('run_statuses', []) if run.get('status') == 'partial']
     if partial_runs:
         lines.append(f'- {label} partial run IDs: {", ".join(partial_runs)}')
+    if dataset.get('aggregation_errors'):
+        lines.append(f'- {label} mixed-signature tests: {len(dataset["aggregation_errors"])}')
     return lines
 
 
@@ -680,12 +731,14 @@ def build_recommendations(payload):
             recommendations.append(
                 '[testing] rerun formal data collection with split boots (`perftest memory` + `perftest sched`) to keep scheduler evidence isolated from the memory suite.'
             )
+        if dataset.get('aggregation_errors'):
+            recommendations.append(
+                f'[{branch_name}] recollect or split datasets before aggregation; {len(dataset["aggregation_errors"])} test(s) currently mix different unit/batch/runs signatures.'
+            )
 
     for item in payload['quality']['low_resolution_tests']:
-        branch_result = payload[item['branch']]['results'].get(item['test'], {})
-        batch = branch_result.get('batch', 1)
         recommendations.append(
-            f'[{item["branch"]}] increase `{item["test"]}` batch beyond {batch} to move it out of the 1-3 tick range.'
+            f'[{item["branch"]}] increase `{item["test"]}` batch beyond {item.get("batch", 1)} to move complete run {item.get("run_id", "unknown")} out of the 1-3 tick range.'
         )
 
     deduped = []
@@ -707,8 +760,9 @@ def save_markdown_report(payload):
         f'- Generated at: {payload["generated_at"]}',
         f'- Baseline runs detected: {quality["baseline_rounds_detected"]}',
         f'- Testing runs detected: {quality["testing_rounds_detected"]}',
-        '- Error bars use cross-round 95% CI when at least two rounds are available; otherwise they use the in-run standard deviation.',
-        '- Raw in-run sample series are retained in JSON/CSV for appendix tables or significance checks, while the primary charts still use cross-round CI over round means to avoid over-weighting a single boot.',
+        '- Error bars use cross-round 95% CI only when at least two valid rounds are available; otherwise plots show descriptive in-run spread and the comparison table is labeled `insufficient-rounds`.',
+        '- Mixed unit/batch/runs signatures are treated as invalid datasets and must be recollected or split before inferential comparison.',
+        '- Raw in-run sample series are retained in JSON/CSV for appendix tables or follow-up significance checks, while the primary charts still use cross-round summaries over boot-level repetitions.',
         f'- Data quality score: {quality["readiness_score"]}/100',
         '',
         '## Data Quality',
@@ -717,7 +771,8 @@ def save_markdown_report(payload):
         f'- Repeatability: {quality["repeatability_percent"]:.1f}%',
         f'- Scheduler discrimination score: {quality["scheduler_spread_score"]:.1f}',
         f'- Stability score: {quality["stability_score"]:.1f}',
-        f'- Low-resolution items: {len(quality["low_resolution_tests"])}',
+        f'- Mixed-signature items: {len(quality["aggregation_errors"])}',
+        f'- Low-resolution complete runs: {len(quality["low_resolution_tests"])}',
         f'- High-variation items: {len(quality["high_variation_tests"])}',
         '',
         '## Experiment Configuration',
@@ -763,6 +818,18 @@ def save_markdown_report(payload):
         lines.extend(['', '## High-Variation Items', ''])
         for item in quality['high_variation_tests']:
             lines.append(f'- {item["branch"]}:{item["test"]} -> CV={item["cv_percent"]:.2f}%')
+
+    if quality['aggregation_errors']:
+        lines.extend(['', '## Invalid Mixed-Signature Items', ''])
+        for item in quality['aggregation_errors']:
+            lines.append(f'- {item["branch"]}:{item["test"]} -> {item["message"]}')
+
+    if quality['low_resolution_tests']:
+        lines.extend(['', '## Low-Resolution Complete Runs', ''])
+        for item in quality['low_resolution_tests']:
+            lines.append(
+                f'- {item["branch"]}:{item["test"]}:{item.get("run_id", "unknown")} -> avg={format_value(item.get("avg"))}, batch={item.get("batch", "N/A")}'
+            )
 
     if payload.get('recommendations'):
         lines.extend(['', '## Recommended Next Actions', ''])

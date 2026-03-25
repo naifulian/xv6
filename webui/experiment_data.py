@@ -6,10 +6,11 @@ from __future__ import annotations
 import csv
 import hashlib
 import math
+import os
 import re
 from pathlib import Path
 
-LOG_DIR = Path('log')
+LOG_DIR = Path(os.environ.get('XV6_LOG_DIR', 'log'))
 
 COMMON_REQUIRED = [
     'SYS_TOTAL_PAGES',
@@ -99,6 +100,26 @@ def _sample_std(values):
     avg = _mean(values)
     variance = sum((value - avg) ** 2 for value in values) / (len(values) - 1)
     return math.sqrt(variance)
+
+
+def result_is_valid(result):
+    return bool(result) and result.get('avg') is not None and result.get('unit') != 'error' and not result.get('consistency_error')
+
+
+def result_signature(result):
+    return (
+        result.get('unit', ''),
+        result.get('batch', 1),
+        result.get('runs', 1),
+    )
+
+
+def describe_signature(signature, run_ids=None):
+    unit, batch, runs = signature
+    detail = f'unit={unit}, batch={batch}, runs={runs}'
+    if run_ids:
+        detail = f'{detail} [{", ".join(run_ids)}]'
+    return detail
 
 
 def parse_log_content(content):
@@ -249,6 +270,7 @@ def aggregate_results(run_entries):
     all_names = sorted({name for run in run_entries for name in run['results'].keys()})
     aggregated = {}
     total_rounds = len(run_entries)
+    aggregation_errors = []
 
     for test_name in all_names:
         valid_values = []
@@ -260,16 +282,24 @@ def aggregate_results(run_entries):
         sample_values = []
         per_run_samples = []
         invalid_rounds = 0
+        signatures = {}
 
         for run in run_entries:
             raw = run['results'].get(test_name)
             if not raw:
                 continue
 
+            signature = result_signature(raw)
+            signatures.setdefault(signature, []).append(run['run_id'])
+
             round_rows.append(
                 {
                     'run_id': run['run_id'],
                     'path': run['source']['path'],
+                    'status': run['summary']['status'],
+                    'source_kind': run['source']['kind'],
+                    'manifest_commit': run['manifest_row'].get('commit', ''),
+                    'manifest_command': run['manifest_row'].get('command', ''),
                     'avg': raw['avg'],
                     'std': raw['std'],
                     'unit': raw['unit'],
@@ -300,9 +330,54 @@ def aggregate_results(run_entries):
             else:
                 invalid_rounds += 1
 
+        configurations = [
+            {
+                'unit': signature[0],
+                'batch': signature[1],
+                'runs': signature[2],
+                'run_ids': run_ids,
+            }
+            for signature, run_ids in sorted(signatures.items())
+        ]
+
         sample_avg = round(_mean(sample_values), 2) if sample_values else None
         sample_std = round(_sample_std(sample_values), 2) if len(sample_values) >= 2 else 0.0
         sample_ci95 = round(1.96 * _sample_std(sample_values) / math.sqrt(len(sample_values)), 2) if len(sample_values) >= 2 else 0.0
+
+        if len(signatures) > 1:
+            message = 'Mixed measurement signatures across runs: ' + '; '.join(
+                describe_signature(signature, run_ids) for signature, run_ids in sorted(signatures.items())
+            )
+            aggregated[test_name] = {
+                'avg': None,
+                'std': None,
+                'unit': None,
+                'batch': None,
+                'runs': None,
+                'round_count': len(valid_values),
+                'rounds_total': total_rounds,
+                'rounds_present': len(round_rows),
+                'invalid_rounds': invalid_rounds,
+                'min': None,
+                'max': None,
+                'ci95': None,
+                'inner_std_avg': round(_mean(inner_stds), 2) if inner_stds else None,
+                'round_cv_percent': None,
+                'values': [round(value, 2) for value in valid_values],
+                'per_run': round_rows,
+                'sample_count': len(sample_values),
+                'sample_avg': sample_avg,
+                'sample_std': sample_std,
+                'sample_ci95': sample_ci95,
+                'sample_min': round(min(sample_values), 2) if sample_values else None,
+                'sample_max': round(max(sample_values), 2) if sample_values else None,
+                'sample_values': [round(value, 2) for value in sample_values],
+                'per_run_samples': per_run_samples,
+                'consistency_error': message,
+                'configurations': configurations,
+            }
+            aggregation_errors.append({'test': test_name, 'message': message, 'configurations': configurations})
+            continue
 
         if valid_values:
             round_std = _sample_std(valid_values)
@@ -332,6 +407,8 @@ def aggregate_results(run_entries):
                 'sample_max': round(max(sample_values), 2) if sample_values else None,
                 'sample_values': [round(value, 2) for value in sample_values],
                 'per_run_samples': per_run_samples,
+                'consistency_error': None,
+                'configurations': configurations,
             }
             continue
 
@@ -362,9 +439,11 @@ def aggregate_results(run_entries):
                 'sample_max': round(max(sample_values), 2) if sample_values else None,
                 'sample_values': [round(value, 2) for value in sample_values],
                 'per_run_samples': per_run_samples,
+                'consistency_error': None,
+                'configurations': configurations,
             }
 
-    return aggregated
+    return aggregated, aggregation_errors
 
 
 def required_tests_for(branch_name):
@@ -443,7 +522,7 @@ def load_branch_dataset(branch_name, log_dir=LOG_DIR):
             }
         )
 
-    aggregate = aggregate_results(run_entries)
+    aggregate, aggregation_errors = aggregate_results(run_entries)
     latest_meta = {}
     for run in reversed(run_entries):
         if run['metadata']:
@@ -458,6 +537,7 @@ def load_branch_dataset(branch_name, log_dir=LOG_DIR):
         'manifest': manifest_rows,
         'run_statuses': [run['summary'] for run in run_entries],
         'collection_summary': summarize_collection(run_entries, manifest_rows),
+        'aggregation_errors': aggregation_errors,
         'source_files': [run['source'] for run in run_entries],
         'branch_dir': str(branch_dir),
         'legacy_log': log_file_info(branch_dir / 'perftest.log'),

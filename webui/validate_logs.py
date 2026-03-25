@@ -3,26 +3,44 @@
 
 import math
 
-from experiment_data import SCENARIOS, load_branch_dataset, required_tests_for
+from experiment_data import SCENARIOS, load_branch_dataset, required_tests_for, result_is_valid, result_signature
 
 
 def is_valid(result):
-    return bool(result) and result.get('avg', -1) >= 0 and result.get('unit') != 'error'
+    return result_is_valid(result)
+
+
+def low_resolution_runs(result):
+    flagged = []
+    if not result:
+        return flagged
+
+    for row in result.get('per_run', []):
+        if row.get('status') != 'complete':
+            continue
+        if row.get('unit') != 'ticks':
+            continue
+        if row.get('avg', 0) > 3 or row.get('std', 0) != 0:
+            continue
+        if row.get('runs', 0) < 5:
+            continue
+        flagged.append(row)
+
+    return flagged
 
 
 def low_resolution(result):
-    return (
-        is_valid(result)
-        and result.get('unit') == 'ticks'
-        and result.get('avg', 0) <= 3
-        and result.get('std', 0) == 0
-        and result.get('runs', 0) >= 5
-    )
+    return bool(low_resolution_runs(result))
 
 
-def suggested_batch(result):
-    avg = max(result.get('avg', 0), 1)
-    batch = max(result.get('batch', 1), 1)
+def suggested_batch(result, flagged_runs=None):
+    runs = flagged_runs if flagged_runs is not None else low_resolution_runs(result)
+    if runs:
+        avg = max(min(row.get('avg', 0) for row in runs), 1)
+        batch = max(max(row.get('batch', 1) for row in runs), 1)
+    else:
+        avg = max(result.get('avg', 0) or 0, 1)
+        batch = max(result.get('batch', 1) or 1, 1)
     factor = max(2, int(math.ceil(8.0 / avg)))
     return batch * factor
 
@@ -64,6 +82,21 @@ def validate_metadata(dataset, branch_name):
     if len(summary.get('unique_cpus', [])) > 1:
         warnings.append(f'[{branch_name}] Multiple CPU settings detected in manifest: {", ".join(summary["unique_cpus"])}')
 
+    for row in dataset.get('manifest', []):
+        run_id = row.get('run_id', 'unknown')
+        status = row.get('status', '')
+        exit_code = int(row.get('exit_code') or 0)
+        commands_planned = int(row.get('commands_planned') or 0)
+        commands_completed = int(row.get('commands_completed') or 0)
+        failed_command = row.get('failed_command', '')
+
+        if status == 'partial' and failed_command and exit_code == 0:
+            errors.append(f'[{branch_name}] Manifest row {run_id} records failed command `{failed_command}` but exit_code=0; recollect or rescan before trusting this dataset')
+        if status == 'complete' and exit_code != 0:
+            errors.append(f'[{branch_name}] Manifest row {run_id} is marked complete but exit_code={exit_code}')
+        if status == 'complete' and commands_planned and commands_completed < commands_planned:
+            errors.append(f'[{branch_name}] Manifest row {run_id} is marked complete but only recorded {commands_completed}/{commands_planned} finished commands')
+
     return errors, warnings
 
 
@@ -79,6 +112,9 @@ def validate_results(dataset, branch_name):
         if not result:
             errors.append(f'[{branch_name}] Missing required test: {test_name}')
             continue
+        if result.get('consistency_error'):
+            errors.append(f'[{branch_name}] {test_name} cannot be aggregated safely: {result["consistency_error"]}')
+            continue
         if not is_valid(result):
             errors.append(f'[{branch_name}] Required test {test_name} has no valid measurement')
             continue
@@ -86,9 +122,11 @@ def validate_results(dataset, branch_name):
             warnings.append(f'[{branch_name}] {test_name} only appeared in {result.get("rounds_present", 0)}/{total_rounds} discovered rounds')
         if result.get('round_count', 0) == 1 and total_rounds >= 2:
             warnings.append(f'[{branch_name}] {test_name} has only one valid round; repeatability is weak')
-        if low_resolution(result):
+        low_res_runs = low_resolution_runs(result)
+        if low_res_runs:
+            run_ids = ', '.join(row.get('run_id', 'unknown') for row in low_res_runs)
             warnings.append(
-                f'[{branch_name}] {test_name} is low-resolution (avg={result.get("avg", 0):.2f} ticks, batch={result.get("batch", 1)}); try batch>={suggested_batch(result)}'
+                f'[{branch_name}] {test_name} is low-resolution in complete run(s) {run_ids}; try batch>={suggested_batch(result, low_res_runs)}'
             )
         round_cv = result.get('round_cv_percent')
         if round_cv is not None and round_cv >= 10.0:
@@ -109,8 +147,17 @@ def validate_consistency(baseline_data, testing_data):
     for test_name in required_tests_for('baseline'):
         if test_name not in baseline_data['results']:
             errors.append(f'[baseline] Missing common test: {test_name}')
+            continue
         if test_name not in testing_data['results']:
             errors.append(f'[testing] Missing common test: {test_name}')
+            continue
+
+        base = baseline_data['results'].get(test_name)
+        test = testing_data['results'].get(test_name)
+        if is_valid(base) and is_valid(test) and result_signature(base) != result_signature(test):
+            warnings.append(
+                f'[cross-branch] {test_name} uses different signatures: baseline {result_signature(base)}, testing {result_signature(test)}; recollect matching batches before writing direct comparison conclusions'
+            )
 
     return errors, warnings
 
@@ -158,10 +205,16 @@ def recommend_actions(baseline_data, testing_data):
                 '[testing] Recollect formal data with split boots (`perftest memory` + `perftest sched`) so scheduler conclusions are not contaminated by the earlier memory workload.'
             )
 
+        if dataset.get('aggregation_errors'):
+            actions.append(
+                f'[{branch_name}] Recollect or separate datasets before aggregation; {len(dataset["aggregation_errors"])} test(s) currently mix different unit/batch/runs signatures.'
+            )
+
         for test_name, result in sorted(dataset['results'].items()):
-            if low_resolution(result):
+            low_res_runs = low_resolution_runs(result)
+            if low_res_runs:
                 actions.append(
-                    f'[{branch_name}] Increase `{test_name}` batch from {result.get("batch", 1)} to at least {suggested_batch(result)} to move it out of the 1-3 tick range.'
+                    f'[{branch_name}] Increase `{test_name}` batch from {max(row.get("batch", 1) for row in low_res_runs)} to at least {suggested_batch(result, low_res_runs)} to move it out of the 1-3 tick range.'
                 )
 
     for scenario, tests in SCENARIOS.items():
