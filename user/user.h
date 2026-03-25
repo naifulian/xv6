@@ -15,10 +15,24 @@ struct pstat {
   int tickets;
   int sched_class;
   uint sz;
+  uint heap_end;
+  int vma_count;
+  int mmap_regions;
+  uint mmap_bytes;
   int rutime;
   int retime;
   int stime;
   char name[16];
+};
+
+struct vma_info {
+  int pid;
+  int slot;
+  uint64 start;
+  uint64 end;
+  uint64 length;
+  int prot;
+  int flags;
 };
 
 // Memory statistics structure for user space
@@ -81,6 +95,8 @@ int getmemstat(struct memstat*);
 int setpriority(int, int);
 int getstats(void);
 int getsnapshot(void*);
+int getprocvmas(int, struct vma_info*, int);
+int telemetrywrite(const void*, int);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -104,6 +120,7 @@ uint memfree(void);
 // printf.c
 void fprintf(int, const char*, ...) __attribute__ ((format (printf, 2, 3)));
 void printf(const char*, ...) __attribute__ ((format (printf, 1, 2)));
+void telemetry_printf(const char*, ...) __attribute__ ((format (printf, 1, 2)));
 
 // umalloc.c
 void* malloc(uint);

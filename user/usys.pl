@@ -51,3 +51,5 @@ entry("getmemstat");
 entry("setpriority");
 entry("getstats");
 entry("getsnapshot");
+entry("getprocvmas");
+entry("telemetrywrite");

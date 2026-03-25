@@ -29,3 +29,5 @@
 #define SYS_setpriority 28
 #define SYS_getstats 29
 #define SYS_getsnapshot 30
+#define SYS_getprocvmas 31
+#define SYS_telemetrywrite 32

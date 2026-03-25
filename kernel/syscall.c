@@ -110,6 +110,8 @@ extern uint64 sys_getmemstat(void);
 extern uint64 sys_setpriority(void);
 extern uint64 sys_getstats(void);
 extern uint64 sys_getsnapshot(void);
+extern uint64 sys_getprocvmas(void);
+extern uint64 sys_telemetrywrite(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -144,6 +146,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_setpriority] sys_setpriority,
 [SYS_getstats] sys_getstats,
 [SYS_getsnapshot] sys_getsnapshot,
+[SYS_getprocvmas] sys_getprocvmas,
+[SYS_telemetrywrite] sys_telemetrywrite,
 };
 
 void

@@ -10,6 +10,23 @@
 #include "kernel/fcntl.h"
 
 char *argv[] = { "sh", 0 };
+char *dashboard_argv[] = { "dashboardd", "30", "0", 0 };
+
+static void
+start_dashboardd(void)
+{
+  int pid = fork();
+  if(pid < 0){
+    printf("init: fork dashboardd failed\n");
+    return;
+  }
+  if(pid == 0){
+    exec("dashboardd", dashboard_argv);
+    printf("init: exec dashboardd failed\n");
+    exit(1);
+  }
+  printf("init: started dashboardd\n");
+}
 
 int
 main(void)
@@ -22,6 +39,8 @@ main(void)
   }
   dup(0);  // stdout
   dup(0);  // stderr
+
+  start_dashboardd();
 
   for(;;){
     printf("init: starting sh\n");

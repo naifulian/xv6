@@ -138,6 +138,8 @@ int             sys_getstats_kernel(void);
 // sysinfo.c
 void            sys_snapshot_init(void);
 uint64          sys_getsnapshot(void);
+uint64          sys_getprocvmas(void);
+uint64          sys_telemetrywrite(void);
 
 // swtch.S
 void            swtch(struct context*, struct context*);
@@ -218,6 +220,10 @@ void            plic_complete(int);
 void            virtio_disk_init(void);
 void            virtio_disk_rw(struct buf *, int);
 void            virtio_disk_intr(void);
+
+// telemetry_console.c
+void            telemetry_console_init(void);
+int             telemetry_console_write(char *, int);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

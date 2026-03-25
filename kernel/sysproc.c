@@ -44,6 +44,34 @@ sys_getpid(void)
 }
 
 uint64
+sys_telemetrywrite(void)
+{
+  uint64 src;
+  int n;
+  char buf[512];
+  int copied = 0;
+  struct proc *p = myproc();
+
+  argaddr(0, &src);
+  argint(1, &n);
+  if(n < 0)
+    return -1;
+
+  while(copied < n){
+    int chunk = n - copied;
+    if(chunk > sizeof(buf))
+      chunk = sizeof(buf);
+    if(copyin(p->pagetable, buf, src + copied, chunk) < 0)
+      return copied > 0 ? copied : -1;
+    if(telemetry_console_write(buf, chunk) < 0)
+      return copied > 0 ? copied : -1;
+    copied += chunk;
+  }
+
+  return copied;
+}
+
+uint64
 sys_fork(void)
 {
   return kfork();
@@ -254,10 +282,24 @@ struct pstat {
   int tickets;
   int sched_class;
   uint sz;
+  uint heap_end;
+  int vma_count;
+  int mmap_regions;
+  uint mmap_bytes;
   int rutime;
   int retime;
   int stime;
   char name[16];
+};
+
+struct vma_info {
+  int pid;
+  int slot;
+  uint64 start;
+  uint64 end;
+  uint64 length;
+  int prot;
+  int flags;
 };
 
 uint64
@@ -284,12 +326,26 @@ sys_getptable(void)
   for(p = proc; p < &proc[NPROC] && count < max_count; p++) {
     acquire(&p->lock);
     if(p->state != UNUSED) {
+      int vma_count = 0;
+      uint mmap_bytes = 0;
+
+      for(int i = 0; i < NVMA; i++) {
+        if(p->vmas[i].valid) {
+          vma_count++;
+          mmap_bytes += p->vmas[i].length;
+        }
+      }
+
       buf[count].pid = p->pid;
       buf[count].state = p->state;
       buf[count].priority = p->priority;
       buf[count].tickets = p->tickets;
       buf[count].sched_class = p->sched_class;
       buf[count].sz = p->sz;
+      buf[count].heap_end = p->heap_end;
+      buf[count].vma_count = vma_count;
+      buf[count].mmap_regions = vma_count;
+      buf[count].mmap_bytes = mmap_bytes;
       buf[count].rutime = p->rutime;
       buf[count].retime = p->retime;
       buf[count].stime = p->stime;
@@ -301,6 +357,68 @@ sys_getptable(void)
 
   struct proc *cur = myproc();
   if(copyout(cur->pagetable, addr, (char *)buf, count * sizeof(struct pstat)) < 0) {
+    kfree((void *)buf);
+    return -1;
+  }
+
+  kfree((void *)buf);
+  return count;
+}
+
+uint64
+sys_getprocvmas(void)
+{
+  int pid;
+  uint64 addr;
+  int max_count;
+  struct vma_info *buf;
+  struct proc *target = 0;
+  int count = 0;
+
+  argint(0, &pid);
+  argaddr(1, &addr);
+  argint(2, &max_count);
+
+  if(pid < 1 || addr == 0 || max_count <= 0)
+    return -1;
+
+  for(struct proc *p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->state != UNUSED && p->pid == pid) {
+      target = p;
+      break;
+    }
+    release(&p->lock);
+  }
+
+  if(target == 0)
+    return -1;
+
+  buf = (struct vma_info *)kalloc();
+  if(buf == 0) {
+    release(&target->lock);
+    return -1;
+  }
+
+  memset(buf, 0, PGSIZE);
+
+  for(int i = 0; i < NVMA && count < max_count; i++) {
+    if(target->vmas[i].valid == 0)
+      continue;
+    buf[count].pid = target->pid;
+    buf[count].slot = i;
+    buf[count].start = target->vmas[i].addr;
+    buf[count].end = target->vmas[i].addr + target->vmas[i].length;
+    buf[count].length = target->vmas[i].length;
+    buf[count].prot = target->vmas[i].prot;
+    buf[count].flags = target->vmas[i].flags;
+    count++;
+  }
+
+  release(&target->lock);
+
+  struct proc *cur = myproc();
+  if(copyout(cur->pagetable, addr, (char *)buf, count * sizeof(struct vma_info)) < 0) {
     kfree((void *)buf);
     return -1;
   }
