@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse sysmon console output into JSON consumed by the web UI."""
+"""Parse sysmon console output into JSON consumed by the dashboard UI."""
 
 import json
 import re
@@ -58,11 +58,11 @@ def parse_file(path):
 
 def main(argv):
     if len(argv) < 2:
-        print('Usage: python3 webui/parse_sysmon.py <raw-log> [output-json]')
+        print('Usage: python3 dashboard/parse_sysmon.py <raw-log> [output-json]')
         return 1
 
     source = Path(argv[1])
-    target = Path(argv[2]) if len(argv) > 2 else Path('webui/data/snapshots.json')
+    target = Path(argv[2]) if len(argv) > 2 else Path('dashboard/data/snapshots.json')
     payload = parse_file(source)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')

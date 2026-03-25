@@ -186,7 +186,7 @@ def recommend_actions(baseline_data, testing_data):
         complete_runs = summary.get('complete_runs', 0)
         if complete_runs < 3:
             actions.append(
-                f'[{branch_name}] Add at least {3 - complete_runs} more complete round(s) with `./webui/analyze_all.sh collect --rounds 3 --resume` before writing formal conclusions.'
+                f'[{branch_name}] Add at least {3 - complete_runs} more complete round(s) with `./experiments/analyze_all.sh collect --rounds 3 --resume` before writing formal conclusions.'
             )
 
         partial_ids = [run['run_id'] for run in dataset.get('run_statuses', []) if run.get('status') == 'partial']

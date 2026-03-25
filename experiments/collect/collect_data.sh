@@ -3,8 +3,9 @@
 
 set -euo pipefail
 
-ROOT=$(cd "$(dirname "$0")/.." && pwd)
-LOG_DIR="${XV6_LOG_DIR:-$ROOT/log}"
+ROOT=$(cd "$(dirname "$0")/../.." && pwd)
+EXPERIMENTS_DIR="$ROOT/experiments"
+LOG_DIR="${XV6_LOG_DIR:-$EXPERIMENTS_DIR/logs}"
 BASELINE_ROOT="${BASELINE_ROOT:-}"
 TESTING_ROOT="${TESTING_ROOT:-}"
 TIMEOUT="${TIMEOUT:-1800}"
@@ -41,7 +42,7 @@ Environment overrides:
   QEMU_CPUS    QEMU CPU count (default: 1)
   TIMEOUT      Timeout per round in seconds (default: 1800)
   PERFTEST_CMD Command sent inside xv6 (default: perftest all)
-  XV6_LOG_DIR  Log root for collected datasets (default: $ROOT/log)
+  XV6_LOG_DIR  Log root for collected datasets (default: $EXPERIMENTS_DIR/logs)
   BASELINE_ROOT Alternate source root for baseline collection
   TESTING_ROOT Alternate source root for testing collection
 
@@ -693,5 +694,5 @@ case "$TARGET" in
 esac
 
 log_info "Data collection complete"
-log_info "Validation: python3 webui/validate_logs.py"
-log_info "Plotting:   python3 webui/plot_results.py"
+log_info "Validation: python3 experiments/analyze/validate_logs.py"
+log_info "Plotting:   python3 experiments/analyze/plot_results.py"

@@ -13,18 +13,18 @@ fi
 
 case "$MODE" in
     collect)
-        "$ROOT/webui/collect_data.sh" all "$@"
+        "$ROOT/experiments/collect/collect_data.sh" all "$@"
         ;;
     validate)
-        python3 "$ROOT/webui/validate_logs.py"
+        python3 "$ROOT/experiments/analyze/validate_logs.py"
         ;;
     plot)
-        python3 "$ROOT/webui/plot_results.py"
+        python3 "$ROOT/experiments/analyze/plot_results.py"
         ;;
     all)
-        "$ROOT/webui/collect_data.sh" all "$@"
-        python3 "$ROOT/webui/validate_logs.py"
-        python3 "$ROOT/webui/plot_results.py"
+        "$ROOT/experiments/collect/collect_data.sh" all "$@"
+        python3 "$ROOT/experiments/analyze/validate_logs.py"
+        python3 "$ROOT/experiments/analyze/plot_results.py"
         ;;
     -h|--help)
         cat <<EOF

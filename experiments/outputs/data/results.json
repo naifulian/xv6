@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-25T12:48:02.627005",
+  "generated_at": "2026-03-25T17:36:18.734656",
   "baseline": {
     "branch": "baseline",
     "metadata": {
@@ -32,7 +32,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -45,7 +45,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -58,7 +58,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -115,7 +115,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -128,7 +128,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -141,7 +141,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -194,7 +194,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               11.0,
@@ -211,7 +211,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -228,7 +228,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -281,7 +281,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -294,7 +294,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -307,7 +307,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -360,7 +360,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               146.0,
@@ -377,7 +377,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               143.0,
@@ -394,7 +394,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               145.0,
@@ -447,7 +447,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -460,7 +460,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -473,7 +473,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -526,7 +526,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -543,7 +543,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -560,7 +560,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -613,7 +613,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -626,7 +626,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -639,7 +639,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -692,7 +692,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               193.0,
@@ -709,7 +709,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               147.0,
@@ -726,7 +726,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               146.0,
@@ -779,7 +779,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -792,7 +792,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -805,7 +805,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -858,7 +858,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -875,7 +875,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -892,7 +892,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -945,7 +945,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -958,7 +958,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -971,7 +971,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1024,7 +1024,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -1041,7 +1041,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -1058,7 +1058,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               5.0,
@@ -1111,7 +1111,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1124,7 +1124,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1137,7 +1137,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1190,7 +1190,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "count": 10,
             "values": [
               213.0,
@@ -1207,7 +1207,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "count": 10,
             "values": [
               213.0,
@@ -1224,7 +1224,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "count": 10,
             "values": [
               211.0,
@@ -1277,7 +1277,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1290,7 +1290,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1303,7 +1303,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1360,7 +1360,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/baseline/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1373,7 +1373,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/baseline/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1386,7 +1386,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/baseline/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "b974bf7bc8888d251e682355e443d279879a1de4-dirty",
@@ -1588,7 +1588,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/baseline/runs/run01_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
           "exists": true,
           "size_bytes": 2993,
           "lines": 78,
@@ -1601,7 +1601,7 @@
           "run_id": "run01",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/baseline/runs/run01_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
           "required_present": 9,
           "required_total": 9,
           "missing_required": [],
@@ -1613,8 +1613,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory",
-            "raw_log": "log/thesis_final/baseline/runs/run01_raw.log",
-            "clean_log": "log/thesis_final/baseline/runs/run01_clean.log",
+            "raw_log": "experiments/logs/thesis_final/baseline/runs/run01_raw.log",
+            "clean_log": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
             "clean_sha256": "b86acdccfc8344cc1dffa9f77d42be862af383a0215d79de90a4cad7b73ca071",
             "result_count": "10",
             "required_results": "10",
@@ -1635,8 +1635,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run01_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run01_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run01_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
           "clean_sha256": "b86acdccfc8344cc1dffa9f77d42be862af383a0215d79de90a4cad7b73ca071",
           "result_count": "10",
           "required_results": "10",
@@ -1815,7 +1815,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/baseline/runs/run02_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
           "exists": true,
           "size_bytes": 2985,
           "lines": 78,
@@ -1828,7 +1828,7 @@
           "run_id": "run02",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/baseline/runs/run02_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
           "required_present": 9,
           "required_total": 9,
           "missing_required": [],
@@ -1840,8 +1840,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory",
-            "raw_log": "log/thesis_final/baseline/runs/run02_raw.log",
-            "clean_log": "log/thesis_final/baseline/runs/run02_clean.log",
+            "raw_log": "experiments/logs/thesis_final/baseline/runs/run02_raw.log",
+            "clean_log": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
             "clean_sha256": "66dfdf0a8bda6c4792cab6b6d659b80510cd5d0949062f58ac5445f05e860825",
             "result_count": "10",
             "required_results": "10",
@@ -1862,8 +1862,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run02_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run02_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run02_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
           "clean_sha256": "66dfdf0a8bda6c4792cab6b6d659b80510cd5d0949062f58ac5445f05e860825",
           "result_count": "10",
           "required_results": "10",
@@ -2042,7 +2042,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/baseline/runs/run03_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
           "exists": true,
           "size_bytes": 2979,
           "lines": 78,
@@ -2055,7 +2055,7 @@
           "run_id": "run03",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/baseline/runs/run03_clean.log",
+          "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
           "required_present": 9,
           "required_total": 9,
           "missing_required": [],
@@ -2067,8 +2067,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory",
-            "raw_log": "log/thesis_final/baseline/runs/run03_raw.log",
-            "clean_log": "log/thesis_final/baseline/runs/run03_clean.log",
+            "raw_log": "experiments/logs/thesis_final/baseline/runs/run03_raw.log",
+            "clean_log": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
             "clean_sha256": "7e3f8cc7cfa80a77e04acfd02be55b097daf2dd6dc6e49f36420fb3b27b9d51b",
             "result_count": "10",
             "required_results": "10",
@@ -2089,8 +2089,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run03_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run03_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run03_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
           "clean_sha256": "7e3f8cc7cfa80a77e04acfd02be55b097daf2dd6dc6e49f36420fb3b27b9d51b",
           "result_count": "10",
           "required_results": "10",
@@ -2113,8 +2113,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory",
-        "raw_log": "log/thesis_final/baseline/runs/run01_raw.log",
-        "clean_log": "log/thesis_final/baseline/runs/run01_clean.log",
+        "raw_log": "experiments/logs/thesis_final/baseline/runs/run01_raw.log",
+        "clean_log": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
         "clean_sha256": "b86acdccfc8344cc1dffa9f77d42be862af383a0215d79de90a4cad7b73ca071",
         "result_count": "10",
         "required_results": "10",
@@ -2134,8 +2134,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory",
-        "raw_log": "log/thesis_final/baseline/runs/run02_raw.log",
-        "clean_log": "log/thesis_final/baseline/runs/run02_clean.log",
+        "raw_log": "experiments/logs/thesis_final/baseline/runs/run02_raw.log",
+        "clean_log": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
         "clean_sha256": "66dfdf0a8bda6c4792cab6b6d659b80510cd5d0949062f58ac5445f05e860825",
         "result_count": "10",
         "required_results": "10",
@@ -2155,8 +2155,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory",
-        "raw_log": "log/thesis_final/baseline/runs/run03_raw.log",
-        "clean_log": "log/thesis_final/baseline/runs/run03_clean.log",
+        "raw_log": "experiments/logs/thesis_final/baseline/runs/run03_raw.log",
+        "clean_log": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
         "clean_sha256": "7e3f8cc7cfa80a77e04acfd02be55b097daf2dd6dc6e49f36420fb3b27b9d51b",
         "result_count": "10",
         "required_results": "10",
@@ -2174,7 +2174,7 @@
         "run_id": "run01",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/baseline/runs/run01_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
         "required_present": 9,
         "required_total": 9,
         "missing_required": [],
@@ -2186,8 +2186,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run01_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run01_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run01_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
           "clean_sha256": "b86acdccfc8344cc1dffa9f77d42be862af383a0215d79de90a4cad7b73ca071",
           "result_count": "10",
           "required_results": "10",
@@ -2204,7 +2204,7 @@
         "run_id": "run02",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/baseline/runs/run02_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
         "required_present": 9,
         "required_total": 9,
         "missing_required": [],
@@ -2216,8 +2216,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run02_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run02_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run02_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
           "clean_sha256": "66dfdf0a8bda6c4792cab6b6d659b80510cd5d0949062f58ac5445f05e860825",
           "result_count": "10",
           "required_results": "10",
@@ -2234,7 +2234,7 @@
         "run_id": "run03",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/baseline/runs/run03_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
         "required_present": 9,
         "required_total": 9,
         "missing_required": [],
@@ -2246,8 +2246,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory",
-          "raw_log": "log/thesis_final/baseline/runs/run03_raw.log",
-          "clean_log": "log/thesis_final/baseline/runs/run03_clean.log",
+          "raw_log": "experiments/logs/thesis_final/baseline/runs/run03_raw.log",
+          "clean_log": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
           "clean_sha256": "7e3f8cc7cfa80a77e04acfd02be55b097daf2dd6dc6e49f36420fb3b27b9d51b",
           "result_count": "10",
           "required_results": "10",
@@ -2281,7 +2281,7 @@
     "aggregation_errors": [],
     "source_files": [
       {
-        "path": "log/thesis_final/baseline/runs/run01_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run01_clean.log",
         "exists": true,
         "size_bytes": 2993,
         "lines": 78,
@@ -2291,7 +2291,7 @@
         "sanitized_from_raw": false
       },
       {
-        "path": "log/thesis_final/baseline/runs/run02_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run02_clean.log",
         "exists": true,
         "size_bytes": 2985,
         "lines": 78,
@@ -2301,7 +2301,7 @@
         "sanitized_from_raw": false
       },
       {
-        "path": "log/thesis_final/baseline/runs/run03_clean.log",
+        "path": "experiments/logs/thesis_final/baseline/runs/run03_clean.log",
         "exists": true,
         "size_bytes": 2979,
         "lines": 78,
@@ -2311,9 +2311,9 @@
         "sanitized_from_raw": false
       }
     ],
-    "branch_dir": "log/thesis_final/baseline",
+    "branch_dir": "experiments/logs/thesis_final/baseline",
     "legacy_log": {
-      "path": "log/thesis_final/baseline/perftest.log",
+      "path": "experiments/logs/thesis_final/baseline/perftest.log",
       "exists": true,
       "size_bytes": 2979,
       "lines": 78,
@@ -2353,7 +2353,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2366,7 +2366,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2379,7 +2379,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2405,7 +2405,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 1,
             "values": [
               16384.0
@@ -2413,7 +2413,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 1,
             "values": [
               16384.0
@@ -2421,7 +2421,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 1,
             "values": [
               16384.0
@@ -2465,7 +2465,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2478,7 +2478,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2491,7 +2491,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2544,7 +2544,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               29.0,
@@ -2561,7 +2561,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               25.0,
@@ -2578,7 +2578,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               26.0,
@@ -2631,7 +2631,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2644,7 +2644,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2657,7 +2657,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2710,7 +2710,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -2727,7 +2727,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               8.0,
@@ -2744,7 +2744,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -2797,7 +2797,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2810,7 +2810,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2823,7 +2823,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2876,7 +2876,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -2893,7 +2893,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               8.0,
@@ -2910,7 +2910,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               8.0,
@@ -2963,7 +2963,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2976,7 +2976,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -2989,7 +2989,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3042,7 +3042,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3059,7 +3059,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3076,7 +3076,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3129,7 +3129,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3142,7 +3142,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3155,7 +3155,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3208,7 +3208,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               14.0,
@@ -3225,7 +3225,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               12.0,
@@ -3242,7 +3242,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               12.0,
@@ -3295,7 +3295,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3308,7 +3308,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3321,7 +3321,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3374,7 +3374,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               6.0,
@@ -3391,7 +3391,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               5.0,
@@ -3408,7 +3408,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               6.0,
@@ -3461,7 +3461,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3474,7 +3474,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3487,7 +3487,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3540,7 +3540,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               11.0,
@@ -3557,7 +3557,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -3574,7 +3574,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3627,7 +3627,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3640,7 +3640,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3653,7 +3653,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3706,7 +3706,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               16.0,
@@ -3723,7 +3723,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               12.0,
@@ -3740,7 +3740,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               12.0,
@@ -3793,7 +3793,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3806,7 +3806,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3819,7 +3819,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3872,7 +3872,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               12.0,
@@ -3889,7 +3889,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3906,7 +3906,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -3959,7 +3959,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3972,7 +3972,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -3985,7 +3985,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4038,7 +4038,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               26.0,
@@ -4055,7 +4055,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               19.0,
@@ -4072,7 +4072,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               20.0,
@@ -4125,7 +4125,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4138,7 +4138,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4151,7 +4151,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4204,7 +4204,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               15.0,
@@ -4221,7 +4221,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -4238,7 +4238,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               9.0,
@@ -4291,7 +4291,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4304,7 +4304,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4317,7 +4317,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4370,7 +4370,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               24.0,
@@ -4387,7 +4387,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               19.0,
@@ -4404,7 +4404,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               20.0,
@@ -4457,7 +4457,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4470,7 +4470,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4483,7 +4483,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4536,7 +4536,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               0.0,
@@ -4553,7 +4553,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               0.0,
@@ -4570,7 +4570,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               454.0,
@@ -4623,7 +4623,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4636,7 +4636,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4649,7 +4649,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4702,7 +4702,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               10000.0,
@@ -4719,7 +4719,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               9230.0,
@@ -4736,7 +4736,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               10000.0,
@@ -4789,7 +4789,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4802,7 +4802,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4815,7 +4815,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4868,7 +4868,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               434.0,
@@ -4885,7 +4885,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               400.0,
@@ -4902,7 +4902,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               400.0,
@@ -4955,7 +4955,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4968,7 +4968,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -4981,7 +4981,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5034,7 +5034,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               5.0,
@@ -5051,7 +5051,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               4.0,
@@ -5068,7 +5068,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               5.0,
@@ -5121,7 +5121,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5134,7 +5134,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5147,7 +5147,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5200,7 +5200,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               11.0,
@@ -5217,7 +5217,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -5234,7 +5234,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               10.0,
@@ -5287,7 +5287,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5300,7 +5300,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5313,7 +5313,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5366,7 +5366,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               38.0,
@@ -5383,7 +5383,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               34.0,
@@ -5400,7 +5400,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               36.0,
@@ -5453,7 +5453,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5466,7 +5466,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5479,7 +5479,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5532,7 +5532,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               19.0,
@@ -5549,7 +5549,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               16.0,
@@ -5566,7 +5566,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               16.0,
@@ -5619,7 +5619,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5632,7 +5632,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5645,7 +5645,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5698,7 +5698,7 @@
         "per_run_samples": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "count": 10,
             "values": [
               41.0,
@@ -5715,7 +5715,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "count": 10,
             "values": [
               33.0,
@@ -5732,7 +5732,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "count": 10,
             "values": [
               36.0,
@@ -5785,7 +5785,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5798,7 +5798,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5811,7 +5811,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5868,7 +5868,7 @@
         "per_run": [
           {
             "run_id": "run01",
-            "path": "log/thesis_final/testing/runs/run01_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5881,7 +5881,7 @@
           },
           {
             "run_id": "run02",
-            "path": "log/thesis_final/testing/runs/run02_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -5894,7 +5894,7 @@
           },
           {
             "run_id": "run03",
-            "path": "log/thesis_final/testing/runs/run03_clean.log",
+            "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "status": "complete",
             "source_kind": "clean",
             "manifest_commit": "9b20e87fe39d9631cdedbd93f1b30df6655e1c73-dirty",
@@ -6346,7 +6346,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/testing/runs/run01_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
           "exists": true,
           "size_bytes": 2706,
           "lines": 57,
@@ -6359,7 +6359,7 @@
           "run_id": "run01",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/testing/runs/run01_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
           "required_present": 20,
           "required_total": 20,
           "missing_required": [],
@@ -6371,8 +6371,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-            "raw_log": "log/thesis_final/testing/runs/run01_raw.log",
-            "clean_log": "log/thesis_final/testing/runs/run01_clean.log",
+            "raw_log": "experiments/logs/thesis_final/testing/runs/run01_raw.log",
+            "clean_log": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
             "clean_sha256": "a26159b8cdd45d6224ed14d3ab086572435b2e062871daa6270597c4aee5049c",
             "result_count": "29",
             "required_results": "29",
@@ -6393,8 +6393,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run01_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run01_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run01_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
           "clean_sha256": "a26159b8cdd45d6224ed14d3ab086572435b2e062871daa6270597c4aee5049c",
           "result_count": "29",
           "required_results": "29",
@@ -6823,7 +6823,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/testing/runs/run02_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
           "exists": true,
           "size_bytes": 2676,
           "lines": 57,
@@ -6836,7 +6836,7 @@
           "run_id": "run02",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/testing/runs/run02_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
           "required_present": 20,
           "required_total": 20,
           "missing_required": [],
@@ -6848,8 +6848,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-            "raw_log": "log/thesis_final/testing/runs/run02_raw.log",
-            "clean_log": "log/thesis_final/testing/runs/run02_clean.log",
+            "raw_log": "experiments/logs/thesis_final/testing/runs/run02_raw.log",
+            "clean_log": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
             "clean_sha256": "26b8d5ab5e34e548a12a19deba77ea0f4f5662bf9bead973de52c159d9b03c8b",
             "result_count": "29",
             "required_results": "29",
@@ -6870,8 +6870,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run02_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run02_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run02_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
           "clean_sha256": "26b8d5ab5e34e548a12a19deba77ea0f4f5662bf9bead973de52c159d9b03c8b",
           "result_count": "29",
           "required_results": "29",
@@ -7300,7 +7300,7 @@
         },
         "error": null,
         "source": {
-          "path": "log/thesis_final/testing/runs/run03_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
           "exists": true,
           "size_bytes": 2682,
           "lines": 57,
@@ -7313,7 +7313,7 @@
           "run_id": "run03",
           "status": "complete",
           "source_kind": "clean",
-          "path": "log/thesis_final/testing/runs/run03_clean.log",
+          "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
           "required_present": 20,
           "required_total": 20,
           "missing_required": [],
@@ -7325,8 +7325,8 @@
             "cpus": "1",
             "timeout_s": "1200",
             "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-            "raw_log": "log/thesis_final/testing/runs/run03_raw.log",
-            "clean_log": "log/thesis_final/testing/runs/run03_clean.log",
+            "raw_log": "experiments/logs/thesis_final/testing/runs/run03_raw.log",
+            "clean_log": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
             "clean_sha256": "205a765536665f25c5ac0e9929351f55ac051e4118354eba4c577e189a7c54f8",
             "result_count": "29",
             "required_results": "29",
@@ -7347,8 +7347,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run03_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run03_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run03_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
           "clean_sha256": "205a765536665f25c5ac0e9929351f55ac051e4118354eba4c577e189a7c54f8",
           "result_count": "29",
           "required_results": "29",
@@ -7371,8 +7371,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-        "raw_log": "log/thesis_final/testing/runs/run01_raw.log",
-        "clean_log": "log/thesis_final/testing/runs/run01_clean.log",
+        "raw_log": "experiments/logs/thesis_final/testing/runs/run01_raw.log",
+        "clean_log": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
         "clean_sha256": "a26159b8cdd45d6224ed14d3ab086572435b2e062871daa6270597c4aee5049c",
         "result_count": "29",
         "required_results": "29",
@@ -7392,8 +7392,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-        "raw_log": "log/thesis_final/testing/runs/run02_raw.log",
-        "clean_log": "log/thesis_final/testing/runs/run02_clean.log",
+        "raw_log": "experiments/logs/thesis_final/testing/runs/run02_raw.log",
+        "clean_log": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
         "clean_sha256": "26b8d5ab5e34e548a12a19deba77ea0f4f5662bf9bead973de52c159d9b03c8b",
         "result_count": "29",
         "required_results": "29",
@@ -7413,8 +7413,8 @@
         "cpus": "1",
         "timeout_s": "1200",
         "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-        "raw_log": "log/thesis_final/testing/runs/run03_raw.log",
-        "clean_log": "log/thesis_final/testing/runs/run03_clean.log",
+        "raw_log": "experiments/logs/thesis_final/testing/runs/run03_raw.log",
+        "clean_log": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
         "clean_sha256": "205a765536665f25c5ac0e9929351f55ac051e4118354eba4c577e189a7c54f8",
         "result_count": "29",
         "required_results": "29",
@@ -7432,7 +7432,7 @@
         "run_id": "run01",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/testing/runs/run01_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
         "required_present": 20,
         "required_total": 20,
         "missing_required": [],
@@ -7444,8 +7444,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run01_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run01_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run01_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
           "clean_sha256": "a26159b8cdd45d6224ed14d3ab086572435b2e062871daa6270597c4aee5049c",
           "result_count": "29",
           "required_results": "29",
@@ -7462,7 +7462,7 @@
         "run_id": "run02",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/testing/runs/run02_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
         "required_present": 20,
         "required_total": 20,
         "missing_required": [],
@@ -7474,8 +7474,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run02_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run02_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run02_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
           "clean_sha256": "26b8d5ab5e34e548a12a19deba77ea0f4f5662bf9bead973de52c159d9b03c8b",
           "result_count": "29",
           "required_results": "29",
@@ -7492,7 +7492,7 @@
         "run_id": "run03",
         "status": "complete",
         "source_kind": "clean",
-        "path": "log/thesis_final/testing/runs/run03_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
         "required_present": 20,
         "required_total": 20,
         "missing_required": [],
@@ -7504,8 +7504,8 @@
           "cpus": "1",
           "timeout_s": "1200",
           "command": "perftest memory + perftest sched_core + perftest sched_fairness + perftest sched_response",
-          "raw_log": "log/thesis_final/testing/runs/run03_raw.log",
-          "clean_log": "log/thesis_final/testing/runs/run03_clean.log",
+          "raw_log": "experiments/logs/thesis_final/testing/runs/run03_raw.log",
+          "clean_log": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
           "clean_sha256": "205a765536665f25c5ac0e9929351f55ac051e4118354eba4c577e189a7c54f8",
           "result_count": "29",
           "required_results": "29",
@@ -7539,7 +7539,7 @@
     "aggregation_errors": [],
     "source_files": [
       {
-        "path": "log/thesis_final/testing/runs/run01_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run01_clean.log",
         "exists": true,
         "size_bytes": 2706,
         "lines": 57,
@@ -7549,7 +7549,7 @@
         "sanitized_from_raw": false
       },
       {
-        "path": "log/thesis_final/testing/runs/run02_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run02_clean.log",
         "exists": true,
         "size_bytes": 2676,
         "lines": 57,
@@ -7559,7 +7559,7 @@
         "sanitized_from_raw": false
       },
       {
-        "path": "log/thesis_final/testing/runs/run03_clean.log",
+        "path": "experiments/logs/thesis_final/testing/runs/run03_clean.log",
         "exists": true,
         "size_bytes": 2682,
         "lines": 57,
@@ -7569,9 +7569,9 @@
         "sanitized_from_raw": false
       }
     ],
-    "branch_dir": "log/thesis_final/testing",
+    "branch_dir": "experiments/logs/thesis_final/testing",
     "legacy_log": {
-      "path": "log/thesis_final/testing/perftest.log",
+      "path": "experiments/logs/thesis_final/testing/perftest.log",
       "exists": true,
       "size_bytes": 2682,
       "lines": 57,
@@ -7844,14 +7844,14 @@
     }
   },
   "artifacts": {
-    "results_json": "webui/data/results.json",
-    "results_long_csv": "webui/data/results_long.csv",
-    "round_results_csv": "webui/data/round_results.csv",
-    "comparison_csv": "webui/data/comparison_summary.csv",
-    "scheduler_csv": "webui/data/scheduler_summary.csv",
-    "report_md": "webui/reports/experiment_report.md",
-    "latex_table": "webui/reports/thesis_memory_table.tex",
-    "figures_dir": "webui/figures"
+    "results_json": "/home/niya/xv6/experiments/outputs/data/results.json",
+    "results_long_csv": "/home/niya/xv6/experiments/outputs/data/results_long.csv",
+    "round_results_csv": "/home/niya/xv6/experiments/outputs/data/round_results.csv",
+    "comparison_csv": "/home/niya/xv6/experiments/outputs/data/comparison_summary.csv",
+    "scheduler_csv": "/home/niya/xv6/experiments/outputs/data/scheduler_summary.csv",
+    "report_md": "/home/niya/xv6/experiments/outputs/reports/experiment_report.md",
+    "latex_table": "/home/niya/xv6/experiments/outputs/reports/thesis_memory_table.tex",
+    "figures_dir": "/home/niya/xv6/experiments/outputs/figures"
   },
   "recommendations": []
 }

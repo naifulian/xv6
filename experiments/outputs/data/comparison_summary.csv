@@ -1,0 +1,8 @@
+test,label,category,objective,baseline_avg,baseline_error_bar,baseline_rounds,testing_avg,testing_error_bar,testing_rounds,unit,improvement_percent,interval_relation,comment
+COW_NO_ACCESS,COW No Access,cow,lower,156.0,17.68,3,9.67,1.31,3,ticks,93.8,separated,significant improvement
+COW_READONLY,COW Read Only,cow,lower,167.0,35.35,3,10.33,0.65,3,ticks,93.81,separated,significant improvement
+COW_PARTIAL,COW Write 30%,cow,lower,10.0,1.13,3,9.0,0.0,3,ticks,10.0,overlap,difference not clearly separated
+COW_FULLWRITE,COW Write 100%,cow,lower,10.0,1.96,3,28.67,3.46,3,ticks,-186.7,separated,clear counter-example
+LAZY_SPARSE,Lazy Access 1%,lazy,lower,225.33,18.33,3,10.33,1.73,3,ticks,95.42,separated,significant improvement
+LAZY_HALF,Lazy Access 50%,lazy,lower,4.33,0.65,3,6.33,0.65,3,ticks,-46.19,separated,clear counter-example
+LAZY_FULL,Lazy Access 100%,lazy,lower,4.0,0.0,3,13.0,1.13,3,ticks,-225.0,separated,clear counter-example

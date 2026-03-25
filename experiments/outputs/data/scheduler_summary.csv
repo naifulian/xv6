@@ -1,0 +1,12 @@
+scenario,algorithm,avg,error_bar,std,unit,round_count,winner,scenario_spread_percent
+throughput,RR,18.33,2.85,2.52,ticks,3,yes,53.79
+throughput,FCFS,37.67,4.57,4.04,ticks,3,no,53.79
+throughput,SJF,39.67,9.42,8.33,ticks,3,no,53.79
+convoy,RR,11.33,4.57,4.04,ticks,3,yes,52.79
+convoy,FCFS,24.0,7.84,6.93,ticks,3,no,52.79
+convoy,SRTF,21.33,2.61,2.31,ticks,3,no,52.79
+fairness,RR,531.33,14.37,12.7,bp,3,yes,94.95
+fairness,PRIORITY,10518.33,410.42,362.69,bp,3,no,94.95
+fairness,CFS,541.0,82.2,72.64,bp,3,no,94.95
+response,RR,11.67,3.27,2.89,ticks,3,no,57.16
+response,MLFQ,5.0,0.0,0.0,ticks,3,yes,57.16

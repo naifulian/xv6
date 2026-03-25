@@ -10,7 +10,9 @@ import os
 import re
 from pathlib import Path
 
-LOG_DIR = Path(os.environ.get('XV6_LOG_DIR', 'log'))
+THIS_DIR = Path(__file__).resolve().parent
+EXPERIMENTS_DIR = THIS_DIR.parent
+LOG_DIR = Path(os.environ.get('XV6_LOG_DIR', str(EXPERIMENTS_DIR / 'logs')))
 
 COMMON_REQUIRED = [
     'SYS_TOTAL_PAGES',
