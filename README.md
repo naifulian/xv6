@@ -141,11 +141,11 @@ tests/
 实验链路：
 user/perftest.c
   -> META / RESULT / SAMPLES
-  -> webui/collect_data.sh
-  -> webui/experiment_data.py
-  -> webui/validate_logs.py
-  -> webui/plot_results.py
-  -> webui/data/*.json / *.csv / webui/figures/*.png
+  -> experiments/collect/collect_data.sh
+  -> experiments/analyze/experiment_data.py
+  -> experiments/analyze/validate_logs.py
+  -> experiments/analyze/plot_results.py
+  -> experiments/outputs/data/*.json / *.csv / experiments/outputs/figures/*.png
 ```
 
 **当前能力：**
@@ -154,6 +154,7 @@ user/perftest.c
 - raw sample-level 数据保留
 - partial run manifest 审计
 - Markdown / CSV / LaTeX 论文产物导出
+- 默认日志根目录已迁移为 `experiments/logs/`
 - 详见 `docs/architecture/4.数据收集与分析.md` 与 `docs/architecture/模块三/实验框架整改设计.md`
 
 ### 模块四：Web 展示界面
@@ -168,7 +169,7 @@ user/perftest.c
 **架构设计：**
 
 ```
-webui/
+dashboard/
 ├── index.html           # 主页面
 ├── css/
 │   └── style.css       # 样式
@@ -180,8 +181,9 @@ webui/
 │   ├── scheduler.json  # 调度器数据
 │   ├── memory.json     # 内存数据
 │   └── performance.json # 性能对比数据
-└── assets/
-    └── echarts.min.js  # ECharts 本地化（可选）
+└── data/
+    ├── snapshots.json  # 运行态快照
+    └── sysmon.raw      # 原始监控输出
 ```
 
 **技术栈：**
