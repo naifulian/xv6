@@ -4,62 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xv6 教学任务管理器</title>
+    <title>xv6 运行监控</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="app-shell">
-        <header class="masthead panel">
-            <div class="masthead-copy">
-                <p class="eyebrow">Module Four Teaching Task Manager</p>
-                <h1>模块四运行态教学任务管理器</h1>
-                <p class="masthead-lead">首页负责把论文四个模块串成一条答辩导览线，子页面负责把进程、调度、内存与事件拆成稳定可讲解的教学视图。</p>
-                <div class="mode-strip">
-                    <span class="mode-pill">答辩导览模式</span>
-                    <span class="mode-pill alt">教学观察模式</span>
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-mark">XV6</div>
+                <div>
+                    <p class="sidebar-tag">Module 4</p>
+                    <h1>运行监控</h1>
                 </div>
             </div>
-            <div class="masthead-status">
-                <div class="status-card emphasis">
-                    <span>链路状态</span>
-                    <strong id="live-status">初始化中</strong>
+
+            <nav class="route-nav">
+                <a href="#/processes" data-route-link="processes">进程</a>
+                <a href="#/scheduler" data-route-link="scheduler">调度</a>
+                <a href="#/memory" data-route-link="memory">内存</a>
+                <a href="#/events" data-route-link="events">事件</a>
+                <a href="#/home" data-route-link="home">概览</a>
+            </nav>
+
+            <section class="sidebar-section panel">
+                <div class="section-title">状态</div>
+                <div class="status-list">
+                    <div class="status-row">
+                        <span>链路</span>
+                        <strong id="live-status">初始化中</strong>
+                    </div>
+                    <div class="status-row">
+                        <span>策略</span>
+                        <strong id="policy-name">UNKNOWN</strong>
+                    </div>
+                    <div class="status-row">
+                        <span>序号</span>
+                        <strong id="seq-label">-</strong>
+                    </div>
+                    <div class="status-row">
+                        <span>更新时间</span>
+                        <strong id="generated-at">N/A</strong>
+                    </div>
                 </div>
-                <div class="status-card">
-                    <span>当前策略</span>
-                    <strong id="policy-name">UNKNOWN</strong>
-                </div>
-                <div class="status-card">
-                    <span>最新序号</span>
-                    <strong id="seq-label">-</strong>
-                </div>
-                <div class="status-card">
-                    <span>更新时间</span>
-                    <strong id="generated-at">N/A</strong>
-                </div>
-                <div class="status-card wide">
-                    <span>当前页面</span>
-                    <strong id="route-label">论文导览</strong>
-                    <p id="route-copy">首页先讲清模块关系，再跳到 live monitor 子页面。</p>
-                </div>
-                <div class="status-card wide subtle">
-                    <span>默认入口</span>
-                    <strong>bash dashboard/scripts/start_monitor.sh</strong>
+            </section>
+
+            <section class="sidebar-section panel">
+                <div class="section-title">数据源</div>
+                <div class="source-card">
+                    <code>bash dashboard/scripts/start_monitor.sh</code>
                     <p id="telemetry-source">dashboard/runtime/dashboard-telemetry.log</p>
                 </div>
-            </div>
+            </section>
+
             <div id="telemetry-warning" class="warning-banner hidden"></div>
-        </header>
+        </aside>
 
-        <nav class="route-nav panel">
-            <a href="#/home" data-route-link="home">论文导览</a>
-            <a href="#/processes" data-route-link="processes">进程管理</a>
-            <a href="#/scheduler" data-route-link="scheduler">调度观察</a>
-            <a href="#/memory" data-route-link="memory">内存管理</a>
-            <a href="#/events" data-route-link="events">事件时间线</a>
-        </nav>
+        <main class="workspace">
+            <header class="workspace-header">
+                <div>
+                    <p class="workspace-tag">模块四</p>
+                    <h2 id="route-label">进程</h2>
+                </div>
+                <div class="workspace-meta">
+                    <span class="meta-pill">实时刷新</span>
+                </div>
+            </header>
 
-        <main id="view-root" class="view-root"></main>
+            <section id="view-root" class="view-root"></section>
+        </main>
     </div>
     <script type="module" src="js/main.js"></script>
 </body>

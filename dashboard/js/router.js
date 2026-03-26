@@ -1,9 +1,11 @@
 import { ROUTES } from "./utils.js";
 
+const DEFAULT_ROUTE = "processes";
+
 function normalizeRoute(hash) {
-  const token = `${hash || "#/home"}`.replace(/^#\/?/, "").trim();
+  const token = `${hash || `#/${DEFAULT_ROUTE}`}`.replace(/^#\/?/, "").trim();
   if (ROUTES.includes(token)) return token;
-  return "home";
+  return DEFAULT_ROUTE;
 }
 
 export function createRouter(onChange) {
@@ -13,7 +15,7 @@ export function createRouter(onChange) {
     start() {
       window.addEventListener("hashchange", handleChange);
       if (!window.location.hash) {
-        window.location.hash = "#/home";
+        window.location.hash = `#/${DEFAULT_ROUTE}`;
         return;
       }
       handleChange();

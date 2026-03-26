@@ -2,7 +2,7 @@ import { emptyMemoryView, emptySchedulerView, emptySummary, preferredProcess } f
 
 export function createStore() {
   return {
-    route: "home",
+    route: "processes",
     bridgeOnline: false,
     meta: {
       generated_at: null,

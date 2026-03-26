@@ -17,7 +17,6 @@ const shellRefs = {
   generatedAt: document.getElementById("generated-at"),
   telemetrySource: document.getElementById("telemetry-source"),
   routeLabel: document.getElementById("route-label"),
-  routeCopy: document.getElementById("route-copy"),
   telemetryWarning: document.getElementById("telemetry-warning"),
   navLinks: Array.from(document.querySelectorAll("[data-route-link]")),
 };
@@ -55,14 +54,15 @@ const actions = {
 };
 
 function renderShell() {
-  const meta = ROUTE_META[state.route] || ROUTE_META.home;
+  const meta = ROUTE_META[state.route] || ROUTE_META.processes;
   shellRefs.liveStatus.textContent = statusLabel(state.bridgeOnline, state.summary);
   shellRefs.policyName.textContent = formatNumber(state.summary.system?.policy || state.summary.policy?.name || "UNKNOWN");
   shellRefs.seqLabel.textContent = formatNumber(state.summary.system?.seq);
   shellRefs.generatedAt.textContent = formatTimeLabel(state.meta.generated_at);
   shellRefs.telemetrySource.textContent = state.meta.source || "dashboard/runtime/dashboard-telemetry.log";
   shellRefs.routeLabel.textContent = meta.label;
-  shellRefs.routeCopy.textContent = meta.copy;
+  document.title = `${meta.label} - xv6 运行监控`;
+
   shellRefs.navLinks.forEach((link) => {
     link.classList.toggle("active", link.dataset.routeLink === state.route);
   });
@@ -77,7 +77,7 @@ function renderShell() {
 }
 
 function renderCurrentRoute() {
-  const render = routeViews[state.route] || routeViews.home;
+  const render = routeViews[state.route] || routeViews.processes;
   render(viewRoot, state, actions);
 }
 
@@ -100,9 +100,10 @@ async function refreshSelectedProcess() {
 }
 
 async function loadHome() {
-  const [memory, events] = await Promise.all([loadMemory(), loadEvents()]);
+  const [memory, events, processes] = await Promise.all([loadMemory(), loadEvents(), loadProcesses()]);
   setMemory(state, memory);
   setEvents(state, events);
+  setProcesses(state, processes);
 }
 
 async function loadProcessesView() {
@@ -140,7 +141,7 @@ async function refreshRouteData(route) {
     memory: loadMemoryView,
     events: loadEventsView,
   };
-  await (jobs[route] || loadHome)();
+  await (jobs[route] || loadProcessesView)();
   if (requestId !== routeRequestId) return;
   renderCurrentRoute();
 }

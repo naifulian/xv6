@@ -1,25 +1,20 @@
-export const ROUTES = ["home", "processes", "scheduler", "memory", "events"];
+export const ROUTES = ["processes", "scheduler", "memory", "events", "home"];
 
 export const ROUTE_META = {
-  home: {
-    label: "论文导览",
-    copy: "首页先讲清模块关系，再跳到 live monitor 子页面。",
-  },
   processes: {
-    label: "进程管理",
-    copy: "左侧看主表，右侧看选中进程的调度与地址空间解释。",
+    label: "进程",
   },
   scheduler: {
-    label: "调度观察",
-    copy: "围绕当前策略展示真正值得讲解的观测字段与热点进程。",
+    label: "调度",
   },
   memory: {
-    label: "内存管理",
-    copy: "先看系统页级口径，再看进程级地址空间与 VMA 细节。",
+    label: "内存",
   },
   events: {
-    label: "事件时间线",
-    copy: "把状态变化、mmap 变化和 fault 变化从主表里解耦出来。",
+    label: "事件",
+  },
+  home: {
+    label: "概览",
   },
 };
 
