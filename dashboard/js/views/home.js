@@ -147,9 +147,9 @@ export function renderHome(root, state, actions) {
           <p class="section-kicker">建议演示命令</p>
           <h3>答辩时可以这样引导现场</h3>
           <ul class="command-list">
-            <li>先运行 `bash dashboard/scripts/start_monitor.sh`，直接进入 xv6 交互。</li>
-            <li>在 xv6 里执行 `ps`、`scheduler_test`、`mmap_test` 观察四条主线。</li>
-            <li>需要兜底排障时再切到 `bash dashboard/scripts/start_monitor.sh --split-console`。</li>
+            <li>先运行 <code>bash dashboard/scripts/start_monitor.sh</code>，直接进入 xv6 交互。</li>
+            <li>在 xv6 里执行 <code>ps</code>、<code>scheduler_test</code>、<code>mmap_test</code> 观察四条主线。</li>
+            <li>需要兜底排障时再切到 <code>bash dashboard/scripts/start_monitor.sh --split-console</code>。</li>
           </ul>
         </article>
       </section>

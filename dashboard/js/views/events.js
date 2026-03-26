@@ -84,9 +84,9 @@ export function renderEvents(root, state, actions) {
             <p class="section-kicker">建议演示命令</p>
             <h3>适合在这一页触发短时变化</h3>
             <ul class="command-list">
-              <li>`echo hello`、`ls`：观察短命命令在快照周期内是否可见。</li>
-              <li>`mmap_test`：触发 mmap / munmap 相关事件。</li>
-              <li>`scheduler_test`：让状态变化和 fault 增长更容易连续出现。</li>
+              <li><code>echo hello</code>、<code>ls</code>：观察短命命令在快照周期内是否可见。</li>
+              <li><code>mmap_test</code>：触发 mmap / munmap 相关事件。</li>
+              <li><code>scheduler_test</code>：让状态变化和 fault 增长更容易连续出现。</li>
             </ul>
           </article>
         </div>

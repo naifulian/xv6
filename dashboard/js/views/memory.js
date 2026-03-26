@@ -85,9 +85,9 @@ export function renderMemory(root, state, actions) {
             <p class="section-kicker">建议演示命令</p>
             <h3>这页适合讲地址空间语义</h3>
             <ul class="command-list">
-              <li>`mmap_test`：直接展示 VMA 数与映射范围变化。</li>
-              <li>`mmap_lazy_test`：观察 lazy fault 与按需分配行为。</li>
-              <li>`memstat`：和本页口径对照 total/free pages 变化。</li>
+              <li><code>mmap_test</code>：直接展示 VMA 数与映射范围变化。</li>
+              <li><code>mmap_lazy_test</code>：观察 lazy fault 与按需分配行为。</li>
+              <li><code>memstat</code>：和本页口径对照 total/free pages 变化。</li>
             </ul>
             <ul class="note-list">
               ${notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}

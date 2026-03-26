@@ -95,9 +95,9 @@ export function renderScheduler(root, state, actions) {
             <p class="section-kicker">建议演示命令</p>
             <h3>这一页适合讲“为什么策略不同”</h3>
             <ul class="command-list">
-              <li>`scheduler_test`：制造不同负载，解释等待时间与运行时间的差异。</li>
-              <li>`test_mlfq` / `test_cfs`：对照不同策略下的热点进程排序。</li>
-              <li>`chsched`：切换策略后回到本页看重点字段是否随策略变化。</li>
+              <li><code>scheduler_test</code>：制造不同负载，解释等待时间与运行时间的差异。</li>
+              <li><code>test_mlfq</code> / <code>test_cfs</code>：对照不同策略下的热点进程排序。</li>
+              <li><code>chsched</code>：切换策略后回到本页看重点字段是否随策略变化。</li>
             </ul>
             <ul class="note-list">
               ${notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}

@@ -136,9 +136,9 @@ export function renderProcesses(root, state, actions) {
           <p class="section-kicker">建议演示命令</p>
           <h3>适合在这一页触发的 guest 操作</h3>
           <ul class="command-list">
-            <li>`ps`：让主表稳定刷新，解释 RUNNING / RUNNABLE 差别。</li>
-            <li>`scheduler_test`：制造多个竞争进程，观察时间分解变化。</li>
-            <li>`mmap_test`：触发 VMA 数和映射字节变化。</li>
+            <li><code>ps</code>：让主表稳定刷新，解释 RUNNING / RUNNABLE 差别。</li>
+            <li><code>scheduler_test</code>：制造多个竞争进程，观察时间分解变化。</li>
+            <li><code>mmap_test</code>：触发 VMA 数和映射字节变化。</li>
           </ul>
           <ul class="note-list">
             ${notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
