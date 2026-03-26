@@ -11,6 +11,8 @@ import { ROUTE_META, formatNumber, formatTimeLabel, statusLabel } from "./utils.
 const state = createStore();
 const viewRoot = document.getElementById("view-root");
 const shellRefs = {
+  sidebar: document.querySelector(".sidebar"),
+  workspace: document.querySelector(".workspace"),
   liveStatus: document.getElementById("live-status"),
   policyName: document.getElementById("policy-name"),
   seqLabel: document.getElementById("seq-label"),
@@ -23,6 +25,7 @@ const shellRefs = {
 
 let routeTimer = null;
 let routeRequestId = 0;
+let lastRoute = state.route;
 
 const routeIntervals = {
   home: 1000,
@@ -79,6 +82,13 @@ function renderShell() {
 function renderCurrentRoute() {
   const render = routeViews[state.route] || routeViews.processes;
   render(viewRoot, state, actions);
+}
+
+function resetShellScroll(force = false) {
+  if (!force && state.route === lastRoute) return;
+  shellRefs.sidebar?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  shellRefs.workspace?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  lastRoute = state.route;
 }
 
 async function refreshShell() {
@@ -154,12 +164,14 @@ function restartRouteTimer(route) {
 
 function handleRouteChange(route) {
   setRoute(state, route);
+  resetShellScroll();
   renderShell();
   renderCurrentRoute();
   restartRouteTimer(route);
 }
 
 window.setInterval(refreshShell, 1000);
+resetShellScroll(true);
 refreshShell();
 router = createRouter(handleRouteChange);
 router.start();
