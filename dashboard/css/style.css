@@ -61,7 +61,7 @@ p {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: clamp(200px, 22vw, 280px) minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -245,7 +245,7 @@ p {
 
 .workspace-header h2 {
   margin-top: 4px;
-  font-size: 30px;
+  font-size: clamp(24px, 3vw, 30px);
 }
 
 .workspace-meta {
@@ -294,7 +294,7 @@ p {
 
 .metric-value {
   margin-top: 8px;
-  font-size: 28px;
+  font-size: clamp(24px, 3.2vw, 28px);
   font-weight: 700;
 }
 
@@ -366,7 +366,7 @@ p {
 
 .table-wrap table {
   width: 100%;
-  min-width: 720px;
+  min-width: 620px;
   border-collapse: collapse;
   background: #ffffff;
 }
@@ -477,21 +477,22 @@ p {
 }
 
 @media (max-width: 1120px) {
-  body {
-    height: auto;
-    overflow: auto;
-  }
-
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
   .sidebar {
-    overflow: visible;
+    padding: 16px;
+    gap: 14px;
   }
 
   .workspace {
-    overflow: visible;
+    padding: 20px 20px 24px;
+  }
+
+  .route-nav a {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  .sidebar-brand h1 {
+    font-size: 22px;
   }
 
   .content-grid.processes-layout,
@@ -504,12 +505,29 @@ p {
 }
 
 @media (max-width: 760px) {
+  body {
+    height: auto;
+    overflow: auto;
+  }
+
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
   .workspace {
+    overflow: visible;
     padding: 18px 16px 20px;
   }
 
   .sidebar {
+    overflow: visible;
     padding: 16px;
+  }
+
+  .workspace-header {
+    position: static;
+    padding-bottom: 0;
+    background: none;
   }
 
   .route-nav {
