@@ -19,7 +19,6 @@ TAGS
 compile_commands.json
 .cache/
 CLAUDE.md
-docs/
 log/
 /log
 experiments/logs/
