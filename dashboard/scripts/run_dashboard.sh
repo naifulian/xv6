@@ -27,6 +27,7 @@ printf 'Next steps\n'
 printf '  1. Terminal A: bash dashboard/scripts/run_dashboard.sh\n'
 printf '  2. Terminal B: bash dashboard/scripts/capture_xv6_console.sh  # shell stays interactive, telemetry is split out\n'
 printf '  3. xv6 init auto-starts dashboardd 30 0\n'
+printf '  4. Default bridge input is dashboard/runtime/dashboard-telemetry.log\n'
 printf '\n'
 printf 'Open http://%s:%s\n' "$HOST" "$PORT"
 

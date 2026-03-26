@@ -87,7 +87,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve the xv6 runtime dashboard bridge")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
-    parser.add_argument("--source", default="dashboard/data/sysmon.raw")
+    parser.add_argument("--source", default="dashboard/runtime/dashboard-telemetry.log")
     parser.add_argument("--root", default="dashboard")
     return parser.parse_args()
 

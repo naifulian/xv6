@@ -60,6 +60,7 @@ xv6/
 │   ├── scripts/
 │   │   └── run_dashboard.sh
 │   └── runtime/
+│       ├── dashboard-telemetry.log
 │       └── xv6-console.log
 ├── user/
 │   └── dashboardd.c
@@ -168,7 +169,7 @@ xv6 kernel counters / snapshot interfaces
 
 9. Host Bridge 设计
 Host Bridge 是模块四的核心宿主机组件，职责如下：
-• 读取 QEMU 控制台日志或独立遥测通道
+• 默认读取分离后的 telemetry 日志，也支持按需接入原始控制台日志或其他独立遥测通道
 • 解析 `dashboardd` 输出的结构化帧
 • 维护 latest summary / latest processes / selected process / recent events
 • 对前端提供 WebSocket 实时推送
@@ -185,22 +186,29 @@ Host Bridge 是模块四的核心宿主机组件，职责如下：
 控制接口例如切换调度器、kill 进程、修改优先级，应视为 V2 或 V3 能力，不进入第一阶段验收。
 
 10. QEMU 与启动链设计
-推荐先使用“控制台复用 + 日志解析”的 MVP 方案：
+推荐默认使用“交互控制台 + telemetry 分流文件”的启动链：
 
 ```text
 QEMU stdio/serial
--> logfile
+-> split_console.py
+-> xv6-console.log                 # 原始控制台回放与调试
+-> dashboard-telemetry.log         # bridge 默认消费的结构化 telemetry
 -> host bridge tail/parse
 ```
 
-优点是：
-• 不需要一开始就额外引入复杂设备支持
-• 你仍然可以在终端看到 xv6 shell
-• bridge 可以稳定读取同一份宿主机日志
+默认策略：
+• `dashboard/scripts/capture_xv6_console.sh` 保持 shell 可交互，并把 telemetry 从控制台输出里分离出来。
+• `dashboard/scripts/run_dashboard.sh` 与 bridge 默认读取 `dashboard/runtime/dashboard-telemetry.log`。
+• `xv6-console.log` 只保留给调试、问题复盘和原始终端回放，不作为 dashboard 默认数据源。
+
+这样做的原因是：
+• 避免 shell 回显、用户输入和普通控制台输出污染 telemetry 解析结果
+• 保留交互式 xv6 终端，不牺牲开发体验
+• 让 bridge 默认消费单一、结构化、可持续 tail 的日志文件
 
 增强版路线：
-• 后续可以把 telemetry 分离到独立串口、pty、socket 或 virtconsole
-• 但这属于加分项，不应阻塞模块四重做
+• 后续可以继续把 telemetry 分离到独立串口、pty、socket 或 virtconsole
+• 但这些链路属于增强项；在当前版本里，默认分流文件已经是基线方案，而不是临时调试手段
 
 关于自启动：
 • `dashboardd` 最终可以由 `init` 自动拉起
