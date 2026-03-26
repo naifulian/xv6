@@ -56,40 +56,40 @@ main(int argc, char *argv[])
     samples = 0;
 
   stream_mode = samples == 0;
-  printf("DASHBOARDD_BEGIN interval=%d samples=%d mode=%s\n",
-         interval, samples, stream_mode ? "stream" : "bounded");
+  telemetry_printf("DASHBOARDD_BEGIN interval=%d samples=%d mode=%s\n",
+                   interval, samples, stream_mode ? "stream" : "bounded");
 
   for(int seq = 0; stream_mode || seq < samples; seq++) {
     if(getsnapshot(&snap) < 0) {
-      printf("DASHBOARDD_ERROR stage=getsnapshot seq=%d\n", seq);
+      telemetry_printf("DASHBOARDD_ERROR stage=getsnapshot seq=%d\n", seq);
       exit(1);
     }
     if(getmemstat(&ms) < 0) {
-      printf("DASHBOARDD_ERROR stage=getmemstat seq=%d\n", seq);
+      telemetry_printf("DASHBOARDD_ERROR stage=getmemstat seq=%d\n", seq);
       exit(1);
     }
 
     int count = getptable(ps, MAX_PSTAT);
     if(count < 0) {
-      printf("DASHBOARDD_ERROR stage=getptable seq=%d\n", seq);
+      telemetry_printf("DASHBOARDD_ERROR stage=getptable seq=%d\n", seq);
       exit(1);
     }
 
-    printf("SNAP seq=%d ts=%d sched=%s policy=%d cpu=%d ctx=%d ticks=%d total_pages=%d free_pages=%d nr_total=%d nr_running=%d nr_sleeping=%d nr_zombie=%d runqueue=%d buddy_merges=%d buddy_splits=%d cow_faults=%d lazy_allocs=%d cow_copy_pages=%d\n",
-           seq, (int)snap.timestamp, snap.sched_name, snap.sched_policy,
-           snap.cpu_usage, (int)snap.context_switches, (int)snap.total_ticks,
-           snap.total_pages, snap.free_pages, snap.nr_total, snap.nr_running,
-           snap.nr_sleeping, snap.nr_zombie, snap.runqueue_len,
-           (int)ms.buddy_merges, (int)ms.buddy_splits, (int)ms.cow_faults,
-           (int)ms.lazy_allocs, (int)ms.cow_copy_pages);
+    telemetry_printf("SNAP seq=%d ts=%d sched=%s policy=%d cpu=%d ctx=%d ticks=%d total_pages=%d free_pages=%d nr_total=%d nr_running=%d nr_sleeping=%d nr_zombie=%d runqueue=%d buddy_merges=%d buddy_splits=%d cow_faults=%d lazy_allocs=%d cow_copy_pages=%d\n",
+                     seq, (int)snap.timestamp, snap.sched_name, snap.sched_policy,
+                     snap.cpu_usage, (int)snap.context_switches, (int)snap.total_ticks,
+                     snap.total_pages, snap.free_pages, snap.nr_total, snap.nr_running,
+                     snap.nr_sleeping, snap.nr_zombie, snap.runqueue_len,
+                     (int)ms.buddy_merges, (int)ms.buddy_splits, (int)ms.cow_faults,
+                     (int)ms.lazy_allocs, (int)ms.cow_copy_pages);
 
     for(int i = 0; i < count; i++) {
       struct pstat *p = &ps[i];
-      printf("PROC seq=%d pid=%d state=%s priority=%d tickets=%d sched=%s sched_class=%d sz=%d heap_end=%d vma_count=%d mmap_regions=%d mmap_bytes=%d rutime=%d retime=%d stime=%d name=%s\n",
-             seq, p->pid, state_name(p->state), p->priority, p->tickets,
-             sched_name(p->sched_class), p->sched_class, (int)p->sz, (int)p->heap_end,
-             p->vma_count, p->mmap_regions, (int)p->mmap_bytes, p->rutime, p->retime,
-             p->stime, p->name);
+      telemetry_printf("PROC seq=%d pid=%d state=%s priority=%d tickets=%d sched=%s sched_class=%d sz=%d heap_end=%d vma_count=%d mmap_regions=%d mmap_bytes=%d rutime=%d retime=%d stime=%d name=%s\n",
+                       seq, p->pid, state_name(p->state), p->priority, p->tickets,
+                       sched_name(p->sched_class), p->sched_class, (int)p->sz, (int)p->heap_end,
+                       p->vma_count, p->mmap_regions, (int)p->mmap_bytes, p->rutime, p->retime,
+                       p->stime, p->name);
 
       int vma_count = getprocvmas(p->pid, vmas, MAX_VMA);
       if(vma_count < 0)
@@ -97,9 +97,9 @@ main(int argc, char *argv[])
 
       for(int j = 0; j < vma_count; j++) {
         struct vma_info *v = &vmas[j];
-        printf("VMA seq=%d pid=%d slot=%d start=%d end=%d length=%d prot=%d flags=%d\n",
-               seq, v->pid, v->slot, (int)v->start, (int)v->end, (int)v->length,
-               v->prot, v->flags);
+        telemetry_printf("VMA seq=%d pid=%d slot=%d start=%d end=%d length=%d prot=%d flags=%d\n",
+                         seq, v->pid, v->slot, (int)v->start, (int)v->end, (int)v->length,
+                         v->prot, v->flags);
       }
     }
 
@@ -107,6 +107,6 @@ main(int argc, char *argv[])
       sleep(interval);
   }
 
-  printf("DASHBOARDD_END samples=%d\n", samples);
+  telemetry_printf("DASHBOARDD_END samples=%d\n", samples);
   exit(0);
 }

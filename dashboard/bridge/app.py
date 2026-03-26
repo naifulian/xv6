@@ -38,12 +38,20 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
     def _handle_api(self, path: str) -> None:
         payload = self.dashboard_state.get_payload()
+        meta = {
+            "generated_at": payload.get("generated_at"),
+            "source": payload.get("source"),
+            "parse_error": payload.get("parse_error"),
+        }
         routes = {
             "/api/dashboard": payload,
+            "/api/meta": meta,
             "/api/summary": payload.get("summary"),
             "/api/processes": payload.get("latest_processes"),
             "/api/events": payload.get("events"),
             "/api/policy": payload.get("summary", {}).get("policy"),
+            "/api/scheduler": payload.get("scheduler_view"),
+            "/api/memory": payload.get("memory_view"),
         }
 
         if path in routes:

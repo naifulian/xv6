@@ -18,16 +18,17 @@ fi
 mkdir -p dashboard/runtime
 touch "$SOURCE"
 
-printf 'Module four dashboard bridge\n'
+printf 'Module four dashboard bridge (bridge only)\n'
 printf '  host   : %s\n' "$HOST"
 printf '  port   : %s\n' "$PORT"
 printf '  source : %s\n' "$SOURCE"
 printf '\n'
-printf 'Next steps\n'
-printf '  1. Terminal A: bash dashboard/scripts/run_dashboard.sh\n'
-printf '  2. Terminal B: bash dashboard/scripts/capture_xv6_console.sh  # shell stays interactive, telemetry is split out\n'
-printf '  3. xv6 init auto-starts dashboardd 30 0\n'
-printf '  4. Default bridge input is dashboard/runtime/dashboard-telemetry.log\n'
+printf 'Recommended entry\n'
+printf '  bash dashboard/scripts/start_monitor.sh\n'
+printf '\n'
+printf 'Advanced paths\n'
+printf '  bridge only : bash dashboard/scripts/run_dashboard.sh\n'
+printf '  fallback PTY split : bash dashboard/scripts/capture_xv6_console.sh\n'
 printf '\n'
 printf 'Open http://%s:%s\n' "$HOST" "$PORT"
 

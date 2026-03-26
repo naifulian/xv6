@@ -18,10 +18,13 @@ else
 fi
 
 printf 'Interactive xv6 terminal with split telemetry\n'
+printf '  mode      : fallback/debug\n'
 printf '  terminal  : interactive output only (telemetry hidden)\n'
 printf '  console   : %s\n' "$CONSOLE_LOG"
 printf '  telemetry : %s\n' "$TELEMETRY_LOG"
 printf '  command   : %s\n' "$RUN_CMD"
+printf '\n'
+printf 'Default entry is: bash dashboard/scripts/start_monitor.sh\n'
 printf '\n'
 
 exec python3 "$SPLIT_SCRIPT" \

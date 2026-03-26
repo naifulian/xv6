@@ -4,215 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xv6 Runtime Dashboard</title>
+    <title>xv6 教学任务管理器</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div class="page-shell">
-        <header class="hero-shell">
-            <div class="hero-copy panel panel-hero">
-                <p class="eyebrow">Module Four Runtime Dashboard</p>
-                <h1>模块四运行态监视器</h1>
-                <p class="lead">模块四聚焦 xv6 运行态可视化，实时展示调度决策、进程状态与地址空间语义变化。</p>
-                <div class="hero-status-row">
-                    <div class="status-chip emphasis">
-                        <span>链路状态</span>
-                        <strong id="live-status">离线</strong>
-                    </div>
-                    <div class="status-chip">
-                        <span>当前策略</span>
-                        <strong id="policy-name">UNKNOWN</strong>
-                    </div>
-                    <div class="status-chip">
-                        <span>最新序号</span>
-                        <strong id="seq-label">-</strong>
-                    </div>
-                    <div class="status-chip">
-                        <span>刷新模式</span>
-                        <strong id="refresh-mode">分层</strong>
-                    </div>
-                </div>
-                <div class="refresh-strip">
-                    <article class="refresh-pill">
-                        <span>总览层</span>
-                        <strong id="overview-refresh">1.0s</strong>
-                        <p>系统总览与趋势</p>
-                    </article>
-                    <article class="refresh-pill">
-                        <span>主表层</span>
-                        <strong id="process-refresh">0.5s</strong>
-                        <p>进程表与右侧详情</p>
-                    </article>
-                    <article class="refresh-pill">
-                        <span>事件层</span>
-                        <strong id="events-refresh">0.2s</strong>
-                        <p>最近活动与退出摘要</p>
-                    </article>
+    <div class="app-shell">
+        <header class="masthead panel">
+            <div class="masthead-copy">
+                <p class="eyebrow">Module Four Teaching Task Manager</p>
+                <h1>模块四运行态教学任务管理器</h1>
+                <p class="masthead-lead">首页负责把论文四个模块串成一条答辩导览线，子页面负责把进程、调度、内存与事件拆成稳定可讲解的教学视图。</p>
+                <div class="mode-strip">
+                    <span class="mode-pill">答辩导览模式</span>
+                    <span class="mode-pill alt">教学观察模式</span>
                 </div>
             </div>
-
-            <aside class="panel launch-panel">
-                <div class="section-head compact">
-                    <div>
-                        <p class="section-kicker">Launch Flow</p>
-                        <h2>启动链路</h2>
-                    </div>
+            <div class="masthead-status">
+                <div class="status-card emphasis">
+                    <span>链路状态</span>
+                    <strong id="live-status">初始化中</strong>
                 </div>
-                <div class="launch-steps">
-                    <article class="command-card">
-                        <span>Terminal A</span>
-                        <code>bash dashboard/scripts/run_dashboard.sh</code>
-                    </article>
-                    <article class="command-card">
-                        <span>Terminal B</span>
-                        <code>bash dashboard/scripts/capture_xv6_console.sh</code>
-                        <p>交互终端保留 shell，遥测单独写入 telemetry 日志。</p>
-                    </article>
-                    <article class="command-card">
-                        <span>xv6 Init</span>
-                        <code>dashboardd auto-starts (10 0)</code>
-                    </article>
+                <div class="status-card">
+                    <span>当前策略</span>
+                    <strong id="policy-name">UNKNOWN</strong>
                 </div>
-                <div class="bridge-note">
-                    <div>
-                        <span>数据时间</span>
-                        <strong id="generated-at">N/A</strong>
-                    </div>
-                    <div>
-                        <span>日志文件</span>
-                        <strong>dashboard/runtime/dashboard-telemetry.log</strong>
-                    </div>
+                <div class="status-card">
+                    <span>最新序号</span>
+                    <strong id="seq-label">-</strong>
                 </div>
-            </aside>
+                <div class="status-card">
+                    <span>更新时间</span>
+                    <strong id="generated-at">N/A</strong>
+                </div>
+                <div class="status-card wide">
+                    <span>当前页面</span>
+                    <strong id="route-label">论文导览</strong>
+                    <p id="route-copy">首页先讲清模块关系，再跳到 live monitor 子页面。</p>
+                </div>
+                <div class="status-card wide subtle">
+                    <span>默认入口</span>
+                    <strong>bash dashboard/scripts/start_monitor.sh</strong>
+                    <p id="telemetry-source">dashboard/runtime/dashboard-telemetry.log</p>
+                </div>
+            </div>
+            <div id="telemetry-warning" class="warning-banner hidden"></div>
         </header>
 
-        <section class="panel kpi-panel">
-            <div class="section-head compact">
-                <div>
-                    <p class="section-kicker">Overview</p>
-                    <h2>系统总览</h2>
-                </div>
-            </div>
-            <div id="kpi-grid" class="kpi-grid"></div>
-        </section>
+        <nav class="route-nav panel">
+            <a href="#/home" data-route-link="home">论文导览</a>
+            <a href="#/processes" data-route-link="processes">进程管理</a>
+            <a href="#/scheduler" data-route-link="scheduler">调度观察</a>
+            <a href="#/memory" data-route-link="memory">内存管理</a>
+            <a href="#/events" data-route-link="events">事件时间线</a>
+        </nav>
 
-        <main class="workspace-grid">
-            <section class="panel process-panel">
-                <div class="section-head">
-                    <div>
-                        <p class="section-kicker">Processes</p>
-                        <h2>进程主表</h2>
-                    </div>
-                    <p class="section-note">中速刷新层，优先保证主表与选中进程详情的任务管理器观感。</p>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>PID</th>
-                                <th>Name</th>
-                                <th>State</th>
-                                <th>Sched</th>
-                                <th>Priority</th>
-                                <th>Tickets</th>
-                                <th>rutime</th>
-                                <th>retime</th>
-                                <th>stime</th>
-                                <th>sz</th>
-                            </tr>
-                        </thead>
-                        <tbody id="process-table"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <aside class="sidebar-stack">
-                <section class="panel side-panel detail-panel">
-                    <div class="section-head compact">
-                        <div>
-                            <p class="section-kicker">Focus</p>
-                            <h2>选中进程</h2>
-                        </div>
-                    </div>
-                    <div id="process-detail" class="detail-stack"></div>
-                </section>
-
-                <section class="panel side-panel policy-panel">
-                    <div class="section-head compact">
-                        <div>
-                            <p class="section-kicker">Policy</p>
-                            <h2>调度解释</h2>
-                        </div>
-                    </div>
-                    <div id="policy-card" class="info-stack"></div>
-                    <div id="scheduler-leaders" class="leader-list spaced"></div>
-                </section>
-            </aside>
-        </main>
-
-        <section class="lower-grid">
-            <section class="panel memory-panel">
-                <div class="section-head compact">
-                    <div>
-                        <p class="section-kicker">Memory</p>
-                        <h2>内存语义视图</h2>
-                    </div>
-                </div>
-                <div class="split-grid">
-                    <div>
-                        <h3>地址空间指标</h3>
-                        <div id="memory-summary" class="info-stack"></div>
-                    </div>
-                    <div>
-                        <h3>口径说明</h3>
-                        <div id="memory-notes" class="note-list"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel trend-panel">
-                <div class="section-head compact">
-                    <div>
-                        <p class="section-kicker">Runtime</p>
-                        <h2>快照趋势</h2>
-                    </div>
-                </div>
-                <div class="trend-grid">
-                    <article class="trend-card">
-                        <h3>CPU Usage</h3>
-                        <div id="cpu-chart" class="sparkline"></div>
-                    </article>
-                    <article class="trend-card">
-                        <h3>Free Pages</h3>
-                        <div id="mem-chart" class="sparkline"></div>
-                    </article>
-                    <article class="trend-card">
-                        <h3>Runqueue</h3>
-                        <div id="rq-chart" class="sparkline"></div>
-                    </article>
-                    <article class="trend-card">
-                        <h3>Ticks</h3>
-                        <div id="ticks-chart" class="sparkline"></div>
-                    </article>
-                </div>
-            </section>
-
-            <section class="panel event-panel">
-                <div class="section-head compact">
-                    <div>
-                        <p class="section-kicker">Events</p>
-                        <h2>事件流</h2>
-                    </div>
-                    <p class="section-note">高频刷新层，单独承接最近活动与退出信息。</p>
-                </div>
-                <div id="event-summary" class="event-summary"></div>
-                <div id="event-list" class="event-list"></div>
-            </section>
-        </section>
+        <main id="view-root" class="view-root"></main>
     </div>
-    <script src="js/app.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>
-
