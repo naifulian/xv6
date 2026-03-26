@@ -30,6 +30,7 @@ OBJS = \
   $K/kernelvec.o \
   $K/plic.o \
   $K/virtio_disk.o \
+  $K/telemetry_console.o \
   $K/sched/sched.o \
   $K/sched/sched_default.o \
   $K/sched/sched_fcfs.o \
@@ -110,6 +111,7 @@ tags: $(OBJS)
 	etags kernel/*.S kernel/*.c
 
 ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o
+TLIB = $U/telemetry_printf.o
 
 # Test files from tests/src directory
 TESTS_CFILES = \
@@ -138,6 +140,16 @@ _%: %.o $(ULIB) $U/user.ld
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $< $(ULIB)
 	$(OBJDUMP) -S $@ > $*.asm
 	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $*.sym
+
+$U/_sysmon: $U/sysmon.o $(ULIB) $(TLIB) $U/user.ld
+	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $U/sysmon.o $(ULIB) $(TLIB)
+	$(OBJDUMP) -S $@ > $U/sysmon.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/sysmon.sym
+
+$U/_dashboardd: $U/dashboardd.o $(ULIB) $(TLIB) $U/user.ld
+	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $U/dashboardd.o $(ULIB) $(TLIB)
+	$(OBJDUMP) -S $@ > $U/dashboardd.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/dashboardd.sym
 
 $U/usys.S : $U/usys.pl
 	perl $U/usys.pl > $U/usys.S
@@ -194,6 +206,7 @@ UPROGS=\
 	$U/_test_stats\
 	$U/_test_snapshot\
 	$U/_sysmon\
+	$U/_dashboardd\
 
 # Test runner depends on all test objects
 $U/_test_runner: tests/src/test_runner.o $(TESTS_OBJS) $(ULIB) $U/user.ld
@@ -229,8 +242,14 @@ QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nogr
 QEMUOPTS += -global virtio-mmio.force-legacy=false
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+TELEMETRY_LOG ?= dashboard/runtime/dashboard-telemetry.log
+QEMUOPTS += -chardev file,id=telemetry,path=$(TELEMETRY_LOG)
+QEMUOPTS += -device virtio-serial-device,bus=virtio-mmio-bus.1
+QEMUOPTS += -device virtconsole,chardev=telemetry
+QEMUOPTS += $(QEMU_EXTRA_OPTS)
 
 qemu: check-qemu-version $K/kernel fs.img
+	@mkdir -p $(dir $(TELEMETRY_LOG))
 	$(QEMU) $(QEMUOPTS)
 
 .gdbinit: .gdbinit.tmpl-riscv
@@ -238,6 +257,7 @@ qemu: check-qemu-version $K/kernel fs.img
 
 qemu-gdb: $K/kernel .gdbinit fs.img
 	@echo "*** Now run 'gdb' in another window." 1>&2
+	@mkdir -p $(dir $(TELEMETRY_LOG))
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
 print-gdbport:

@@ -1,11 +1,76 @@
 {
-  "generated_at": "2026-03-25T17:45:31.323119",
+  "generated_at": "2026-03-25T18:16:26.695474",
   "source": "dashboard/data/sysmon.raw",
   "samples": [],
   "latest_processes": [],
   "summary": {
     "sample_count": 0,
     "latest_seq": -1,
-    "latest_scheduler": null
-  }
+    "latest_scheduler": null,
+    "online": false,
+    "system": {
+      "ticks": null,
+      "seq": null,
+      "policy": "UNKNOWN",
+      "cpu": null,
+      "context_switches": null,
+      "free_pages": null,
+      "runqueue": null,
+      "nr_total": null,
+      "nr_running": null,
+      "nr_sleeping": null,
+      "nr_zombie": null,
+      "cow_faults": null,
+      "lazy_allocs": null,
+      "cow_copy_pages": null,
+      "total_pages": null
+    },
+    "state_counts": {},
+    "policy": {
+      "name": "UNKNOWN",
+      "label": "UNKNOWN",
+      "focus": "当前策略暂无额外说明",
+      "observed_field": "rutime"
+    }
+  },
+  "timelines": {
+    "cpu": [],
+    "free_pages": [],
+    "runqueue": [],
+    "ticks": [],
+    "context_switches": []
+  },
+  "selected_process": null,
+  "scheduler_view": {
+    "policy": {
+      "name": "UNKNOWN",
+      "label": "UNKNOWN",
+      "focus": "当前策略暂无额外说明",
+      "observed_field": "rutime"
+    },
+    "leaders": [],
+    "notes": [
+      "当前策略为 UNKNOWN，主观察字段是 rutime。",
+      "RUNNABLE 进程数 None，运行队列长度 None。",
+      "上下文切换累计 None，可用于解释调度活跃度。"
+    ]
+  },
+  "memory_view": {
+    "totals": {
+      "total_pages": 0,
+      "free_pages": 0,
+      "used_pages": 0,
+      "pressure_percent": 0,
+      "cow_faults": null,
+      "lazy_allocs": null,
+      "cow_copy_pages": null
+    },
+    "largest_process": null,
+    "notes": [
+      "sz 表示逻辑地址空间规模，不等价于 RSS。",
+      "当前内存面板聚焦 COW、Lazy Allocation 与逻辑地址空间口径。",
+      "Buddy 计数保留在原始快照中，但不进入模块四主叙事。"
+    ]
+  },
+  "events": []
 }

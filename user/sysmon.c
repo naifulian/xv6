@@ -79,10 +79,11 @@ main(int argc, char *argv[])
 
     for(int i = 0; i < count; i++) {
       struct pstat *p = &ps[i];
-      printf("PROC seq=%d pid=%d state=%s priority=%d tickets=%d sched=%s sched_class=%d sz=%d rutime=%d retime=%d stime=%d name=%s\n",
+      printf("PROC seq=%d pid=%d state=%s priority=%d tickets=%d sched=%s sched_class=%d sz=%d heap_end=%d vma_count=%d mmap_regions=%d mmap_bytes=%d rutime=%d retime=%d stime=%d name=%s\n",
              seq, p->pid, state_name(p->state), p->priority, p->tickets,
-             sched_name(p->sched_class), p->sched_class, (int)p->sz, p->rutime,
-             p->retime, p->stime, p->name);
+             sched_name(p->sched_class), p->sched_class, (int)p->sz, (int)p->heap_end,
+             p->vma_count, p->mmap_regions, (int)p->mmap_bytes, p->rutime, p->retime,
+             p->stime, p->name);
     }
 
     if(seq + 1 < samples)
