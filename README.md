@@ -155,7 +155,7 @@ user/perftest.c
 - partial run manifest 审计
 - Markdown / CSV / LaTeX 论文产物导出
 - 默认日志根目录已迁移为 `experiments/logs/`
-- 详见 `docs/architecture/4.数据收集与分析.md` 与 `docs/architecture/模块三/实验框架整改设计.md`
+- 详见 [模块三索引](/home/niya/xv6/docs/module3/README.md) 与 [文档索引](/home/niya/xv6/docs/README.md)
 
 ### 模块四：Web 展示界面
 
@@ -266,7 +266,10 @@ xv6/
 │   ├── include/              # 测试头文件
 │   └── src/                  # 测试实现
 ├── docs/                     # 文档目录
-│   └── log/                  # Bug 修复日志
+│   ├── review/               # 审查报告
+│   ├── bug/                  # Bug 档案
+│   ├── module1-4/            # 模块文档
+│   └── 开发进度.md           # 开发进度
 └── Makefile                  # 构建系统
 ```
 
