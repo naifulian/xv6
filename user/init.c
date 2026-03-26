@@ -10,7 +10,7 @@
 #include "kernel/fcntl.h"
 
 char *argv[] = { "sh", 0 };
-char *dashboard_argv[] = { "dashboardd", "30", "0", 0 };
+char *dashboard_argv[] = { "dashboardd", "10", "0", 0 };
 
 static void
 start_dashboardd(void)

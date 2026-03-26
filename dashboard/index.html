@@ -29,9 +29,26 @@
                         <strong id="seq-label">-</strong>
                     </div>
                     <div class="status-chip">
-                        <span>刷新周期</span>
-                        <strong>3s</strong>
+                        <span>刷新模式</span>
+                        <strong id="refresh-mode">分层</strong>
                     </div>
+                </div>
+                <div class="refresh-strip">
+                    <article class="refresh-pill">
+                        <span>总览层</span>
+                        <strong id="overview-refresh">1.0s</strong>
+                        <p>系统总览与趋势</p>
+                    </article>
+                    <article class="refresh-pill">
+                        <span>主表层</span>
+                        <strong id="process-refresh">0.5s</strong>
+                        <p>进程表与右侧详情</p>
+                    </article>
+                    <article class="refresh-pill">
+                        <span>事件层</span>
+                        <strong id="events-refresh">0.2s</strong>
+                        <p>最近活动与退出摘要</p>
+                    </article>
                 </div>
             </div>
 
@@ -54,7 +71,7 @@
                     </article>
                     <article class="command-card">
                         <span>xv6 Init</span>
-                        <code>dashboardd auto-starts (30 0)</code>
+                        <code>dashboardd auto-starts (10 0)</code>
                     </article>
                 </div>
                 <div class="bridge-note">
@@ -87,7 +104,7 @@
                         <p class="section-kicker">Processes</p>
                         <h2>进程主表</h2>
                     </div>
-                    <p class="section-note">运行态主视图，按状态和运行时间高亮。</p>
+                    <p class="section-note">中速刷新层，优先保证主表与选中进程详情的任务管理器观感。</p>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -187,7 +204,9 @@
                         <p class="section-kicker">Events</p>
                         <h2>事件流</h2>
                     </div>
+                    <p class="section-note">高频刷新层，单独承接最近活动与退出信息。</p>
                 </div>
+                <div id="event-summary" class="event-summary"></div>
                 <div id="event-list" class="event-list"></div>
             </section>
         </section>
@@ -196,3 +215,4 @@
 </body>
 
 </html>
+

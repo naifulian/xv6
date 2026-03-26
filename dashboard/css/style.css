@@ -123,6 +123,49 @@ h3 {
   margin-top: 28px;
 }
 
+.refresh-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.refresh-pill,
+.event-summary-card,
+.recent-exit-token {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel-strong);
+}
+
+.refresh-pill {
+  padding: 14px 16px;
+}
+
+.refresh-pill span,
+.event-summary-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.refresh-pill strong,
+.event-summary-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+.refresh-pill p,
+.event-summary-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .status-chip,
 .kpi-card,
 .command-card,
@@ -514,6 +557,28 @@ tbody tr.selected {
   color: var(--muted);
 }
 
+.event-summary {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.event-summary-card {
+  padding: 14px 16px;
+}
+
+.recent-exit-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recent-exit-token {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
 .event-list {
   max-height: 520px;
   overflow: auto;
@@ -750,6 +815,7 @@ code {
   }
 
   .hero-status-row,
+  .refresh-strip,
   .trend-grid,
   .info-grid,
   .split-grid {
@@ -772,6 +838,7 @@ code {
   }
 
   .hero-status-row,
+  .refresh-strip,
   .kpi-grid,
   .trend-grid,
   .info-grid,

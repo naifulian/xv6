@@ -1,4 +1,10 @@
-const REFRESH_MS = 3000;
+const REFRESH_PROFILE = {
+  overview: 1000,
+  process: 500,
+  events: 200,
+  static: 1000,
+};
+
 
 const statePriority = {
   RUNNING: 0,
@@ -22,7 +28,9 @@ const metricLabels = {
 let dashboardState = {
   payload: null,
   selectedPid: null,
-  refreshTimer: null,
+  timers: {},
+  mode: "loading",
+  detailRequestId: 0,
 };
 
 const numeric = (value) => {
@@ -32,6 +40,120 @@ const numeric = (value) => {
 
 const formatNumber = (value) => (value == null || value === "" ? "N/A" : `${value}`);
 const formatPercent = (value) => (value == null || Number.isNaN(Number(value)) ? "N/A" : `${Number(value).toFixed(1)}%`);
+
+function emptyRawPayload() {
+  return {
+    generated_at: null,
+    samples: [],
+    latest_processes: [],
+    summary: {},
+    process_details: {},
+    timelines: {},
+    events: [],
+  };
+}
+
+function currentPayload() {
+  if (!dashboardState.payload) {
+    dashboardState.payload = normalizePayload(emptyRawPayload());
+  }
+  return dashboardState.payload;
+}
+
+function applyFullPayload(raw) {
+  const payload = normalizePayload(raw || emptyRawPayload());
+  dashboardState.payload = payload;
+  const processes = payload.latest_processes || [];
+  if (dashboardState.selectedPid == null || !processes.some((proc) => proc.pid === dashboardState.selectedPid)) {
+    dashboardState.selectedPid = payload.selected_process?.pid ?? processes[0]?.pid ?? null;
+  }
+  return dashboardState.payload;
+}
+
+function mergePayload(partial) {
+  const current = currentPayload();
+  const merged = {
+    ...current,
+    ...partial,
+    summary: partial.summary
+      ? {
+          ...current.summary,
+          ...partial.summary,
+          system: {
+            ...(current.summary?.system || {}),
+            ...(partial.summary.system || {}),
+          },
+          policy: {
+            ...(current.summary?.policy || {}),
+            ...(partial.summary.policy || {}),
+          },
+          state_counts: partial.summary.state_counts || current.summary?.state_counts || {},
+        }
+      : current.summary,
+    scheduler_view: partial.scheduler_view
+      ? {
+          ...(current.scheduler_view || {}),
+          ...partial.scheduler_view,
+          policy: {
+            ...(current.scheduler_view?.policy || {}),
+            ...(partial.scheduler_view.policy || {}),
+          },
+        }
+      : current.scheduler_view,
+    memory_view: partial.memory_view
+      ? {
+          ...(current.memory_view || {}),
+          ...partial.memory_view,
+          totals: {
+            ...(current.memory_view?.totals || {}),
+            ...(partial.memory_view.totals || {}),
+          },
+        }
+      : current.memory_view,
+    timelines: partial.timelines ? { ...(current.timelines || {}), ...partial.timelines } : current.timelines,
+    process_details: partial.process_details
+      ? { ...(current.process_details || {}), ...partial.process_details }
+      : current.process_details,
+  };
+
+  if (!("selected_process" in partial)) merged.selected_process = current.selected_process;
+  if (!("events" in partial)) merged.events = current.events;
+  if (!("latest_processes" in partial)) merged.latest_processes = current.latest_processes;
+  if (!("samples" in partial)) merged.samples = current.samples;
+  if (!("generated_at" in partial)) merged.generated_at = current.generated_at;
+
+  return applyFullPayload(merged);
+}
+
+function clearRefreshTimers() {
+  Object.values(dashboardState.timers).forEach((timer) => clearInterval(timer));
+  dashboardState.timers = {};
+}
+
+function renderRefreshProfile() {
+  const mode = dashboardState.mode;
+  const refreshMode = document.getElementById("refresh-mode");
+  const overview = document.getElementById("overview-refresh");
+  const process = document.getElementById("process-refresh");
+  const events = document.getElementById("events-refresh");
+
+  if (!refreshMode || !overview || !process || !events) {
+    return;
+  }
+
+  if (mode === "api") {
+    refreshMode.textContent = "分层";
+    overview.textContent = `${(REFRESH_PROFILE.overview / 1000).toFixed(1)}s`;
+    process.textContent = `${(REFRESH_PROFILE.process / 1000).toFixed(1)}s`;
+    events.textContent = `${(REFRESH_PROFILE.events / 1000).toFixed(1)}s`;
+    return;
+  }
+
+  refreshMode.textContent = "静态";
+  overview.textContent = `${(REFRESH_PROFILE.static / 1000).toFixed(1)}s`;
+  process.textContent = "跟随静态源";
+  events.textContent = "跟随静态源";
+}
 
 async function loadJson(path, fallback) {
   try {
@@ -294,6 +416,7 @@ function renderHeader(payload) {
   document.getElementById("policy-name").textContent = system.policy || "UNKNOWN";
   document.getElementById("seq-label").textContent = formatNumber(system.seq);
   document.getElementById("generated-at").textContent = payload.generated_at ? payload.generated_at.replace("T", " ").slice(5, 19) : "N/A";
+  renderRefreshProfile();
 }
 
 function renderKpis(payload) {
@@ -353,6 +476,9 @@ function renderProcessTable(payload) {
       renderProcessTable(payload);
       renderProcessDetail(payload);
       renderMemory(payload);
+      if (dashboardState.mode === "api") {
+        refreshSelectedProcessDetail();
+      }
     });
     tbody.appendChild(row);
   });
@@ -671,6 +797,51 @@ function renderTrends(payload) {
   document.getElementById("ticks-chart").innerHTML = sparkline(timelines.ticks || [], "#9d7418");
 }
 
+function buildEventSummary(events) {
+  const recent = (events || []).slice(-12);
+  const exits = recent.filter((event) => event.kind === "exit").slice(-3).reverse();
+  return {
+    recentCount: recent.length,
+    exitCount: recent.filter((event) => event.kind === "exit").length,
+    forkCount: recent.filter((event) => event.kind === "fork").length,
+    lastEvent: recent[recent.length - 1] || null,
+    exits,
+  };
+}
+
+function renderEventSummary(payload) {
+  const container = document.getElementById("event-summary");
+  if (!container) {
+    return;
+  }
+
+  const summary = buildEventSummary(payload.events);
+  container.innerHTML = "";
+
+  [
+    ["最近事件", formatNumber(summary.recentCount), "近 12 条活动"],
+    ["最近 fork", formatNumber(summary.forkCount), "短时创建行为"],
+    ["最近退出", formatNumber(summary.exitCount), summary.lastEvent ? `最后事件: ${summary.lastEvent.title || "事件"}` : "等待新事件"],
+  ].forEach(([label, value, note]) => {
+    const card = document.createElement("article");
+    card.className = "event-summary-card";
+    card.innerHTML = `<span>${label}</span><strong>${value}</strong><p>${note}</p>`;
+    container.appendChild(card);
+  });
+
+  if (summary.exits.length) {
+    const strip = document.createElement("div");
+    strip.className = "recent-exit-strip";
+    summary.exits.forEach((event) => {
+      const item = document.createElement("div");
+      item.className = "recent-exit-token";
+      item.textContent = `seq ${event.seq ?? "-"} · ${event.detail || "exit"}`;
+      strip.appendChild(item);
+    });
+    container.appendChild(strip);
+  }
+}
+
 function renderEvents(payload) {
   const container = document.getElementById("event-list");
   const events = (payload.events || []).slice().reverse();
@@ -695,39 +866,125 @@ function renderEvents(payload) {
   });
 }
 
-function renderDashboard(payload) {
+function renderOverviewLayer(payload) {
   renderHeader(payload);
   renderKpis(payload);
+  renderTrends(payload);
+}
+
+function renderProcessLayer(payload) {
   renderProcessTable(payload);
   renderProcessDetail(payload);
   renderScheduler(payload);
   renderMemory(payload);
-  renderTrends(payload);
+}
+
+function renderEventLayer(payload) {
+  renderEventSummary(payload);
   renderEvents(payload);
 }
 
-async function fetchDashboardPayload() {
-  const emptyPayload = { generated_at: null, samples: [], latest_processes: [], summary: {} };
-  const apiPayload = await loadJson("/api/dashboard", null);
-  if (apiPayload) {
-    return normalizePayload(apiPayload);
-  }
-  const staticPayload = await loadJson("data/snapshots.json", emptyPayload);
-  return normalizePayload(staticPayload);
+function renderDashboard(payload) {
+  renderOverviewLayer(payload);
+  renderProcessLayer(payload);
+  renderEventLayer(payload);
 }
 
-async function refreshDashboard() {
-  const payload = await fetchDashboardPayload();
-  dashboardState.payload = payload;
+async function refreshSelectedProcessDetail() {
+  if (dashboardState.mode !== "api" || dashboardState.selectedPid == null) {
+    return;
+  }
+
+  const requestId = ++dashboardState.detailRequestId;
+  const detail = await loadJson(`/api/processes/${dashboardState.selectedPid}`, null);
+  if (!detail || requestId !== dashboardState.detailRequestId) {
+    return;
+  }
+
+  const payload = mergePayload({
+    process_details: { [dashboardState.selectedPid]: detail },
+    selected_process: detail,
+  });
+  renderProcessLayer(payload);
+}
+
+async function updateOverviewLayer() {
+  if (dashboardState.mode === "static") {
+    const payload = applyFullPayload(await loadJson("data/snapshots.json", emptyRawPayload()));
+    renderDashboard(payload);
+    return;
+  }
+
+  const raw = await loadJson("/api/dashboard", null);
+  if (!raw) {
+    return;
+  }
+
+  const payload = applyFullPayload(raw);
   renderDashboard(payload);
 }
 
-async function main() {
-  await refreshDashboard();
-  if (dashboardState.refreshTimer) {
-    clearInterval(dashboardState.refreshTimer);
+async function updateProcessLayer() {
+  if (dashboardState.mode !== "api") {
+    return;
   }
-  dashboardState.refreshTimer = setInterval(refreshDashboard, REFRESH_MS);
+
+  const processes = await loadJson("/api/processes", null);
+  if (!Array.isArray(processes)) {
+    return;
+  }
+
+  const visible = new Set(processes.map((proc) => proc.pid));
+  if (dashboardState.selectedPid == null || !visible.has(dashboardState.selectedPid)) {
+    dashboardState.selectedPid = processes[0]?.pid ?? null;
+  }
+
+  const payload = mergePayload({ latest_processes: processes });
+  renderProcessLayer(payload);
+  await refreshSelectedProcessDetail();
 }
 
+async function updateEventLayer() {
+  if (dashboardState.mode !== "api") {
+    return;
+  }
+
+  const events = await loadJson("/api/events", null);
+  if (!Array.isArray(events)) {
+    return;
+  }
+
+  const payload = mergePayload({ events });
+  renderEventLayer(payload);
+}
+
+function startApiRefresh() {
+  clearRefreshTimers();
+  dashboardState.timers.overview = setInterval(updateOverviewLayer, REFRESH_PROFILE.overview);
+  dashboardState.timers.process = setInterval(updateProcessLayer, REFRESH_PROFILE.process);
+  dashboardState.timers.events = setInterval(updateEventLayer, REFRESH_PROFILE.events);
+}
+
+function startStaticRefresh() {
+  clearRefreshTimers();
+  dashboardState.timers.static = setInterval(updateOverviewLayer, REFRESH_PROFILE.static);
+}
+
+async function main() {
+  const apiPayload = await loadJson("/api/dashboard", null);
+  if (apiPayload) {
+    dashboardState.mode = "api";
+    const payload = applyFullPayload(apiPayload);
+    renderDashboard(payload);
+    await refreshSelectedProcessDetail();
+    startApiRefresh();
+  } else {
+    dashboardState.mode = "static";
+    const payload = applyFullPayload(await loadJson("data/snapshots.json", emptyRawPayload()));
+    renderDashboard(payload);
+    startStaticRefresh();
+  }
+}
+
+window.addEventListener("beforeunload", clearRefreshTimers);
 main();
