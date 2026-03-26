@@ -79,9 +79,14 @@ function renderShell() {
   }
 }
 
-function renderCurrentRoute() {
+function renderCurrentRoute({ preserveScroll = true } = {}) {
+  const scrollTop = preserveScroll ? shellRefs.workspace?.scrollTop ?? 0 : 0;
+  const scrollLeft = preserveScroll ? shellRefs.workspace?.scrollLeft ?? 0 : 0;
   const render = routeViews[state.route] || routeViews.processes;
   render(viewRoot, state, actions);
+  if (preserveScroll) {
+    shellRefs.workspace?.scrollTo({ top: scrollTop, left: scrollLeft, behavior: "auto" });
+  }
 }
 
 function resetShellScroll(force = false) {
@@ -166,7 +171,7 @@ function handleRouteChange(route) {
   setRoute(state, route);
   resetShellScroll();
   renderShell();
-  renderCurrentRoute();
+  renderCurrentRoute({ preserveScroll: false });
   restartRouteTimer(route);
 }
 
