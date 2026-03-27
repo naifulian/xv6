@@ -19,9 +19,9 @@ TAGS
 compile_commands.json
 .cache/
 .trae/
+CLAUDE.md
 AGENT.md
 AGENTS.md
-CLAUDE.md
 log/
 /log
 experiments/logs/
