@@ -19,6 +19,7 @@ TAGS
 compile_commands.json
 .cache/
 .trae/
+docs/
 CLAUDE.md
 AGENT.md
 AGENTS.md
