@@ -307,8 +307,8 @@ sys_getptable(void)
 {
   uint64 addr;
   int max_count;
-  struct pstat *buf;
   struct proc *p;
+  struct proc *cur = myproc();
   int count = 0;
 
   argaddr(0, &addr);
@@ -317,51 +317,47 @@ sys_getptable(void)
   if(addr == 0 || max_count <= 0)
     return -1;
 
-  buf = (struct pstat *)kalloc();
-  if(buf == 0)
-    return -1;
-
-  memset(buf, 0, PGSIZE);
-
   for(p = proc; p < &proc[NPROC] && count < max_count; p++) {
+    struct pstat entry;
+
     acquire(&p->lock);
-    if(p->state != UNUSED) {
-      int vma_count = 0;
-      uint mmap_bytes = 0;
-
-      for(int i = 0; i < NVMA; i++) {
-        if(p->vmas[i].valid) {
-          vma_count++;
-          mmap_bytes += p->vmas[i].length;
-        }
-      }
-
-      buf[count].pid = p->pid;
-      buf[count].state = p->state;
-      buf[count].priority = p->priority;
-      buf[count].tickets = p->tickets;
-      buf[count].sched_class = p->sched_class;
-      buf[count].sz = p->sz;
-      buf[count].heap_end = p->heap_end;
-      buf[count].vma_count = vma_count;
-      buf[count].mmap_regions = vma_count;
-      buf[count].mmap_bytes = mmap_bytes;
-      buf[count].rutime = p->rutime;
-      buf[count].retime = p->retime;
-      buf[count].stime = p->stime;
-      safestrcpy(buf[count].name, p->name, sizeof(buf[count].name));
-      count++;
+    if(p->state == UNUSED) {
+      release(&p->lock);
+      continue;
     }
+
+    int vma_count = 0;
+    uint mmap_bytes = 0;
+    for(int i = 0; i < NVMA; i++) {
+      if(p->vmas[i].valid) {
+        vma_count++;
+        mmap_bytes += p->vmas[i].length;
+      }
+    }
+
+    memset(&entry, 0, sizeof(entry));
+    entry.pid = p->pid;
+    entry.state = p->state;
+    entry.priority = p->priority;
+    entry.tickets = p->tickets;
+    entry.sched_class = p->sched_class;
+    entry.sz = p->sz;
+    entry.heap_end = p->heap_end;
+    entry.vma_count = vma_count;
+    entry.mmap_regions = vma_count;
+    entry.mmap_bytes = mmap_bytes;
+    entry.rutime = p->rutime;
+    entry.retime = p->retime;
+    entry.stime = p->stime;
+    safestrcpy(entry.name, p->name, sizeof(entry.name));
     release(&p->lock);
+
+    if(copyout(cur->pagetable, addr + count * sizeof(struct pstat), (char *)&entry, sizeof(entry)) < 0)
+      return -1;
+
+    count++;
   }
 
-  struct proc *cur = myproc();
-  if(copyout(cur->pagetable, addr, (char *)buf, count * sizeof(struct pstat)) < 0) {
-    kfree((void *)buf);
-    return -1;
-  }
-
-  kfree((void *)buf);
   return count;
 }
 

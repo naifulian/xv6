@@ -129,9 +129,8 @@ telemetry_console_write(char *buf, int n)
   __sync_synchronize();
   *R1(VIRTIO_MMIO_QUEUE_NOTIFY) = 1;
 
-  while(telemetry_console.txq.used->idx == telemetry_console.tx_used_idx)
-    ;
-  telemetry_console.tx_used_idx = telemetry_console.txq.used->idx;
+  if(telemetry_console.txq.used->idx != telemetry_console.tx_used_idx)
+    telemetry_console.tx_used_idx = telemetry_console.txq.used->idx;
 
   release(&telemetry_console.lock);
   return n;

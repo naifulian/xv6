@@ -25,6 +25,47 @@ TELEMETRY_PREFIXES = (
     "PROC ",
     "VMA ",
 )
+TELEMETRY_HINTS = (
+    "seq=",
+    "ts=",
+    "sched=",
+    "policy=",
+    "cpu=",
+    "ctx=",
+    "ticks=",
+    "total_pages=",
+    "free_pages=",
+    "nr_total=",
+    "nr_running=",
+    "nr_sleeping=",
+    "nr_zombie=",
+    "runqueue=",
+    "buddy_merges=",
+    "buddy_splits=",
+    "cow_faults=",
+    "lazy_allocs=",
+    "cow_copy_pages=",
+    "pid=",
+    "state=",
+    "priority=",
+    "tickets=",
+    "sched_class=",
+    "sz=",
+    "heap_end=",
+    "vma_count=",
+    "mmap_regions=",
+    "mmap_bytes=",
+    "slot=",
+    "start=",
+    "end=",
+    "length=",
+    "prot=",
+    "flags=",
+    "rutime=",
+    "retime=",
+    "stime=",
+    "name=",
+)
 
 
 def sanitize(line: str) -> str:
@@ -45,34 +86,58 @@ def classify_prefix(buffer: str) -> str:
     return "regular"
 
 
+def looks_like_telemetry_continuation(text: str) -> bool:
+    stripped = sanitize(text).strip()
+    if not stripped:
+        return False
+    if stripped.startswith("="):
+        return True
+    return stripped.count("=") >= 3 and any(hint in stripped for hint in TELEMETRY_HINTS)
+
+
 class OutputSplitter:
     def __init__(self, console_log, telemetry_log, terminal):
         self.console_log = console_log
         self.telemetry_log = telemetry_log
         self.terminal = terminal
         self.buffer = ""
+        self.pending_telemetry = ""
+        self.line_has_terminal_output = False
 
     def _emit_terminal(self, text: str) -> None:
         if text:
             self.terminal.write(text)
             self.terminal.flush()
 
-    def _emit_telemetry(self, text: str) -> None:
+    def _flush_pending_telemetry(self) -> None:
+        if not self.pending_telemetry:
+            return
+        self.telemetry_log.write(self.pending_telemetry + "\n")
+        self.telemetry_log.flush()
+        self.pending_telemetry = ""
+
+    def _start_telemetry_frame(self, text: str) -> None:
         clean = sanitize(text)
         match = KEYWORD_RE.search(clean)
         if not match:
             return
+        self._flush_pending_telemetry()
         frame = clean[match.start() :].strip()
         if frame:
-            self.telemetry_log.write(frame + "\n")
-            self.telemetry_log.flush()
+            self.pending_telemetry = frame
 
     def _flush_line(self, text: str) -> None:
-        kind = classify_prefix(text)
-        if kind == "telemetry":
-            self._emit_telemetry(text)
-        else:
-            self._emit_terminal(text)
+        clean = sanitize(text)
+        if not clean:
+            return
+        if KEYWORD_RE.search(clean):
+            self._start_telemetry_frame(text)
+            return
+        if self.pending_telemetry and looks_like_telemetry_continuation(text):
+            self.pending_telemetry += clean.strip()
+            return
+        self._flush_pending_telemetry()
+        self._emit_terminal(text)
 
     def feed(self, text: str) -> None:
         if not text:
@@ -85,18 +150,23 @@ class OutputSplitter:
             if ch == "\n":
                 self._flush_line(self.buffer)
                 self.buffer = ""
+                self.line_has_terminal_output = False
                 continue
 
             kind = classify_prefix(self.buffer)
-            if kind == "regular":
+            if kind == "telemetry" and self.line_has_terminal_output:
+                self._emit_terminal("\n")
+                self.line_has_terminal_output = False
+            elif kind == "regular":
                 self._emit_terminal(self.buffer)
+                self.line_has_terminal_output = True
                 self.buffer = ""
 
     def flush(self) -> None:
-        if not self.buffer:
-            return
-        self._flush_line(self.buffer)
-        self.buffer = ""
+        if self.buffer:
+            self._flush_line(self.buffer)
+            self.buffer = ""
+        self._flush_pending_telemetry()
 
 
 def parse_args() -> argparse.Namespace:
