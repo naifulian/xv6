@@ -18,6 +18,7 @@ user/usys.S
 TAGS
 compile_commands.json
 .cache/
+.trae/
 CLAUDE.md
 log/
 /log
